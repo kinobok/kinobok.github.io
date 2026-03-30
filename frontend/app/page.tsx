@@ -36,7 +36,7 @@ export default function Home() {
   if (!data) return <div>Loading kinꚘbok Warsaw...</div>;
 
   return (
-    <main style={{ height: "100vh", width: "100vw", display: "flex" }}>
+    <main className="main-container" style={{ height: "100vh", width: "100vw", display: "flex" }}>
       <MatchSidebar
         matches={matches}
         visibleChains={visibleChains}

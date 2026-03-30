@@ -16,6 +16,7 @@ export default function Home() {
   const [data, setData] = useState<any>(null);
   const [watchlistUris, setWatchlistUris] = useState<string[]>([]);
   const [visibleChains, setVisibleChains] = useState<string[]>(["Helios"]);
+  const [userLocation, setUserLocation] = useState<{ lat: number, lng: number } | null>(null);
 
   useEffect(() => {
     fetch("/data.json")
@@ -33,6 +34,10 @@ export default function Home() {
     );
   };
 
+  const handleLocationFound = (loc: { lat: number, lng: number }) => {
+    setUserLocation(loc);
+  };
+
   if (!data) return <div>Loading kinꚘbok Warsaw...</div>;
 
   return (
@@ -48,6 +53,8 @@ export default function Home() {
           cinemas={filteredCinemas}
           highlightedCinemaIds={matchedCinemaIds}
           matches={matches}
+          userLocation={userLocation}
+          onLocationFound={handleLocationFound}
         />
       </div>
     </main>

@@ -47,6 +47,7 @@ export default function Home() {
         <CinemaMap
           cinemas={filteredCinemas}
           highlightedCinemaIds={matchedCinemaIds}
+          matches={matches}
         />
       </div>
     </main>

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import L from "leaflet";
 import { Match } from "../utils/matching_logic";
 
-const DEFAULT_ZOOM_VALUE = 12
+const DEFAULT_ZOOM_VALUE = 12;
 
 // Leaflet marker icons are notoriously tricky in Next.js
 // We use unpkg as a reliable CDN for the default assets

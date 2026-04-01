@@ -18,22 +18,24 @@ export default function MatchSidebar({
   onToggleChain,
 }: MatchSidebarProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [sheetState, setSheetState] = useState<'collapsed' | 'partial' | 'expanded'>('partial');
+  const [sheetState, setSheetState] = useState<
+    "collapsed" | "partial" | "expanded"
+  >("partial");
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   const handleCycleState = () => {
     if (!isMobile) return;
-    setSheetState(prev => {
-      if (prev === 'collapsed') return 'partial';
-      if (prev === 'partial') return 'expanded';
-      return 'collapsed';
+    setSheetState((prev) => {
+      if (prev === "collapsed") return "partial";
+      if (prev === "partial") return "expanded";
+      return "collapsed";
     });
   };
 
@@ -64,15 +66,30 @@ export default function MatchSidebar({
       }}
     >
       <div className="drag-handle" onClick={handleCycleState} />
-      <h2 style={{ color: "var(--lb-text-primary)", borderBottom: "1px solid var(--lb-card)", paddingBottom: "10px" }}>kinꚘbok Warsaw</h2>
+      <h2
+        style={{
+          color: "var(--lb-text-primary)",
+          borderBottom: "1px solid var(--lb-card)",
+          paddingBottom: "10px",
+        }}
+      >
+        kinꚘbok Warsaw
+      </h2>
       <p style={{ fontSize: "0.9em", color: "var(--lb-text-secondary)" }}>
         Upload your Letterboxd watchlist (CSV) to find matches in Warsaw.
       </p>
 
-      <div style={{ background: "var(--lb-card)", padding: "10px", borderRadius: "4px", marginBottom: "20px" }}>
-        <input 
-          type="file" 
-          accept=".csv" 
+      <div
+        style={{
+          background: "var(--lb-card)",
+          padding: "10px",
+          borderRadius: "4px",
+          marginBottom: "20px",
+        }}
+      >
+        <input
+          type="file"
+          accept=".csv"
           onChange={handleFileUpload}
           style={{ fontSize: "0.8em", width: "100%" }}
         />
@@ -104,21 +121,38 @@ export default function MatchSidebar({
               fontSize: "0.9em",
             }}
           >
-            <strong style={{ color: "var(--lb-orange)" }}>Include big chains:</strong>
+            <strong style={{ color: "var(--lb-orange)" }}>
+              Include big chains:
+            </strong>
             {chains.map((chain) => (
               <div key={chain} style={{ marginTop: "5px" }}>
-                <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
+                <label
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    cursor: "pointer",
+                  }}
+                >
                   <input
                     type="checkbox"
                     checked={visibleChains.includes(chain)}
                     onChange={() => onToggleChain(chain)}
-                    style={{ marginRight: "8px", accentColor: "var(--lb-green)" }}
+                    style={{
+                      marginRight: "8px",
+                      accentColor: "var(--lb-green)",
+                    }}
                   />
                   {chain === "Cinema City" ? "Cinema City / IMAX" : chain}
                 </label>
               </div>
             ))}
-            <p style={{ fontSize: "0.8em", color: "var(--lb-text-secondary)", marginTop: "10px" }}>
+            <p
+              style={{
+                fontSize: "0.8em",
+                color: "var(--lb-text-secondary)",
+                marginTop: "10px",
+              }}
+            >
               Independent cinemas are always visible.
             </p>
           </div>
@@ -126,14 +160,27 @@ export default function MatchSidebar({
       </div>
 
       {!showAdvanced && (
-        <p style={{ fontSize: "0.8em", color: "var(--lb-text-secondary)", marginTop: "10px" }}>
-          Showing local independent cinemas {visibleChains.includes("Helios") && "& Helios"}.
+        <p
+          style={{
+            fontSize: "0.8em",
+            color: "var(--lb-text-secondary)",
+            marginTop: "10px",
+          }}
+        >
+          Showing local independent cinemas{" "}
+          {visibleChains.includes("Helios") && "& Helios"}.
         </p>
       )}
 
       {matches.length > 0 && (
         <div style={{ marginTop: "20px" }}>
-          <h3 style={{ fontSize: "1.1em", color: "var(--lb-text-primary)", marginBottom: "15px" }}>
+          <h3
+            style={{
+              fontSize: "1.1em",
+              color: "var(--lb-text-primary)",
+              marginBottom: "15px",
+            }}
+          >
             Matches Found ({matches.length})
           </h3>
           {matches.map((match) => (
@@ -149,33 +196,65 @@ export default function MatchSidebar({
                 border: "1px solid transparent",
                 transition: "border-color 0.2s",
               }}
-              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--lb-green)")}
-              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "transparent")}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.borderColor = "var(--lb-green)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.borderColor = "transparent")
+              }
             >
-              <img 
-                src={match.poster || "/poster-placeholder.svg"} 
-                alt={match.title} 
+              <img
+                src={match.poster || "/poster-placeholder.svg"}
+                alt={match.title}
                 loading="lazy"
-                style={{ 
-                  width: "45px", 
-                  height: "67px", 
-                  objectFit: "cover", 
-                  borderRadius: "2px", 
+                style={{
+                  width: "45px",
+                  height: "67px",
+                  objectFit: "cover",
+                  borderRadius: "2px",
                   background: "#333",
-                  flexShrink: 0 
+                  flexShrink: 0,
                 }}
-                onError={(e) => { (e.target as HTMLImageElement).src = "/poster-placeholder.svg"; }}
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src =
+                    "/poster-placeholder.svg";
+                }}
               />
               <div style={{ overflow: "hidden" }}>
-                <div style={{ fontWeight: "bold", fontSize: "0.95em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                  <a href={match.boxd_uri} target="_blank" rel="noopener noreferrer" style={{ color: "var(--lb-text-primary)", textDecoration: "none" }}>
+                <div
+                  style={{
+                    fontWeight: "bold",
+                    fontSize: "0.95em",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  <a
+                    href={match.boxd_uri}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      color: "var(--lb-text-primary)",
+                      textDecoration: "none",
+                    }}
+                  >
                     {match.title}
                   </a>
                 </div>
-                <div style={{ fontSize: "0.85em", color: "var(--lb-text-secondary)", marginTop: "4px" }}>
+                <div
+                  style={{
+                    fontSize: "0.85em",
+                    color: "var(--lb-text-secondary)",
+                    marginTop: "4px",
+                  }}
+                >
                   {match.showtimes.map((s, idx) => (
                     <div key={idx} style={{ marginBottom: "2px" }}>
-                      <span style={{ color: "var(--lb-orange)" }}>{s.cinema}</span>: {s.times.join(", ")}
+                      <span style={{ color: "var(--lb-orange)" }}>
+                        {s.cinema}
+                      </span>
+                      : {s.times.join(", ")}
                     </div>
                   ))}
                 </div>

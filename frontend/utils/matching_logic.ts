@@ -20,6 +20,7 @@ export interface Match {
   id: string;
   title: string;
   boxd_uri: string;
+  poster?: string;
   showtimes: {
     cinema: string | undefined;
     times: string[];

@@ -56,27 +56,35 @@ export default function MatchSidebar({
       style={{
         width: isMobile ? "100%" : "350px",
         height: "100%",
-        background: "#fff",
+        background: "var(--lb-sidebar)",
+        color: "var(--lb-text-primary)",
         padding: "20px",
         overflowY: "auto",
-        borderRight: isMobile ? "none" : "1px solid #ccc",
+        borderRight: isMobile ? "none" : "1px solid var(--lb-card)",
       }}
     >
       <div className="drag-handle" onClick={handleCycleState} />
-      <h2>kinꚘbok Warsaw</h2>
-      <p style={{ fontSize: "0.9em", color: "#666" }}>
+      <h2 style={{ color: "var(--lb-text-primary)", borderBottom: "1px solid var(--lb-card)", paddingBottom: "10px" }}>kinꚘbok Warsaw</h2>
+      <p style={{ fontSize: "0.9em", color: "var(--lb-text-secondary)" }}>
         Upload your Letterboxd watchlist (CSV) to find matches in Warsaw.
       </p>
 
-      <input type="file" accept=".csv" onChange={handleFileUpload} />
+      <div style={{ background: "var(--lb-card)", padding: "10px", borderRadius: "4px", marginBottom: "20px" }}>
+        <input 
+          type="file" 
+          accept=".csv" 
+          onChange={handleFileUpload}
+          style={{ fontSize: "0.8em", width: "100%" }}
+        />
+      </div>
 
-      <div style={{ marginTop: "20px" }}>
+      <div style={{ marginTop: "10px" }}>
         <button
           onClick={() => setShowAdvanced(!showAdvanced)}
           style={{
             background: "none",
             border: "none",
-            color: "#0070f3",
+            color: "var(--lb-blue)",
             cursor: "pointer",
             padding: 0,
             fontSize: "0.9em",
@@ -91,26 +99,26 @@ export default function MatchSidebar({
             style={{
               marginTop: "10px",
               padding: "10px",
-              background: "#f9f9f9",
+              background: "var(--lb-card)",
               borderRadius: "4px",
               fontSize: "0.9em",
             }}
           >
-            <strong>Include big chains:</strong>
+            <strong style={{ color: "var(--lb-orange)" }}>Include big chains:</strong>
             {chains.map((chain) => (
               <div key={chain} style={{ marginTop: "5px" }}>
-                <label style={{ display: "flex", alignItems: "center" }}>
+                <label style={{ display: "flex", alignItems: "center", cursor: "pointer" }}>
                   <input
                     type="checkbox"
                     checked={visibleChains.includes(chain)}
                     onChange={() => onToggleChain(chain)}
-                    style={{ marginRight: "8px" }}
+                    style={{ marginRight: "8px", accentColor: "var(--lb-green)" }}
                   />
                   {chain === "Cinema City" ? "Cinema City / IMAX" : chain}
                 </label>
               </div>
             ))}
-            <p style={{ fontSize: "0.8em", color: "#888", marginTop: "10px" }}>
+            <p style={{ fontSize: "0.8em", color: "var(--lb-text-secondary)", marginTop: "10px" }}>
               Independent cinemas are always visible.
             </p>
           </div>
@@ -118,30 +126,59 @@ export default function MatchSidebar({
       </div>
 
       {!showAdvanced && (
-        <p style={{ fontSize: "0.8em", color: "#888", marginTop: "10px" }}>
+        <p style={{ fontSize: "0.8em", color: "var(--lb-text-secondary)", marginTop: "10px" }}>
           Showing local independent cinemas {visibleChains.includes("Helios") && "& Helios"}.
         </p>
       )}
 
       {matches.length > 0 && (
         <div style={{ marginTop: "20px" }}>
-          <h3>Matches Found ({matches.length})</h3>
+          <h3 style={{ fontSize: "1.1em", color: "var(--lb-text-primary)", marginBottom: "15px" }}>
+            Matches Found ({matches.length})
+          </h3>
           {matches.map((match) => (
             <div
               key={match.id}
               style={{
-                marginBottom: "15px",
-                borderBottom: "1px solid #eee",
-                paddingBottom: "10px",
+                display: "flex",
+                gap: "12px",
+                marginBottom: "16px",
+                padding: "8px",
+                background: "var(--lb-card)",
+                borderRadius: "4px",
+                border: "1px solid transparent",
+                transition: "border-color 0.2s",
               }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "var(--lb-green)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "transparent")}
             >
-              <strong>{match.title}</strong>
-              <div style={{ fontSize: "0.9em", color: "#666" }}>
-                {match.showtimes.map((s: any, idx: number) => (
-                  <div key={idx}>
-                    {s.cinema}: {s.times.join(", ")}
-                  </div>
-                ))}
+              <img 
+                src={match.poster || "/poster-placeholder.svg"} 
+                alt={match.title} 
+                loading="lazy"
+                style={{ 
+                  width: "45px", 
+                  height: "67px", 
+                  objectFit: "cover", 
+                  borderRadius: "2px", 
+                  background: "#333",
+                  flexShrink: 0 
+                }}
+                onError={(e) => { (e.target as HTMLImageElement).src = "/poster-placeholder.svg"; }}
+              />
+              <div style={{ overflow: "hidden" }}>
+                <div style={{ fontWeight: "bold", fontSize: "0.95em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  <a href={match.boxd_uri} target="_blank" rel="noopener noreferrer" style={{ color: "var(--lb-text-primary)", textDecoration: "none" }}>
+                    {match.title}
+                  </a>
+                </div>
+                <div style={{ fontSize: "0.85em", color: "var(--lb-text-secondary)", marginTop: "4px" }}>
+                  {match.showtimes.map((s, idx) => (
+                    <div key={idx} style={{ marginBottom: "2px" }}>
+                      <span style={{ color: "var(--lb-orange)" }}>{s.cinema}</span>: {s.times.join(", ")}
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           ))}

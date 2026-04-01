@@ -6,9 +6,9 @@
     "strict": false,
     "noEmit": true,
     "incremental": true,
-    "module": "Node16",
+    "module": "esnext",
     "esModuleInterop": true,
-    "moduleResolution": "node16",
+    "moduleResolution": "node10", // https://www.typescriptlang.org/tsconfig/#moduleResolution, https://github.com/kinobok/kinobok.github.io/issues/16
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",

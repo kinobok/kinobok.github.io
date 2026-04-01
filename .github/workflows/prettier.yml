@@ -9,4 +9,5 @@ jobs:
       - uses: actions/checkout@v6
       - uses: creyD/prettier_action@v4.6
         with:
-          prettier_options: --write **/*.{ts,tsx,js,md}
+          prettier_options: --check --write **/*.{ts,tsx,js,md}
+          dry: true

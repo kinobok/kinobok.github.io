@@ -60,11 +60,13 @@ export default function MatchSidebar({
         height: "100%",
         background: "var(--lb-sidebar)",
         color: "var(--lb-text-primary)",
-        padding: "20px",
         overflowY: "auto",
         borderRight: isMobile ? "none" : "1px solid var(--lb-card)",
       }}
     >
+      <div style={{
+        padding: "20px",
+      }}>
       <div className="drag-handle" onClick={handleCycleState} />
       <h2
         style={{
@@ -263,6 +265,7 @@ export default function MatchSidebar({
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

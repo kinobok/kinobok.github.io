@@ -105,13 +105,13 @@ body,
   }
 
   .bottom-sheet.collapsed {
-    transform: translateY(calc(100% - 60px));
+    transform: translateY(90%);
   }
   .bottom-sheet.partial {
     transform: translateY(50%);
   }
   .bottom-sheet.expanded {
-    transform: translateY(0);
+    transform: translateY(10%);
   }
 
   .drag-handle {

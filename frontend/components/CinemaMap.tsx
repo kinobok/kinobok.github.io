@@ -45,6 +45,17 @@ interface CinemaMapProps {
   onLocationFound?: (loc: { lat: number; lng: number }) => void;
 }
 
+const createMarkerIcon = (color: string) => {
+  if (typeof L === 'undefined') return null;
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `<div class="marker-pin" style="background-color: ${color};"></div>`,
+    iconSize: [16, 16],
+    iconAnchor: [8, 8],
+    popupAnchor: [0, -8],
+  });
+};
+
 function MapController({ center }: { center: [number, number] | null }) {
   const map = useMap();
   useEffect(() => {
@@ -69,8 +80,12 @@ export default function CinemaMap({
   }, []);
 
   if (!isClient) {
-    return <div style={{ height: '100%', width: '100%', background: '#eee' }}>Loading Map...</div>;
+    return <div style={{ height: '100%', width: '100%', background: 'var(--lb-bg)' }}>Loading Map...</div>;
   }
+
+  const DefaultIcon = createMarkerIcon('#ff8000'); // Orange
+  const HighlightedIcon = createMarkerIcon('#00e054'); // Green
+  const UserIcon = createMarkerIcon('#40bcf4'); // Blue
 
   const warsawCenter: [number, number] = [52.2297, 21.0122];
 
@@ -91,7 +106,7 @@ export default function CinemaMap({
   };
 
   return (
-    <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+    <div style={{ position: 'relative', height: '100%', width: '100%', background: 'var(--lb-bg)' }}>
       <button
         onClick={handleLocateMe}
         style={{
@@ -99,13 +114,14 @@ export default function CinemaMap({
           top: '20px',
           right: '20px',
           zIndex: 1000,
-          background: 'white',
-          border: '2px solid rgba(0,0,0,0.2)',
+          background: 'var(--lb-sidebar)',
+          color: 'var(--lb-blue)',
+          border: '1px solid var(--lb-card)',
           borderRadius: '4px',
           padding: '8px 12px',
           cursor: 'pointer',
           fontWeight: 'bold',
-          boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+          boxShadow: '0 2px 4px rgba(0,0,0,0.3)'
         }}
       >
         📍 Locate Me
@@ -114,15 +130,15 @@ export default function CinemaMap({
       <MapContainer 
         center={warsawCenter} 
         zoom={13} 
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '100%', width: '100%', background: 'var(--lb-bg)' }}
       >
         <MapController center={userLocation ? [userLocation.lat, userLocation.lng] : null} />
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
         
-        {userLocation && (
+        {userLocation && UserIcon && (
           <Marker position={[userLocation.lat, userLocation.lng]} icon={UserIcon}>
             <Popup>You are here</Popup>
           </Marker>
@@ -133,22 +149,25 @@ export default function CinemaMap({
             m.showtimes.some(s => s.cinema_id === cinema.id)
           );
 
-          return cinema.coords && (
+          const isHighlighted = highlightedCinemaIds.includes(cinema.id);
+          const icon = isHighlighted ? HighlightedIcon : DefaultIcon;
+
+          return cinema.coords && icon && (
             <Marker 
               key={cinema.id} 
               position={[cinema.coords.lat, cinema.coords.lng]}
-              icon={highlightedCinemaIds.includes(cinema.id) ? HighlightedIcon : DefaultIcon}
+              icon={icon}
             >
               <Popup>
-                <strong>{cinema.name}</strong><br />
-                {cinema.address}
+                <strong style={{ color: 'var(--lb-text-primary)' }}>{cinema.name}</strong><br />
+                <span style={{ color: 'var(--lb-text-secondary)', fontSize: '0.9em' }}>{cinema.address}</span>
                 {cinemaMatches.length > 0 && (
-                  <div style={{ marginTop: '10px', borderTop: '1px solid #eee', paddingTop: '5px' }}>
-                    <strong style={{ fontSize: '0.85em' }}>Watchlist Matches:</strong>
+                  <div style={{ marginTop: '10px', borderTop: '1px solid var(--lb-card)', paddingTop: '5px' }}>
+                    <strong style={{ fontSize: '0.85em', color: 'var(--lb-green)' }}>Watchlist Matches:</strong>
                     <ul style={{ margin: '5px 0 0 0', paddingLeft: '18px', fontSize: '0.9em' }}>
                       {cinemaMatches.map(m => (
                         <li key={m.id}>
-                          <a href={m.boxd_uri} target="_blank" rel="noopener noreferrer" style={{ color: '#0070f3' }}>
+                          <a href={m.boxd_uri} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--lb-blue)' }}>
                             {m.title}
                           </a>
                         </li>

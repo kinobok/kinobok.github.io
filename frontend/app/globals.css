@@ -1,11 +1,74 @@
+:root {
+  --lb-bg: #14181c;
+  --lb-sidebar: #1c232e;
+  --lb-card: #2c3440;
+  --lb-text-primary: #ffffff;
+  --lb-text-secondary: #b3c2d1;
+  --lb-orange: #ff8000;
+  --lb-green: #00e054;
+  --lb-blue: #40bcf4;
+}
+
 html, body, #__next {
   height: 100%;
   margin: 0;
   padding: 0;
+  background-color: var(--lb-bg);
+  color: var(--lb-text-primary);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
+
 .leaflet-container {
   height: 100%;
   width: 100%;
+  background-color: var(--lb-bg) !important;
+}
+
+/* Custom Scrollbar for Dark Theme */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--lb-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #444;
+}
+
+/* Leaflet Popup Styling Overrides */
+.leaflet-popup-content-wrapper, .leaflet-popup-tip {
+  background-color: var(--lb-sidebar) !important;
+  color: var(--lb-text-primary) !important;
+  box-shadow: 0 3px 14px rgba(0,0,0,0.4) !important;
+  border-radius: 4px !important;
+}
+
+.leaflet-popup-content {
+  margin: 13px 19px !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-popup-close-button {
+  color: var(--lb-text-secondary) !important;
+}
+
+/* Custom DivIcon Styling */
+.custom-marker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-pin {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 4px rgba(0,0,0,0.5);
 }
 
 /* Bottom sheet and responsive layout */
@@ -27,9 +90,9 @@ html, body, #__next {
     left: 0;
     width: 100% !important;
     border-right: none !important;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid var(--lb-card);
     border-radius: 12px 12px 0 0;
-    background: white;
+    background: var(--lb-sidebar);
   }
   
   .bottom-sheet.collapsed { transform: translateY(calc(100% - 60px)); }
@@ -39,7 +102,7 @@ html, body, #__next {
   .drag-handle {
     width: 40px;
     height: 5px;
-    background: #ccc;
+    background: var(--lb-card);
     border-radius: 3px;
     margin: 10px auto;
     cursor: pointer;

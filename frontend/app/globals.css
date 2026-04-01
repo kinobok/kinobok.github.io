@@ -88,13 +88,14 @@ body,
 }
 
 .bottom-sheet {
-  transition: transform 0.3s ease-in-out;
+  transition: top 0.3s ease-in-out;
   z-index: 1000;
 }
 
 @media (max-width: 767px) {
   .bottom-sheet {
     position: fixed;
+    top: 50%;
     bottom: 0;
     left: 0;
     width: 100% !important;
@@ -105,13 +106,13 @@ body,
   }
 
   .bottom-sheet.collapsed {
-    transform: translateY(calc(100% - 60px));
+    top: 80%;
   }
   .bottom-sheet.partial {
-    transform: translateY(50%);
+    top: 50%;
   }
   .bottom-sheet.expanded {
-    transform: translateY(0);
+    top: 10%;
   }
 
   .drag-handle {

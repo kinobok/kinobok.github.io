@@ -1,8 +1,9 @@
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import L from "leaflet";
 import { Match } from "../utils/matching_logic";
+
+const DEFAULT_ZOOM_VALUE = 12;
 
 // Leaflet marker icons are notoriously tricky in Next.js
 // We use unpkg as a reliable CDN for the default assets
@@ -62,7 +63,7 @@ function MapController({ center }: { center: [number, number] | null }) {
   const map = useMap();
   useEffect(() => {
     if (center) {
-      map.setView(center, 14);
+      map.setView(center, DEFAULT_ZOOM_VALUE);
     }
   }, [center, map]);
   return null;
@@ -149,7 +150,7 @@ export default function CinemaMap({
 
       <MapContainer
         center={warsawCenter}
-        zoom={13}
+        zoom={DEFAULT_ZOOM_VALUE}
         style={{ height: "100%", width: "100%", background: "var(--lb-bg)" }}
       >
         <MapController

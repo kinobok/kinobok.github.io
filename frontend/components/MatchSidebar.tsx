@@ -57,7 +57,8 @@ export default function MatchSidebar({
       className={sheetClass}
       style={{
         width: isMobile ? "100%" : "350px",
-        height: "100%",
+        height: isMobile ? "auto" : "100%",
+        minHeight: "20%",
         background: "var(--lb-sidebar)",
         color: "var(--lb-text-primary)",
         overflowY: "auto",

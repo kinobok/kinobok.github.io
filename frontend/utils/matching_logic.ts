@@ -47,7 +47,8 @@ export function findMatchesWithFilters(
   const finalMatches: Match[] = matchingMovies
     .map((movie: any) => {
       const relevantShowtimes = data.showtimes.filter(
-        (s: any) => s.movie_id === movie.id && filteredCinemaIds.has(s.cinema_id),
+        (s: any) =>
+          s.movie_id === movie.id && filteredCinemaIds.has(s.cinema_id),
       );
 
       if (relevantShowtimes.length === 0) return null;

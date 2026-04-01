@@ -7,3 +7,45 @@ html, body, #__next {
   height: 100%;
   width: 100%;
 }
+
+/* Bottom sheet and responsive layout */
+@media (max-width: 767px) {
+  .main-container {
+    flex-direction: column-reverse !important;
+  }
+}
+
+.bottom-sheet {
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+@media (max-width: 767px) {
+  .bottom-sheet {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100% !important;
+    border-right: none !important;
+    border-top: 1px solid #ccc;
+    border-radius: 12px 12px 0 0;
+    background: white;
+  }
+  
+  .bottom-sheet.collapsed { transform: translateY(calc(100% - 60px)); }
+  .bottom-sheet.partial { transform: translateY(50%); }
+  .bottom-sheet.expanded { transform: translateY(0); }
+
+  .drag-handle {
+    width: 40px;
+    height: 5px;
+    background: #ccc;
+    border-radius: 3px;
+    margin: 10px auto;
+    cursor: pointer;
+  }
+}
+
+@media (min-width: 768px) {
+  .drag-handle { display: none; }
+}

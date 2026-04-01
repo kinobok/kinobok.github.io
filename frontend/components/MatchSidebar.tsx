@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { parseWatchlist } from "../utils/csv_parser";
+import { Match } from "../utils/matching_logic";
 
 interface MatchSidebarProps {
-  matches: any[];
+  matches: Match[];
   visibleChains: string[];
   onWatchlistUpload: (uris: string[]) => void;
   onToggleChain: (chain: string) => void;
@@ -17,6 +18,24 @@ export default function MatchSidebar({
   onToggleChain,
 }: MatchSidebarProps) {
   const [showAdvanced, setShowAdvanced] = useState(false);
+  const [sheetState, setSheetState] = useState<'collapsed' | 'partial' | 'expanded'>('partial');
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleCycleState = () => {
+    if (!isMobile) return;
+    setSheetState(prev => {
+      if (prev === 'collapsed') return 'partial';
+      if (prev === 'partial') return 'expanded';
+      return 'collapsed';
+    });
+  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -29,17 +48,21 @@ export default function MatchSidebar({
 
   const chains = ["Multikino", "Cinema City", "Helios"];
 
+  const sheetClass = isMobile ? `bottom-sheet ${sheetState}` : "";
+
   return (
     <div
+      className={sheetClass}
       style={{
-        width: "350px",
+        width: isMobile ? "100%" : "350px",
         height: "100%",
         background: "#fff",
         padding: "20px",
         overflowY: "auto",
-        borderRight: "1px solid #ccc",
+        borderRight: isMobile ? "none" : "1px solid #ccc",
       }}
     >
+      <div className="drag-handle" onClick={handleCycleState} />
       <h2>kinꚘbok Warsaw</h2>
       <p style={{ fontSize: "0.9em", color: "#666" }}>
         Upload your Letterboxd watchlist (CSV) to find matches in Warsaw.

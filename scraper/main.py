@@ -110,7 +110,7 @@ def main():
     # To be safe and portable, we can use an absolute path or relative to project root.
     # For now, let's keep it relative to the root assuming the user runs it from there.
     # If the user runs it from scraper/, they can adjust.
-    output_path = os.path.join(os.getcwd(), "../frontend/public/data.json")
+    output_path = os.path.join(os.getcwd(), "/frontend/public/data.json")
     print(f"💾 Exporting data to {output_path}...")
 
     try:

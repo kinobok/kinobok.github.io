@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import JSZip from "jszip";
 import { parseWatchlist } from "../utils/csv_parser";
 import { Match } from "../utils/matching_logic";
 
@@ -43,9 +44,43 @@ export default function MatchSidebar({
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const text = await file.text();
-    const watchlistUris = parseWatchlist(text);
+    let csvText = "";
+
+    if (file.name.endsWith(".zip")) {
+      try {
+        const zip = new JSZip();
+        const contents = await zip.loadAsync(file);
+        const watchlistFile = Object.keys(contents.files).find((path) =>
+          path.endsWith("watchlist.csv"),
+        );
+
+        if (watchlistFile) {
+          csvText = await contents.files[watchlistFile].async("text");
+        } else {
+          alert(
+            "Error: 'watchlist.csv' not found in the uploaded ZIP. Please ensure you are uploading the full Letterboxd export. If you believe this is a bug, please raise an issue at: https://github.com/kinobok/kinobok.github.io/issues/",
+          );
+          return;
+        }
+      } catch (error) {
+        console.error("Error unzipping file:", error);
+        alert(
+          "Failed to process ZIP file. Please try uploading the CSV directly.",
+        );
+        return;
+      }
+    } else {
+      csvText = await file.text();
+    }
+
+    const watchlistUris = parseWatchlist(csvText);
     onWatchlistUpload(watchlistUris);
+
+    // Save to localStorage
+    localStorage.setItem(
+      "kinobok_watchlist_uris",
+      JSON.stringify(watchlistUris),
+    );
   };
 
   const chains = ["Multikino", "Cinema City", "Helios"];
@@ -81,7 +116,8 @@ export default function MatchSidebar({
           kinꚘbok Warsaw
         </h2>
         <p style={{ fontSize: "0.9em", color: "var(--lb-text-secondary)" }}>
-          Upload your Letterboxd watchlist (CSV) to find matches in Warsaw.
+          Upload your Letterboxd export ZIP (containing{" "}
+          <strong>watchlist.csv</strong>) or the CSV itself.
         </p>
 
         <div
@@ -94,7 +130,7 @@ export default function MatchSidebar({
         >
           <input
             type="file"
-            accept=".csv"
+            accept=".csv,.zip"
             onChange={handleFileUpload}
             style={{ fontSize: "0.8em", width: "100%" }}
           />

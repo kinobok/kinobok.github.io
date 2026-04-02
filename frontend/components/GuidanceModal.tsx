@@ -34,11 +34,11 @@ export default function GuidanceModal({ onClose }: GuidanceModalProps) {
               fontSize: "1.1em",
             }}
           >
-            1. Export your data from Letterboxd
+            Export your data from Letterboxd
           </a>
           <p style={{ fontSize: "0.9em", color: "var(--lb-text-secondary)" }}>
-            Once you have the ZIP file, just upload it here. We'll find your{" "}
-            <strong>watchlist.csv</strong> automatically.
+            Once you have the ZIP file, just upload it here. There is no need to extract the files - we'll find your{" "}
+            <strong>watchlist.csv</strong> list for you.
           </p>
         </div>
         <button className="modal-button" onClick={onClose}>

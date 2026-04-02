@@ -7,26 +7,26 @@ describe("ZIP handling logic (manual check of logic used in component)", () => {
     const files = {
       "README.txt": {},
       "movies/watchlist.csv": {},
-      "profile.json": {}
+      "profile.json": {},
     };
-    
-    const watchlistFile = Object.keys(files).find(
-      (path) => path.endsWith("watchlist.csv")
+
+    const watchlistFile = Object.keys(files).find((path) =>
+      path.endsWith("watchlist.csv"),
     );
-    
+
     expect(watchlistFile).toBe("movies/watchlist.csv");
   });
 
   it("should return undefined if watchlist.csv is missing", async () => {
     const files = {
       "README.txt": {},
-      "data.json": {}
+      "data.json": {},
     };
-    
-    const watchlistFile = Object.keys(files).find(
-      (path) => path.endsWith("watchlist.csv")
+
+    const watchlistFile = Object.keys(files).find((path) =>
+      path.endsWith("watchlist.csv"),
     );
-    
+
     expect(watchlistFile).toBeUndefined();
   });
 });

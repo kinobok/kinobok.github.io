@@ -11,8 +11,15 @@ export default function GuidanceModal({ onClose }: GuidanceModalProps) {
         <h2 style={{ color: "var(--lb-text-primary)", marginBottom: "15px" }}>
           Find your Letterboxd watchlist in Warsaw
         </h2>
-        <p style={{ color: "var(--lb-text-secondary)", lineHeight: "1.6", marginBottom: "20px" }}>
-          To see which movies from your watchlist are playing in Warsaw, you need your Letterboxd data.
+        <p
+          style={{
+            color: "var(--lb-text-secondary)",
+            lineHeight: "1.6",
+            marginBottom: "20px",
+          }}
+        >
+          To see which movies from your watchlist are playing in Warsaw, you
+          need your Letterboxd data.
         </p>
         <div style={{ marginBottom: "20px" }}>
           <a
@@ -24,13 +31,14 @@ export default function GuidanceModal({ onClose }: GuidanceModalProps) {
               textDecoration: "underline",
               display: "block",
               marginBottom: "10px",
-              fontSize: "1.1em"
+              fontSize: "1.1em",
             }}
           >
             1. Export your data from Letterboxd
           </a>
           <p style={{ fontSize: "0.9em", color: "var(--lb-text-secondary)" }}>
-            Once you have the ZIP file, just upload it here. We'll find your <strong>watchlist.csv</strong> automatically.
+            Once you have the ZIP file, just upload it here. We'll find your{" "}
+            <strong>watchlist.csv</strong> automatically.
           </p>
         </div>
         <button className="modal-button" onClick={onClose}>

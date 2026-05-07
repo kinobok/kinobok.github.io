@@ -8,6 +8,7 @@ import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
 import SearchBar from "../components/SearchBar";
 import ConfigMenu from "../components/ConfigMenu";
+import DateSelector from "../components/DateSelector";
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
 const CinemaMap = dynamic(() => import("../components/CinemaMap"), {
@@ -41,9 +42,10 @@ export default function Home() {
   const [data, setData] = useState<{
     cinemas: Cinema[];
     movies: Movie[];
-    showtimes: Showtime[];
+    showtimes: { [date: string]: Showtime[] };
   } | null>(null);
   const [watchlistUris, setWatchlistUris] = useState<string[]>([]);
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const [visibleChains, setVisibleChains] = useState<string[]>(["Helios"]);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -57,7 +59,15 @@ export default function Home() {
   useEffect(() => {
     fetch("/data.json")
       .then((res) => res.json())
-      .then((json) => setData(json));
+      .then((json) => {
+        setData(json);
+        if (json.showtimes) {
+          const dates = Object.keys(json.showtimes).sort();
+          if (dates.length > 0) {
+            setSelectedDate(dates[0]);
+          }
+        }
+      });
 
     // 1. Hydrate watchlist from localStorage
     const savedUris = localStorage.getItem("kinobok_watchlist_uris");
@@ -123,7 +133,12 @@ export default function Home() {
   };
 
   const { matches, filteredCinemas, matchedCinemaIds } = useMemo(() => {
-    const result = findMatchesWithFilters(watchlistUris, data, visibleChains);
+    const result = findMatchesWithFilters(
+      watchlistUris,
+      data,
+      visibleChains,
+      selectedDate,
+    );
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -140,7 +155,7 @@ export default function Home() {
     }
 
     return result;
-  }, [watchlistUris, data, visibleChains, searchQuery]);
+  }, [watchlistUris, data, visibleChains, searchQuery, selectedDate]);
 
   const handleToggleChain = (chain: string) => {
     setVisibleChains((prev) =>
@@ -171,6 +186,14 @@ export default function Home() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
+
+      {data?.showtimes && (
+        <DateSelector
+          dates={Object.keys(data.showtimes).sort()}
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+        />
+      )}
 
       <ConfigMenu
         isOpen={isMenuOpen}

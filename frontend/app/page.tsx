@@ -3,7 +3,13 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState, useMemo } from "react";
 import JSZip from "jszip";
-import { findMatchesWithFilters } from "../utils/matching_logic";
+import {
+  findMatchesWithFilters,
+  CinemaData,
+  Cinema,
+  Movie,
+  Showtime,
+} from "../utils/matching_logic";
 import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
 import SearchBar from "../components/SearchBar";
@@ -18,32 +24,8 @@ const MatchSidebar = dynamic(() => import("../components/MatchSidebar"), {
   ssr: false,
 });
 
-interface Cinema {
-  id: string;
-  name: string;
-  address: string;
-  coords?: { lat: number; lng: number };
-}
-
-interface Movie {
-  id: string;
-  title: string;
-  boxd_uri: string;
-  poster?: string;
-}
-
-interface Showtime {
-  movie_id: string;
-  cinema_id: string;
-  times: string[];
-}
-
 export default function Home() {
-  const [data, setData] = useState<{
-    cinemas: Cinema[];
-    movies: Movie[];
-    showtimes: { [date: string]: Showtime[] };
-  } | null>(null);
+  const [data, setData] = useState<CinemaData | null>(null);
   const [watchlistUris, setWatchlistUris] = useState<string[]>([]);
   const [selectedDate, setSelectedDate] = useState<string>("");
   const [visibleChains, setVisibleChains] = useState<string[]>(["Helios"]);

@@ -1,3 +1,4 @@
 letterboxd/
 
 .env
+.worktrees/

@@ -3,11 +3,18 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState, useMemo } from "react";
 import JSZip from "jszip";
-import { findMatchesWithFilters } from "../utils/matching_logic";
+import {
+  findMatchesWithFilters,
+  CinemaData,
+  Cinema,
+  Movie,
+  Showtime,
+} from "../utils/matching_logic";
 import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
 import SearchBar from "../components/SearchBar";
 import ConfigMenu from "../components/ConfigMenu";
+import DateSelector from "../components/DateSelector";
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
 const CinemaMap = dynamic(() => import("../components/CinemaMap"), {
@@ -17,33 +24,10 @@ const MatchSidebar = dynamic(() => import("../components/MatchSidebar"), {
   ssr: false,
 });
 
-interface Cinema {
-  id: string;
-  name: string;
-  address: string;
-  coords?: { lat: number; lng: number };
-}
-
-interface Movie {
-  id: string;
-  title: string;
-  boxd_uri: string;
-  poster?: string;
-}
-
-interface Showtime {
-  movie_id: string;
-  cinema_id: string;
-  times: string[];
-}
-
 export default function Home() {
-  const [data, setData] = useState<{
-    cinemas: Cinema[];
-    movies: Movie[];
-    showtimes: Showtime[];
-  } | null>(null);
+  const [data, setData] = useState<CinemaData | null>(null);
   const [watchlistUris, setWatchlistUris] = useState<string[]>([]);
+  const [selectedDate, setSelectedDate] = useState<string>("");
   const [visibleChains, setVisibleChains] = useState<string[]>(["Helios"]);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -57,7 +41,15 @@ export default function Home() {
   useEffect(() => {
     fetch("/data.json")
       .then((res) => res.json())
-      .then((json) => setData(json));
+      .then((json) => {
+        setData(json);
+        if (json.showtimes) {
+          const dates = Object.keys(json.showtimes).sort();
+          if (dates.length > 0) {
+            setSelectedDate(dates[0]);
+          }
+        }
+      });
 
     // 1. Hydrate watchlist from localStorage
     const savedUris = localStorage.getItem("kinobok_watchlist_uris");
@@ -123,7 +115,12 @@ export default function Home() {
   };
 
   const { matches, filteredCinemas, matchedCinemaIds } = useMemo(() => {
-    const result = findMatchesWithFilters(watchlistUris, data, visibleChains);
+    const result = findMatchesWithFilters(
+      watchlistUris,
+      data,
+      visibleChains,
+      selectedDate,
+    );
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -140,7 +137,7 @@ export default function Home() {
     }
 
     return result;
-  }, [watchlistUris, data, visibleChains, searchQuery]);
+  }, [watchlistUris, data, visibleChains, searchQuery, selectedDate]);
 
   const handleToggleChain = (chain: string) => {
     setVisibleChains((prev) =>
@@ -171,6 +168,14 @@ export default function Home() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />
+
+      {data?.showtimes && (
+        <DateSelector
+          dates={Object.keys(data.showtimes).sort()}
+          selectedDate={selectedDate}
+          onDateChange={setSelectedDate}
+        />
+      )}
 
       <ConfigMenu
         isOpen={isMenuOpen}

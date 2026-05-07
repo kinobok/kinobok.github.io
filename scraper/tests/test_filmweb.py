@@ -4,14 +4,18 @@ from scraper.filmweb_scraper import FilmwebScraper
 def test_scrape_warsaw_showtimes():
     scraper = FilmwebScraper()
     # Limit to 3 movies for faster and more reliable testing
-    movies = scraper.get_warsaw_movies(limit=3)
+    result = scraper.get_warsaw_movies(limit=3)
+    assert "date" in result
+    assert "movies" in result
+    movies = result["movies"]
     assert len(movies) > 0
 
     # Find a movie with showtimes to verify extraction
     matched_movie = next((m for m in movies if len(m["cinemas"]) > 0), None)
     if not matched_movie:
         # If no movie in first 3 has showtimes, try one more without limit just to be sure
-        movies = scraper.get_warsaw_movies(limit=10)
+        result = scraper.get_warsaw_movies(limit=10)
+        movies = result["movies"]
         matched_movie = next((m for m in movies if len(m["cinemas"]) > 0), None)
 
     assert matched_movie is not None, "No movies with showtimes found"

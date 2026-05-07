@@ -10,20 +10,12 @@ import {
 } from "react-leaflet";
 import { useEffect, useState } from "react";
 import L from "leaflet";
-import { Match } from "../utils/matching_logic";
+import { Match, Cinema } from "../utils/matching_logic";
 
 const DEFAULT_ZOOM_VALUE = 12;
 
 interface CinemaMapProps {
-  cinemas: Array<{
-    id: string;
-    name: string;
-    address: string;
-    coords?: {
-      lat: number;
-      lng: number;
-    };
-  }>;
+  cinemas: Cinema[];
   highlightedCinemaIds?: string[];
   matches?: Match[];
   userLocation?: { lat: number; lng: number } | null;

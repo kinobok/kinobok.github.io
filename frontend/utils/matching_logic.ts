@@ -16,6 +16,32 @@ export function isVisible(cinemaName: string, visibleChains: string[]) {
   return true; // Independent
 }
 
+export interface Cinema {
+  id: string;
+  name: string;
+  address: string;
+  coords?: { lat: number; lng: number };
+}
+
+export interface Movie {
+  id: string;
+  title: string;
+  boxd_uri: string;
+  poster?: string;
+}
+
+export interface Showtime {
+  movie_id: string;
+  cinema_id: string;
+  times: string[];
+}
+
+export interface CinemaData {
+  cinemas: Cinema[];
+  movies: Movie[];
+  showtimes: { [date: string]: Showtime[] };
+}
+
 export interface Match {
   id: string;
   title: string;
@@ -30,39 +56,47 @@ export interface Match {
 
 export function findMatchesWithFilters(
   watchlistUris: string[],
-  data: any,
+  data: CinemaData | null,
   visibleChains: string[],
-): { matches: Match[]; filteredCinemas: any[]; matchedCinemaIds: string[] } {
-  if (!data) return { matches: [], filteredCinemas: [], matchedCinemaIds: [] };
+  selectedDate: string,
+): { matches: Match[]; filteredCinemas: Cinema[]; matchedCinemaIds: string[] } {
+  if (!data || !selectedDate || !data.showtimes[selectedDate])
+    return { matches: [], filteredCinemas: [], matchedCinemaIds: [] };
 
-  const filteredCinemas = data.cinemas.filter((c: any) =>
+  const dailyShowtimes = data.showtimes[selectedDate];
+  if (dailyShowtimes !== null && !(dailyShowtimes instanceof Array)) {
+    throw new TypeError(
+      "Daily showtimes should be an instance of an Array - verify scraped data structure.",
+    );
+  }
+
+  const filteredCinemas = data.cinemas.filter((c) =>
     isVisible(c.name, visibleChains),
   );
-  const filteredCinemaIds = new Set(filteredCinemas.map((c: any) => c.id));
+  const filteredCinemaIds = new Set(filteredCinemas.map((c) => c.id));
 
-  const matchingMovies = data.movies.filter((movie: any) =>
+  const matchingMovies = data.movies.filter((movie) =>
     watchlistUris.includes(movie.boxd_uri),
   );
 
   const finalMatches: Match[] = matchingMovies
-    .map((movie: any) => {
-      const relevantShowtimes = data.showtimes.filter(
-        (s: any) =>
-          s.movie_id === movie.id && filteredCinemaIds.has(s.cinema_id),
+    .map((movie) => {
+      const relevantShowtimes = dailyShowtimes.filter(
+        (s) => s.movie_id === movie.id && filteredCinemaIds.has(s.cinema_id),
       );
 
       if (relevantShowtimes.length === 0) return null;
 
       return {
         ...movie,
-        showtimes: relevantShowtimes.map((s: any) => ({
-          cinema: data.cinemas.find((c: any) => c.id === s.cinema_id)?.name,
+        showtimes: relevantShowtimes.map((s) => ({
+          cinema: data.cinemas.find((c) => c.id === s.cinema_id)?.name,
           times: s.times,
           cinema_id: s.cinema_id,
         })),
       };
     })
-    .filter((m: any): m is Match => m !== null);
+    .filter((m): m is Match => m !== null);
 
   const matchedCinemaIds = Array.from(
     new Set(finalMatches.flatMap((m) => m.showtimes.map((s) => s.cinema_id))),

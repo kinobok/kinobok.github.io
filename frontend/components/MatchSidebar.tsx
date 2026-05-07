@@ -1,27 +1,20 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import JSZip from "jszip";
-import { parseWatchlist } from "../utils/csv_parser";
+import { ChevronDown } from "lucide-react";
 import { Match } from "../utils/matching_logic";
 
 interface MatchSidebarProps {
   matches: Match[];
-  visibleChains: string[];
-  onWatchlistUpload: (uris: string[]) => void;
-  onToggleChain: (chain: string) => void;
+  isExpanded: boolean;
+  onToggleExpand: (expanded: boolean) => void;
 }
 
 export default function MatchSidebar({
   matches,
-  visibleChains,
-  onWatchlistUpload,
-  onToggleChain,
+  isExpanded,
+  onToggleExpand,
 }: MatchSidebarProps) {
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const [sheetState, setSheetState] = useState<
-    "collapsed" | "partial" | "expanded"
-  >("partial");
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -31,279 +24,199 @@ export default function MatchSidebar({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  const handleCycleState = () => {
-    if (!isMobile) return;
-    setSheetState((prev) => {
-      if (prev === "collapsed") return "partial";
-      if (prev === "partial") return "expanded";
-      return "collapsed";
-    });
-  };
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    let csvText = "";
-
-    if (file.name.endsWith(".zip")) {
-      try {
-        const zip = new JSZip();
-        const contents = await zip.loadAsync(file);
-        const watchlistFile = Object.keys(contents.files).find((path) =>
-          path.endsWith("watchlist.csv"),
-        );
-
-        if (watchlistFile) {
-          csvText = await contents.files[watchlistFile].async("text");
-        } else {
-          alert(
-            "Error: 'watchlist.csv' not found in the uploaded ZIP. Please ensure you are uploading the full Letterboxd export. If you believe this is a bug, please raise an issue at: https://github.com/kinobok/kinobok.github.io/issues/",
-          );
-          return;
-        }
-      } catch (error) {
-        console.error("Error unzipping file:", error);
-        alert(
-          "Failed to process ZIP file. Please try uploading the CSV directly.",
-        );
-        return;
+  const containerStyle: React.CSSProperties = isMobile
+    ? {
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        height: isExpanded ? "100%" : "60px",
+        zIndex: 1200,
+        background: "var(--lb-sidebar)",
+        color: "var(--lb-text-primary)",
+        overflowY: isExpanded ? "auto" : "hidden",
+        borderRadius: isExpanded ? "0" : "12px 12px 0 0",
+        transition: "height 0.3s ease-in-out",
+        boxShadow: "0 -2px 10px rgba(0,0,0,0.4)",
+        borderTop: "1px solid var(--lb-card)",
       }
-    } else {
-      csvText = await file.text();
-    }
-
-    const watchlistUris = parseWatchlist(csvText);
-    onWatchlistUpload(watchlistUris);
-
-    // Save to localStorage
-    localStorage.setItem(
-      "kinobok_watchlist_uris",
-      JSON.stringify(watchlistUris),
-    );
-  };
-
-  const chains = ["Multikino", "Cinema City", "Helios"];
-
-  const sheetClass = isMobile ? `bottom-sheet ${sheetState}` : "";
-
-  return (
-    <div
-      className={sheetClass}
-      style={{
-        width: isMobile ? "100%" : "350px",
-        height: isMobile ? "auto" : "100%",
-        minHeight: "20%",
+    : {
+        width: "350px",
+        height: "100%",
         background: "var(--lb-sidebar)",
         color: "var(--lb-text-primary)",
         overflowY: "auto",
-        borderRight: isMobile ? "none" : "1px solid var(--lb-card)",
-      }}
-    >
-      <div
-        style={{
-          padding: "20px",
-        }}
-      >
-        <div className="drag-handle" onClick={handleCycleState} />
-        <h2
-          style={{
-            color: "var(--lb-text-primary)",
-            borderBottom: "1px solid var(--lb-card)",
-            paddingBottom: "10px",
-          }}
-        >
-          kinꚘbok Warsaw
-        </h2>
-        <p style={{ fontSize: "0.9em", color: "var(--lb-text-secondary)" }}>
-          Upload your Letterboxd export ZIP (containing{" "}
-          <strong>watchlist.csv</strong>) or the CSV itself.
-        </p>
+        borderRight: "1px solid var(--lb-card)",
+        flexShrink: 0,
+      };
+
+  const handleBarClick = () => {
+    if (isMobile && !isExpanded) {
+      onToggleExpand(true);
+    }
+  };
+
+  return (
+    <div style={containerStyle} onClick={handleBarClick}>
+      <div style={{ padding: "15px 20px" }}>
+        {isMobile && (
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginBottom: isExpanded ? "10px" : "0",
+            }}
+          >
+            {isExpanded ? (
+              <button
+                className="icon-button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onToggleExpand(false);
+                }}
+                style={{ position: "absolute", left: "15px", top: "15px" }}
+              >
+                <ChevronDown size={28} />
+              </button>
+            ) : (
+              <div
+                style={{
+                  width: "40px",
+                  height: "4px",
+                  background: "var(--lb-card)",
+                  borderRadius: "2px",
+                }}
+              />
+            )}
+          </div>
+        )}
 
         <div
           style={{
-            background: "var(--lb-card)",
-            padding: "10px",
-            borderRadius: "4px",
-            marginBottom: "20px",
+            marginTop: isMobile && isExpanded ? "40px" : "0",
+            textAlign: isMobile && !isExpanded ? "center" : "left",
           }}
         >
-          <input
-            type="file"
-            accept=".csv,.zip"
-            onChange={handleFileUpload}
-            style={{ fontSize: "0.8em", width: "100%" }}
-          />
-        </div>
-
-        <div style={{ marginTop: "10px" }}>
-          <button
-            onClick={() => setShowAdvanced(!showAdvanced)}
+          <h3
             style={{
-              background: "none",
-              border: "none",
-              color: "var(--lb-blue)",
-              cursor: "pointer",
-              padding: 0,
-              fontSize: "0.9em",
-              textDecoration: "underline",
+              fontSize: "1.1em",
+              color: "var(--lb-text-primary)",
+              margin: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: isMobile && !isExpanded ? "center" : "flex-start",
+              gap: "10px",
             }}
           >
-            {showAdvanced ? "Hide" : "Show"} Advanced Filters
-          </button>
-
-          {showAdvanced && (
-            <div
+            Matches Found
+            <span
               style={{
-                marginTop: "10px",
-                padding: "10px",
-                background: "var(--lb-card)",
-                borderRadius: "4px",
-                fontSize: "0.9em",
+                background: "var(--lb-green)",
+                color: "#000",
+                padding: "2px 8px",
+                borderRadius: "10px",
+                fontSize: "0.8em",
               }}
             >
-              <strong style={{ color: "var(--lb-orange)" }}>
-                Include big chains:
-              </strong>
-              {chains.map((chain) => (
-                <div key={chain} style={{ marginTop: "5px" }}>
-                  <label
+              {matches.length}
+            </span>
+          </h3>
+
+          {(isExpanded || !isMobile) && (
+            <div style={{ marginTop: "20px" }}>
+              {matches.length === 0 ? (
+                <p
+                  style={{
+                    color: "var(--lb-text-secondary)",
+                    fontSize: "0.9em",
+                  }}
+                >
+                  No matches found yet. Try uploading your watchlist in the menu
+                  or adjusting filters.
+                </p>
+              ) : (
+                matches.map((match) => (
+                  <div
+                    key={match.id}
                     style={{
                       display: "flex",
-                      alignItems: "center",
-                      cursor: "pointer",
+                      gap: "12px",
+                      marginBottom: "16px",
+                      padding: "8px",
+                      background: "var(--lb-card)",
+                      borderRadius: "4px",
+                      border: "1px solid transparent",
+                      transition: "border-color 0.2s",
                     }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.borderColor = "var(--lb-green)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.borderColor = "transparent")
+                    }
                   >
-                    <input
-                      type="checkbox"
-                      checked={visibleChains.includes(chain)}
-                      onChange={() => onToggleChain(chain)}
+                    <img
+                      src={match.poster || "/poster-placeholder.svg"}
+                      alt={match.title}
+                      loading="lazy"
                       style={{
-                        marginRight: "8px",
-                        accentColor: "var(--lb-green)",
+                        width: "45px",
+                        height: "67px",
+                        objectFit: "cover",
+                        borderRadius: "2px",
+                        background: "#333",
+                        flexShrink: 0,
+                      }}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src =
+                          "/poster-placeholder.svg";
                       }}
                     />
-                    {chain === "Cinema City" ? "Cinema City / IMAX" : chain}
-                  </label>
-                </div>
-              ))}
-              <p
-                style={{
-                  fontSize: "0.8em",
-                  color: "var(--lb-text-secondary)",
-                  marginTop: "10px",
-                }}
-              >
-                Independent cinemas are always visible.
-              </p>
+                    <div style={{ overflow: "hidden" }}>
+                      <div
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: "0.95em",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        <a
+                          href={match.boxd_uri}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            color: "var(--lb-text-primary)",
+                            textDecoration: "none",
+                          }}
+                        >
+                          {match.title}
+                        </a>
+                      </div>
+                      <div
+                        style={{
+                          fontSize: "0.85em",
+                          color: "var(--lb-text-secondary)",
+                          marginTop: "4px",
+                        }}
+                      >
+                        {match.showtimes.map((s, idx) => (
+                          <div key={idx} style={{ marginBottom: "2px" }}>
+                            <span style={{ color: "var(--lb-orange)" }}>
+                              {s.cinema}
+                            </span>
+                            : {s.times.join(", ")}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           )}
         </div>
-
-        {!showAdvanced && (
-          <p
-            style={{
-              fontSize: "0.8em",
-              color: "var(--lb-text-secondary)",
-              marginTop: "10px",
-            }}
-          >
-            Showing local independent cinemas{" "}
-            {visibleChains.includes("Helios") && "& Helios"}.
-          </p>
-        )}
-
-        {matches.length > 0 && (
-          <div style={{ marginTop: "20px" }}>
-            <h3
-              style={{
-                fontSize: "1.1em",
-                color: "var(--lb-text-primary)",
-                marginBottom: "15px",
-              }}
-            >
-              Matches Found ({matches.length})
-            </h3>
-            {matches.map((match) => (
-              <div
-                key={match.id}
-                style={{
-                  display: "flex",
-                  gap: "12px",
-                  marginBottom: "16px",
-                  padding: "8px",
-                  background: "var(--lb-card)",
-                  borderRadius: "4px",
-                  border: "1px solid transparent",
-                  transition: "border-color 0.2s",
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.borderColor = "var(--lb-green)")
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.borderColor = "transparent")
-                }
-              >
-                <img
-                  src={match.poster || "/poster-placeholder.svg"}
-                  alt={match.title}
-                  loading="lazy"
-                  style={{
-                    width: "45px",
-                    height: "67px",
-                    objectFit: "cover",
-                    borderRadius: "2px",
-                    background: "#333",
-                    flexShrink: 0,
-                  }}
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src =
-                      "/poster-placeholder.svg";
-                  }}
-                />
-                <div style={{ overflow: "hidden" }}>
-                  <div
-                    style={{
-                      fontWeight: "bold",
-                      fontSize: "0.95em",
-                      whiteSpace: "nowrap",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                    }}
-                  >
-                    <a
-                      href={match.boxd_uri}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{
-                        color: "var(--lb-text-primary)",
-                        textDecoration: "none",
-                      }}
-                    >
-                      {match.title}
-                    </a>
-                  </div>
-                  <div
-                    style={{
-                      fontSize: "0.85em",
-                      color: "var(--lb-text-secondary)",
-                      marginTop: "4px",
-                    }}
-                  >
-                    {match.showtimes.map((s, idx) => (
-                      <div key={idx} style={{ marginBottom: "2px" }}>
-                        <span style={{ color: "var(--lb-orange)" }}>
-                          {s.cinema}
-                        </span>
-                        : {s.times.join(", ")}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );

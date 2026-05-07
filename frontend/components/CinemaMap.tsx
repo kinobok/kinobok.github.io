@@ -1,36 +1,18 @@
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+"use client";
+
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  Popup,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
 import { useEffect, useState } from "react";
 import L from "leaflet";
 import { Match } from "../utils/matching_logic";
 
 const DEFAULT_ZOOM_VALUE = 12;
-
-// Leaflet marker icons are notoriously tricky in Next.js
-// We use unpkg as a reliable CDN for the default assets
-const DefaultIcon = L.icon({
-  iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
-const HighlightedIcon = L.icon({
-  iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
-const UserIcon = L.icon({
-  iconUrl:
-    "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-});
-
-L.Marker.prototype.options.icon = DefaultIcon;
 
 interface CinemaMapProps {
   cinemas: Array<{
@@ -48,24 +30,43 @@ interface CinemaMapProps {
   onLocationFound?: (loc: { lat: number; lng: number }) => void;
 }
 
-const createMarkerIcon = (color: string) => {
+const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
   if (typeof L === "undefined") return null;
   return L.divIcon({
     className: "custom-marker",
-    html: `<div class="marker-pin" style="background-color: ${color};"></div>`,
+    html: `
+      <div class="marker-wrapper">
+        <div class="marker-pin" style="background-color: ${color};"></div>
+        ${showLabel ? `<div class="marker-label">${name}</div>` : ""}
+      </div>
+    `,
     iconSize: [16, 16],
     iconAnchor: [8, 8],
     popupAnchor: [0, -8],
   });
 };
 
-function MapController({ center }: { center: [number, number] | null }) {
+function MapController({
+  center,
+  onZoomChange,
+}: {
+  center: [number, number] | null;
+  onZoomChange: (zoom: number) => void;
+}) {
   const map = useMap();
+
+  useMapEvents({
+    zoomend: () => {
+      onZoomChange(map.getZoom());
+    },
+  });
+
   useEffect(() => {
     if (center) {
       map.setView(center, DEFAULT_ZOOM_VALUE);
     }
   }, [center, map]);
+
   return null;
 }
 
@@ -77,6 +78,7 @@ export default function CinemaMap({
   onLocationFound,
 }: CinemaMapProps) {
   const [isClient, setIsClient] = useState(false);
+  const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
 
   useEffect(() => {
     setIsClient(true);
@@ -91,10 +93,6 @@ export default function CinemaMap({
       </div>
     );
   }
-
-  const DefaultIcon = createMarkerIcon("#ff8000"); // Orange
-  const HighlightedIcon = createMarkerIcon("#00e054"); // Green
-  const UserIcon = createMarkerIcon("#40bcf4"); // Blue
 
   const warsawCenter: [number, number] = [52.2297, 21.0122];
 
@@ -128,43 +126,60 @@ export default function CinemaMap({
         background: "var(--lb-bg)",
       }}
     >
-      <button
-        onClick={handleLocateMe}
+      <div
+        className="map-controls-container"
         style={{
           position: "absolute",
-          top: "20px",
-          right: "20px",
+          bottom: "30px",
+          right: "15px",
           zIndex: 1000,
-          background: "var(--lb-sidebar)",
-          color: "var(--lb-blue)",
-          border: "1px solid var(--lb-card)",
-          borderRadius: "4px",
-          padding: "8px 12px",
-          cursor: "pointer",
-          fontWeight: "bold",
-          boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
+          display: "flex",
+          flexDirection: "column",
+          gap: "10px",
+          alignItems: "flex-end",
         }}
       >
-        📍 Locate Me
-      </button>
+        <button
+          onClick={handleLocateMe}
+          style={{
+            background: "var(--lb-sidebar)",
+            color: "var(--lb-blue)",
+            border: "1px solid var(--lb-card)",
+            borderRadius: "50%",
+            width: "48px",
+            height: "48px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            fontSize: "1.2em",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.4)",
+          }}
+          title="Locate Me"
+        >
+          📍
+        </button>
+      </div>
 
       <MapContainer
         center={warsawCenter}
         zoom={DEFAULT_ZOOM_VALUE}
+        zoomControl={false}
         style={{ height: "100%", width: "100%", background: "var(--lb-bg)" }}
       >
         <MapController
           center={userLocation ? [userLocation.lat, userLocation.lng] : null}
+          onZoomChange={setZoom}
         />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
 
-        {userLocation && UserIcon && (
+        {userLocation && (
           <Marker
             position={[userLocation.lat, userLocation.lng]}
-            icon={UserIcon}
+            icon={createMarkerIcon("#40bcf4", "You", false)!}
           >
             <Popup>You are here</Popup>
           </Marker>
@@ -176,7 +191,8 @@ export default function CinemaMap({
           );
 
           const isHighlighted = highlightedCinemaIds.includes(cinema.id);
-          const icon = isHighlighted ? HighlightedIcon : DefaultIcon;
+          const color = isHighlighted ? "#00e054" : "#ff8000";
+          const icon = createMarkerIcon(color, cinema.name, zoom >= 13);
 
           return (
             cinema.coords &&

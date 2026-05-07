@@ -36,10 +36,24 @@ export interface Showtime {
   times: string[];
 }
 
+export interface Failure {
+  title: string;
+  reason: string;
+  details?: string;
+}
+
+export interface Metadata {
+  last_scrape: string;
+  total_movies: number;
+  available_dates: string[];
+  failures: Failure[];
+}
+
 export interface CinemaData {
   cinemas: Cinema[];
   movies: Movie[];
   showtimes: { [date: string]: Showtime[] };
+  metadata: Metadata;
 }
 
 export interface Match {

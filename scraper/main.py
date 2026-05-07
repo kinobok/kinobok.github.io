@@ -61,6 +61,7 @@ def main():
 
     movies_data = {m["boxd_uri"]: m for m in existing_data.get("movies", [])}
     cinemas_data = {c["name"]: c for c in existing_data.get("cinemas", [])}
+    failures = []
 
     # Movie and cinema ID counters
     def get_max_id(items, prefix):
@@ -75,6 +76,9 @@ def main():
         result = filmweb.get_warsaw_movies(day_offset=day_offset)
         page_date = result["date"]
         scraped_movies = result["movies"]
+        
+        # If Filmweb provides failures (currently it doesn't, but we can add it if we modify filmweb_scraper.py)
+        # For now, we'll focus on TMDB and Letterboxd failures in this loop.
 
         if not page_date:
             print(f"⚠️ No date found for offset {day_offset}. Skipping.")
@@ -92,6 +96,11 @@ def main():
                 tmdb_movie = tmdb.search_movie(title)
                 if not tmdb_movie:
                     print(f"⚠️ Could not find '{title}' on TMDB. Skipping.")
+                    failures.append({
+                        "title": title,
+                        "reason": "TMDB search failed",
+                        "details": f"No matches found for '{title}'"
+                    })
                     continue
 
                 en_title = tmdb_movie["title"]
@@ -105,6 +114,11 @@ def main():
                     print(
                         f"⚠️ Could not resolve Letterboxd URI for '{en_title}' ({slug}): {e}"
                     )
+                    failures.append({
+                        "title": title,
+                        "reason": "Letterboxd URI resolution failed",
+                        "details": f"Slug: {slug}, Error: {str(e)}"
+                    })
                     continue
 
                 if boxd_uri not in movies_data:
@@ -149,6 +163,11 @@ def main():
 
             except Exception as e:
                 print(f"❌ Error processing '{title}': {e}")
+                failures.append({
+                    "title": title,
+                    "reason": "Unexpected processing error",
+                    "details": str(e)
+                })
                 continue
 
         final_showtimes[page_date] = day_showtimes
@@ -156,11 +175,28 @@ def main():
     # 5. Export to JSON
     print(f"💾 Exporting data to {output_path}...")
 
+    # deduplicate failures by title and reason
+    seen_failures = set()
+    unique_failures = []
+    for f in failures:
+        key = (f["title"], f["reason"])
+        if key not in seen_failures:
+            unique_failures.append(f)
+            seen_failures.add(key)
+
+    metadata = {
+        "last_scrape": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        "total_movies": len(movies_data),
+        "available_dates": sorted(list(final_showtimes.keys())),
+        "failures": unique_failures
+    }
+
     try:
         export_to_json(
             movies=list(movies_data.values()),
             cinemas=list(cinemas_data.values()),
             showtimes=final_showtimes,
+            metadata=metadata,
             output_file=output_path,
         )
         print("✨ Scraping and export completed successfully!")

@@ -28,20 +28,37 @@ class ShowtimeModel(BaseModel):
     times: List[str]
 
 
+class FailureModel(BaseModel):
+    title: str
+    reason: str
+    details: Optional[str] = None
+
+
+class MetadataModel(BaseModel):
+    last_scrape: str
+    total_movies: int
+    available_dates: List[str]
+    failures: List[FailureModel]
+
+
 class ExportSchema(BaseModel):
     movies: List[MovieModel]
     cinemas: List[CinemaModel]
     showtimes: Dict[str, List[ShowtimeModel]]
+    metadata: MetadataModel
 
 
 def export_to_json(
     movies: List[Dict],
     cinemas: List[Dict],
     showtimes: Dict[str, List[Dict]],
+    metadata: Dict,
     output_file: str,
 ):
     try:
-        data = ExportSchema(movies=movies, cinemas=cinemas, showtimes=showtimes)
+        data = ExportSchema(
+            movies=movies, cinemas=cinemas, showtimes=showtimes, metadata=metadata
+        )
 
         with open(output_file, "w") as f:
             f.write(data.model_dump_json(indent=2))

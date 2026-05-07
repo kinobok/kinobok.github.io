@@ -1,8 +1,9 @@
 import httpx
 from bs4 import BeautifulSoup
-from typing import List, Dict
+from typing import Dict
 import time
 import random
+from datetime import datetime, timedelta
 
 
 class FilmwebScraper:
@@ -27,7 +28,8 @@ class FilmwebScraper:
 
         # Extract date from the first available showtime tile
         date_element = soup.select_one(".seanceTile")
-        page_date = date_element.get("data-date") if date_element else None
+        selected_datetime = datetime.today() + timedelta(days=day_offset)
+        page_date = selected_datetime.strftime("%Y-%m-%d")
 
         movies = []
         movie_links = soup.select(".preview__title a")
@@ -75,8 +77,6 @@ class FilmwebScraper:
                     times = [
                         time.text.strip()
                         for time in cinema_section.select(".seanceTile__value")
-                        if time.parent.parent.get("data-date") == page_date
-                        or page_date is None
                     ]
 
                     if times:

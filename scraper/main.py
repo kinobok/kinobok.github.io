@@ -38,7 +38,14 @@ def main():
     today = datetime.date.today()
     is_refresh_day = today.weekday() == 2  # Wednesday
 
-    if is_refresh_day or not existing_data.get("showtimes"):
+    showtimes = existing_data.get("showtimes")
+
+    were_showtimes_populated = False
+    if isinstance(showtimes, Dict):
+        # at initialization, showtimes are not populated fully
+        were_showtimes_populated = len(showtimes) >= 7
+
+    if is_refresh_day or not were_showtimes_populated:
         print("📅 Full refresh day (Wednesday or first run). Scraping 7 days...")
         days_to_scrape = range(7)
         final_showtimes = {}

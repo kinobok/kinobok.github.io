@@ -17,8 +17,32 @@ const MatchSidebar = dynamic(() => import("../components/MatchSidebar"), {
   ssr: false,
 });
 
+interface Cinema {
+  id: string;
+  name: string;
+  address: string;
+  coords?: { lat: number; lng: number };
+}
+
+interface Movie {
+  id: string;
+  title: string;
+  boxd_uri: string;
+  poster?: string;
+}
+
+interface Showtime {
+  movie_id: string;
+  cinema_id: string;
+  times: string[];
+}
+
 export default function Home() {
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<{
+    cinemas: Cinema[];
+    movies: Movie[];
+    showtimes: Showtime[];
+  } | null>(null);
   const [watchlistUris, setWatchlistUris] = useState<string[]>([]);
   const [visibleChains, setVisibleChains] = useState<string[]>(["Helios"]);
   const [userLocation, setUserLocation] = useState<{
@@ -99,7 +123,7 @@ export default function Home() {
   };
 
   const { matches, filteredCinemas, matchedCinemaIds } = useMemo(() => {
-    let result = findMatchesWithFilters(watchlistUris, data, visibleChains);
+    const result = findMatchesWithFilters(watchlistUris, data, visibleChains);
 
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
@@ -107,7 +131,7 @@ export default function Home() {
       result.matches = result.matches.filter(
         (m) =>
           m.title.toLowerCase().includes(q) ||
-          m.showtimes.some((s) => s.cinema.toLowerCase().includes(q)),
+          m.showtimes.some((s) => s.cinema?.toLowerCase().includes(q)),
       );
       // Filter cinemas by name (for display on map)
       result.filteredCinemas = result.filteredCinemas.filter((c) =>

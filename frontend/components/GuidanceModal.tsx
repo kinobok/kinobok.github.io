@@ -38,12 +38,12 @@ export default function GuidanceModal({ onClose }: GuidanceModalProps) {
           </a>
           <p style={{ fontSize: "0.9em", color: "var(--lb-text-secondary)" }}>
             Once you have the ZIP file, just upload it here. There is no need to
-            extract the files - we'll find your <strong>watchlist.csv</strong>{" "}
+            extract the files - we&apos;ll find your <strong>watchlist.csv</strong>{" "}
             list for you.
           </p>
         </div>
         <button className="modal-button" onClick={onClose}>
-          Got it, let's go!
+          Got it, let&apos;s go!
         </button>
       </div>
     </div>

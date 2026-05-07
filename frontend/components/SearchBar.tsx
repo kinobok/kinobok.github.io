@@ -1,7 +1,5 @@
 "use client";
 
-import { Menu, Search } from "lucide-react";
-
 interface SearchBarProps {
   onMenuToggle: () => void;
   searchQuery: string;
@@ -16,10 +14,10 @@ export default function SearchBar({
   return (
     <div className="search-bar-container">
       <button className="icon-button" onClick={onMenuToggle}>
-        <Menu size={24} />
+        ☰
       </button>
       <div className="search-input-wrapper">
-        <Search size={20} className="search-icon" />
+        🔍
         <input
           type="text"
           placeholder="Search movies or cinemas..."

@@ -1,6 +1,5 @@
 "use client";
 
-import { X } from "lucide-react";
 import React from "react";
 
 interface ConfigMenuProps {
@@ -28,7 +27,7 @@ export default function ConfigMenu({
         <div className="config-menu-header">
           <h2 style={{ margin: 0 }}>kinꚘbok Warsaw</h2>
           <button className="icon-button" onClick={onClose}>
-            <X size={24} />
+            ✕
           </button>
         </div>
 

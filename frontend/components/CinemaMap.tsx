@@ -7,7 +7,6 @@ import {
   Popup,
   useMap,
   useMapEvents,
-  ZoomControl,
 } from "react-leaflet";
 import { useEffect, useState } from "react";
 import L from "leaflet";
@@ -131,7 +130,7 @@ export default function CinemaMap({
         className="map-controls-container"
         style={{
           position: "absolute",
-          bottom: "80px",
+          bottom: "30px",
           right: "15px",
           zIndex: 1000,
           display: "flex",
@@ -168,7 +167,6 @@ export default function CinemaMap({
         zoomControl={false}
         style={{ height: "100%", width: "100%", background: "var(--lb-bg)" }}
       >
-        <ZoomControl position="bottomright" />
         <MapController
           center={userLocation ? [userLocation.lat, userLocation.lng] : null}
           onZoomChange={setZoom}
@@ -194,7 +192,7 @@ export default function CinemaMap({
 
           const isHighlighted = highlightedCinemaIds.includes(cinema.id);
           const color = isHighlighted ? "#00e054" : "#ff8000";
-          const icon = createMarkerIcon(color, cinema.name, zoom >= 15);
+          const icon = createMarkerIcon(color, cinema.name, zoom >= 13);
 
           return (
             cinema.coords &&

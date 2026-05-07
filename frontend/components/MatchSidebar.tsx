@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
 import { Match } from "../utils/matching_logic";
 
 interface MatchSidebarProps {
@@ -30,7 +29,7 @@ export default function MatchSidebar({
         bottom: 0,
         left: 0,
         right: 0,
-        height: isExpanded ? "100%" : "60px",
+        height: isExpanded ? "100%" : "200px",
         zIndex: 1200,
         background: "var(--lb-sidebar)",
         color: "var(--lb-text-primary)",
@@ -64,7 +63,6 @@ export default function MatchSidebar({
             style={{
               display: "flex",
               justifyContent: "center",
-              marginBottom: isExpanded ? "10px" : "0",
             }}
           >
             {isExpanded ? (
@@ -76,7 +74,7 @@ export default function MatchSidebar({
                 }}
                 style={{ position: "absolute", left: "15px", top: "15px" }}
               >
-                <ChevronDown size={28} />
+                <span style={{fontSize: 20}}>⌄</span> {/*ChevronDown*/}
               </button>
             ) : (
               <div
@@ -85,6 +83,7 @@ export default function MatchSidebar({
                   height: "4px",
                   background: "var(--lb-card)",
                   borderRadius: "2px",
+                  marginBottom: 20
                 }}
               />
             )}
@@ -93,8 +92,8 @@ export default function MatchSidebar({
 
         <div
           style={{
-            marginTop: isMobile && isExpanded ? "40px" : "0",
-            textAlign: isMobile && !isExpanded ? "center" : "left",
+            marginTop: isMobile && isExpanded ? "40px" : !isMobile && !isExpanded ? "70px" : "0px",
+            textAlign: "left",
           }}
         >
           <h3
@@ -104,7 +103,7 @@ export default function MatchSidebar({
               margin: 0,
               display: "flex",
               alignItems: "center",
-              justifyContent: isMobile && !isExpanded ? "center" : "flex-start",
+              justifyContent: isMobile ? "center" : "flex-start",
               gap: "10px",
             }}
           >
@@ -122,7 +121,7 @@ export default function MatchSidebar({
             </span>
           </h3>
 
-          {(isExpanded || !isMobile) && (
+          
             <div style={{ marginTop: "20px" }}>
               {matches.length === 0 ? (
                 <p
@@ -215,7 +214,7 @@ export default function MatchSidebar({
                 ))
               )}
             </div>
-          )}
+
         </div>
       </div>
     </div>

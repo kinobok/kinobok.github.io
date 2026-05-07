@@ -6,6 +6,12 @@ on:
       - main
     paths:
       - 'frontend/**'
+  workflow_run:
+    workflows: ["Daily Warsaw Scraper"]
+    types:
+      - completed
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:

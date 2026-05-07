@@ -22,6 +22,9 @@ export default function Home() {
     lng: number;
   } | null>(null);
   const [showGuidance, setShowGuidance] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
   useEffect(() => {
     fetch("/data.json")
@@ -51,8 +54,24 @@ export default function Home() {
   };
 
   const { matches, filteredCinemas, matchedCinemaIds } = useMemo(() => {
-    return findMatchesWithFilters(watchlistUris, data, visibleChains);
-  }, [watchlistUris, data, visibleChains]);
+    let result = findMatchesWithFilters(watchlistUris, data, visibleChains);
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      // Filter matches by title or cinema name
+      result.matches = result.matches.filter(
+        (m) =>
+          m.title.toLowerCase().includes(q) ||
+          m.showtimes.some((s) => s.cinema.toLowerCase().includes(q)),
+      );
+      // Filter cinemas by name (for display on map)
+      result.filteredCinemas = result.filteredCinemas.filter((c) =>
+        c.name.toLowerCase().includes(q),
+      );
+    }
+
+    return result;
+  }, [watchlistUris, data, visibleChains, searchQuery]);
 
   const handleToggleChain = (chain: string) => {
     setVisibleChains((prev) =>

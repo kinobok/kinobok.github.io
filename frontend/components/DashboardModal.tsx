@@ -57,7 +57,9 @@ const DashboardModal: React.FC<DashboardModalProps> = ({
                   ))}
                 </ul>
               ) : (
-                <p>No failures reported. All movies were successfully matched!</p>
+                <p>
+                  No failures reported. All movies were successfully matched!
+                </p>
               )}
             </div>
           ) : (

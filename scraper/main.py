@@ -76,7 +76,7 @@ def main():
         result = filmweb.get_warsaw_movies(day_offset=day_offset)
         page_date = result["date"]
         scraped_movies = result["movies"]
-        
+
         # If Filmweb provides failures (currently it doesn't, but we can add it if we modify filmweb_scraper.py)
         # For now, we'll focus on TMDB and Letterboxd failures in this loop.
 
@@ -96,11 +96,13 @@ def main():
                 tmdb_movie = tmdb.search_movie(title)
                 if not tmdb_movie:
                     print(f"⚠️ Could not find '{title}' on TMDB. Skipping.")
-                    failures.append({
-                        "title": title,
-                        "reason": "TMDB search failed",
-                        "details": f"No matches found for '{title}'"
-                    })
+                    failures.append(
+                        {
+                            "title": title,
+                            "reason": "TMDB search failed",
+                            "details": f"No matches found for '{title}'",
+                        }
+                    )
                     continue
 
                 en_title = tmdb_movie["title"]
@@ -114,11 +116,13 @@ def main():
                     print(
                         f"⚠️ Could not resolve Letterboxd URI for '{en_title}' ({slug}): {e}"
                     )
-                    failures.append({
-                        "title": title,
-                        "reason": "Letterboxd URI resolution failed",
-                        "details": f"Slug: {slug}, Error: {str(e)}"
-                    })
+                    failures.append(
+                        {
+                            "title": title,
+                            "reason": "Letterboxd URI resolution failed",
+                            "details": f"Slug: {slug}, Error: {str(e)}",
+                        }
+                    )
                     continue
 
                 if boxd_uri not in movies_data:
@@ -163,11 +167,13 @@ def main():
 
             except Exception as e:
                 print(f"❌ Error processing '{title}': {e}")
-                failures.append({
-                    "title": title,
-                    "reason": "Unexpected processing error",
-                    "details": str(e)
-                })
+                failures.append(
+                    {
+                        "title": title,
+                        "reason": "Unexpected processing error",
+                        "details": str(e),
+                    }
+                )
                 continue
 
         final_showtimes[page_date] = day_showtimes
@@ -188,7 +194,7 @@ def main():
         "last_scrape": datetime.datetime.now(datetime.timezone.utc).isoformat(),
         "total_movies": len(movies_data),
         "available_dates": sorted(list(final_showtimes.keys())),
-        "failures": unique_failures
+        "failures": unique_failures,
     }
 
     try:

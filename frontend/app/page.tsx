@@ -6,6 +6,7 @@ import JSZip from "jszip";
 import { findMatchesWithFilters, CinemaData } from "../utils/matching_logic";
 import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
+import DashboardModal from "../components/DashboardModal";
 import SearchBar from "../components/SearchBar";
 import ConfigMenu from "../components/ConfigMenu";
 import DateSelector from "../components/DateSelector";
@@ -28,6 +29,7 @@ export default function Home() {
     lng: number;
   } | null>(null);
   const [showGuidance, setShowGuidance] = useState(false);
+  const [showDashboard, setShowDashboard] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
@@ -157,8 +159,15 @@ export default function Home() {
     >
       {showGuidance && <GuidanceModal onClose={handleCloseGuidance} />}
 
+      <DashboardModal
+        isOpen={showDashboard}
+        onClose={() => setShowDashboard(false)}
+        metadata={data?.metadata}
+      />
+
       <SearchBar
         onMenuToggle={() => setIsMenuOpen(true)}
+        onDashboardToggle={() => setShowDashboard(true)}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
       />

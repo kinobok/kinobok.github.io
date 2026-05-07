@@ -28,8 +28,14 @@ def test_export_to_json_valid_data(tmp_path):
             {"movie_id": "m1", "cinema_id": "c1", "times": ["18:00", "21:00"]}
         ]
     }
+    metadata = {
+        "last_scrape": "2026-05-07T10:00:00Z",
+        "total_movies": 1,
+        "available_dates": ["2026-05-07"],
+        "failures": [],
+    }
 
-    export_to_json(movies, cinemas, showtimes, str(output_file))
+    export_to_json(movies, cinemas, showtimes, metadata, str(output_file))
 
     assert os.path.exists(output_file)
     with open(output_file, "r") as f:
@@ -38,6 +44,8 @@ def test_export_to_json_valid_data(tmp_path):
     assert "movies" in data
     assert "cinemas" in data
     assert "showtimes" in data
+    assert "metadata" in data
+    assert data["metadata"]["total_movies"] == 1
     assert len(data["movies"]) == 1
     assert data["movies"][0]["title"] == "Project Hail Mary"
     assert data["movies"][0]["boxd_uri"] == "https://boxd.it/pEeQ"
@@ -49,7 +57,8 @@ def test_export_to_json_invalid_data(tmp_path):
     # Missing required field 'boxd_uri'
     movies = [{"id": "m1", "title": "Invalid Movie"}]
     cinemas = []
-    showtimes = []
+    showtimes = {}
+    metadata = {}
 
     with pytest.raises(ValueError):
-        export_to_json(movies, cinemas, showtimes, str(output_file))
+        export_to_json(movies, cinemas, showtimes, metadata, str(output_file))

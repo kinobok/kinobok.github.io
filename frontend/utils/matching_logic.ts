@@ -64,6 +64,11 @@ export function findMatchesWithFilters(
     return { matches: [], filteredCinemas: [], matchedCinemaIds: [] };
 
   const dailyShowtimes = data.showtimes[selectedDate];
+  if (dailyShowtimes !== null && !(dailyShowtimes instanceof Array)) {
+    throw new TypeError(
+      "Daily showtimes should be an instance of an Array - verify scraped data structure.",
+    );
+  }
 
   const filteredCinemas = data.cinemas.filter((c) =>
     isVisible(c.name, visibleChains),

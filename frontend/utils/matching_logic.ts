@@ -32,8 +32,12 @@ export function findMatchesWithFilters(
   watchlistUris: string[],
   data: any,
   visibleChains: string[],
+  selectedDate: string,
 ): { matches: Match[]; filteredCinemas: any[]; matchedCinemaIds: string[] } {
-  if (!data) return { matches: [], filteredCinemas: [], matchedCinemaIds: [] };
+  if (!data || !selectedDate || !data.showtimes[selectedDate])
+    return { matches: [], filteredCinemas: [], matchedCinemaIds: [] };
+
+  const dailyShowtimes = data.showtimes[selectedDate];
 
   const filteredCinemas = data.cinemas.filter((c: any) =>
     isVisible(c.name, visibleChains),
@@ -46,7 +50,7 @@ export function findMatchesWithFilters(
 
   const finalMatches: Match[] = matchingMovies
     .map((movie: any) => {
-      const relevantShowtimes = data.showtimes.filter(
+      const relevantShowtimes = dailyShowtimes.filter(
         (s: any) =>
           s.movie_id === movie.id && filteredCinemaIds.has(s.cinema_id),
       );

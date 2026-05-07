@@ -74,7 +74,7 @@ export default function MatchSidebar({
                 }}
                 style={{ position: "absolute", left: "15px", top: "15px" }}
               >
-                <span style={{fontSize: 20}}>⌄</span> {/*ChevronDown*/}
+                <span style={{ fontSize: 20 }}>⌄</span> {/*ChevronDown*/}
               </button>
             ) : (
               <div
@@ -83,7 +83,7 @@ export default function MatchSidebar({
                   height: "4px",
                   background: "var(--lb-card)",
                   borderRadius: "2px",
-                  marginBottom: 20
+                  marginBottom: 20,
                 }}
               />
             )}
@@ -92,7 +92,12 @@ export default function MatchSidebar({
 
         <div
           style={{
-            marginTop: isMobile && isExpanded ? "40px" : !isMobile && !isExpanded ? "70px" : "0px",
+            marginTop:
+              isMobile && isExpanded
+                ? "40px"
+                : !isMobile && !isExpanded
+                  ? "70px"
+                  : "0px",
             textAlign: "left",
           }}
         >
@@ -121,100 +126,98 @@ export default function MatchSidebar({
             </span>
           </h3>
 
-          
-            <div style={{ marginTop: "20px" }}>
-              {matches.length === 0 ? (
-                <p
+          <div style={{ marginTop: "20px" }}>
+            {matches.length === 0 ? (
+              <p
+                style={{
+                  color: "var(--lb-text-secondary)",
+                  fontSize: "0.9em",
+                }}
+              >
+                No matches found yet. Try uploading your watchlist in the menu
+                or adjusting filters.
+              </p>
+            ) : (
+              matches.map((match) => (
+                <div
+                  key={match.id}
                   style={{
-                    color: "var(--lb-text-secondary)",
-                    fontSize: "0.9em",
+                    display: "flex",
+                    gap: "12px",
+                    marginBottom: "16px",
+                    padding: "8px",
+                    background: "var(--lb-card)",
+                    borderRadius: "4px",
+                    border: "1px solid transparent",
+                    transition: "border-color 0.2s",
                   }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.borderColor = "var(--lb-green)")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.borderColor = "transparent")
+                  }
                 >
-                  No matches found yet. Try uploading your watchlist in the menu
-                  or adjusting filters.
-                </p>
-              ) : (
-                matches.map((match) => (
-                  <div
-                    key={match.id}
+                  <img
+                    src={match.poster || "/poster-placeholder.svg"}
+                    alt={match.title}
+                    loading="lazy"
                     style={{
-                      display: "flex",
-                      gap: "12px",
-                      marginBottom: "16px",
-                      padding: "8px",
-                      background: "var(--lb-card)",
-                      borderRadius: "4px",
-                      border: "1px solid transparent",
-                      transition: "border-color 0.2s",
+                      width: "45px",
+                      height: "67px",
+                      objectFit: "cover",
+                      borderRadius: "2px",
+                      background: "#333",
+                      flexShrink: 0,
                     }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.borderColor = "var(--lb-green)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.borderColor = "transparent")
-                    }
-                  >
-                    <img
-                      src={match.poster || "/poster-placeholder.svg"}
-                      alt={match.title}
-                      loading="lazy"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        "/poster-placeholder.svg";
+                    }}
+                  />
+                  <div style={{ overflow: "hidden" }}>
+                    <div
                       style={{
-                        width: "45px",
-                        height: "67px",
-                        objectFit: "cover",
-                        borderRadius: "2px",
-                        background: "#333",
-                        flexShrink: 0,
+                        fontWeight: "bold",
+                        fontSize: "0.95em",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
                       }}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src =
-                          "/poster-placeholder.svg";
-                      }}
-                    />
-                    <div style={{ overflow: "hidden" }}>
-                      <div
+                    >
+                      <a
+                        href={match.boxd_uri}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         style={{
-                          fontWeight: "bold",
-                          fontSize: "0.95em",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
+                          color: "var(--lb-text-primary)",
+                          textDecoration: "none",
                         }}
                       >
-                        <a
-                          href={match.boxd_uri}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          style={{
-                            color: "var(--lb-text-primary)",
-                            textDecoration: "none",
-                          }}
-                        >
-                          {match.title}
-                        </a>
-                      </div>
-                      <div
-                        style={{
-                          fontSize: "0.85em",
-                          color: "var(--lb-text-secondary)",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {match.showtimes.map((s, idx) => (
-                          <div key={idx} style={{ marginBottom: "2px" }}>
-                            <span style={{ color: "var(--lb-orange)" }}>
-                              {s.cinema}
-                            </span>
-                            : {s.times.join(", ")}
-                          </div>
-                        ))}
-                      </div>
+                        {match.title}
+                      </a>
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "0.85em",
+                        color: "var(--lb-text-secondary)",
+                        marginTop: "4px",
+                      }}
+                    >
+                      {match.showtimes.map((s, idx) => (
+                        <div key={idx} style={{ marginBottom: "2px" }}>
+                          <span style={{ color: "var(--lb-orange)" }}>
+                            {s.cinema}
+                          </span>
+                          : {s.times.join(", ")}
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))
-              )}
-            </div>
-
+                </div>
+              ))
+            )}
+          </div>
         </div>
       </div>
     </div>

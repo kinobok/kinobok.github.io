@@ -57,7 +57,7 @@ def main():
 
     # Movie and cinema ID counters
     def get_max_id(items, prefix):
-        ids = [int(i["id"][len(prefix):]) for i in items if i["id"].startswith(prefix)]
+        ids = [int(i["id"][len(prefix) :]) for i in items if i["id"].startswith(prefix)]
         return max(ids) if ids else 0
 
     movie_id_counter = get_max_id(movies_data.values(), "m") + 1

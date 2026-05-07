@@ -24,7 +24,9 @@ def test_export_to_json_valid_data(tmp_path):
         }
     ]
     showtimes = {
-        "2026-05-07": [{"movie_id": "m1", "cinema_id": "c1", "times": ["18:00", "21:00"]}]
+        "2026-05-07": [
+            {"movie_id": "m1", "cinema_id": "c1", "times": ["18:00", "21:00"]}
+        ]
     }
 
     export_to_json(movies, cinemas, showtimes, str(output_file))

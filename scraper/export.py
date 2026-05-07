@@ -35,7 +35,10 @@ class ExportSchema(BaseModel):
 
 
 def export_to_json(
-    movies: List[Dict], cinemas: List[Dict], showtimes: Dict[str, List[Dict]], output_file: str
+    movies: List[Dict],
+    cinemas: List[Dict],
+    showtimes: Dict[str, List[Dict]],
+    output_file: str,
 ):
     try:
         data = ExportSchema(movies=movies, cinemas=cinemas, showtimes=showtimes)

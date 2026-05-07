@@ -21,9 +21,7 @@ class FilmwebScraper:
         if day_offset > 0:
             url += f"?day={day_offset}"
 
-        response = httpx.get(
-            url, headers=self._get_headers(), follow_redirects=True
-        )
+        response = httpx.get(url, headers=self._get_headers(), follow_redirects=True)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
 
@@ -77,7 +75,8 @@ class FilmwebScraper:
                     times = [
                         time.text.strip()
                         for time in cinema_section.select(".seanceTile__value")
-                        if time.parent.parent.get("data-date") == page_date or page_date is None
+                        if time.parent.parent.get("data-date") == page_date
+                        or page_date is None
                     ]
 
                     if times:

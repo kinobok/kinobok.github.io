@@ -6,7 +6,11 @@ interface DateSelectorProps {
   onDateChange: (date: string) => void;
 }
 
-export default function DateSelector({ dates, selectedDate, onDateChange }: DateSelectorProps) {
+export default function DateSelector({
+  dates,
+  selectedDate,
+  onDateChange,
+}: DateSelectorProps) {
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     const weekday = date.toLocaleDateString("en-GB", { weekday: "short" });

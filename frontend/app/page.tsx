@@ -3,13 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState, useMemo } from "react";
 import JSZip from "jszip";
-import {
-  findMatchesWithFilters,
-  CinemaData,
-  Cinema,
-  Movie,
-  Showtime,
-} from "../utils/matching_logic";
+import { findMatchesWithFilters, CinemaData } from "../utils/matching_logic";
 import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
 import SearchBar from "../components/SearchBar";

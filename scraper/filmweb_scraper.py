@@ -16,12 +16,20 @@ class FilmwebScraper:
     def _get_headers(self) -> Dict[str, str]:
         return {"User-Agent": random.choice(self.USER_AGENTS)}
 
-    def get_warsaw_movies(self, limit: int = None) -> List[Dict]:
+    def get_warsaw_movies(self, day_offset: int = 0, limit: int = None) -> Dict:
+        url = self.BASE_URL
+        if day_offset > 0:
+            url += f"?day={day_offset}"
+
         response = httpx.get(
-            self.BASE_URL, headers=self._get_headers(), follow_redirects=True
+            url, headers=self._get_headers(), follow_redirects=True
         )
         response.raise_for_status()
         soup = BeautifulSoup(response.text, "html.parser")
+
+        # Extract date from the first available showtime tile
+        date_element = soup.select_one(".seanceTile")
+        page_date = date_element.get("data-date") if date_element else None
 
         movies = []
         movie_links = soup.select(".preview__title a")
@@ -34,6 +42,8 @@ class FilmwebScraper:
 
             # Navigate to individual movie showtime page
             showtimes_url = f"https://www.filmweb.pl{movie_url}/showtimes/Warszawa"
+            if day_offset > 0:
+                showtimes_url += f"?day={day_offset}"
 
             # Respectful scraping: delay between requests
             time.sleep(random.uniform(1.0, 3.0))
@@ -67,6 +77,7 @@ class FilmwebScraper:
                     times = [
                         time.text.strip()
                         for time in cinema_section.select(".seanceTile__value")
+                        if time.parent.parent.get("data-date") == page_date or page_date is None
                     ]
 
                     if times:
@@ -81,4 +92,4 @@ class FilmwebScraper:
                 print(f"Error scraping showtimes for {title}: {e}")
                 continue
 
-        return movies
+        return {"date": page_date, "movies": movies}

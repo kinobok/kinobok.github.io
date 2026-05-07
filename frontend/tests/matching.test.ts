@@ -1,29 +1,17 @@
 import { describe, it, expect } from "vitest";
 import { parseWatchlist } from "../utils/csv_parser";
-import { isVisible, findMatchesWithFilters } from "../utils/matching_logic";
-
-interface Movie {
-  id: string;
-  title: string;
-  boxd_uri: string;
-}
-
-interface Showtime {
-  movie_id: string;
-  cinema_id: string;
-  times: string[];
-}
-
-interface Data {
-  movies: Movie[];
-  cinemas: any[];
-  showtimes: { [date: string]: Showtime[] };
-}
+import {
+  isVisible,
+  findMatchesWithFilters,
+  Movie,
+  Showtime,
+  CinemaData,
+} from "../utils/matching_logic";
 
 describe("findMatchesWithFilters", () => {
-  const mockData: Data = {
+  const mockData: CinemaData = {
     movies: [{ id: "m1", title: "Movie 1", boxd_uri: "https://boxd.it/uri1" }],
-    cinemas: [{ id: "c1", name: "Cinema 1" }],
+    cinemas: [{ id: "c1", name: "Cinema 1", address: "Address 1" }],
     showtimes: {
       "2026-05-07": [{ movie_id: "m1", cinema_id: "c1", times: ["12:00"] }],
     },

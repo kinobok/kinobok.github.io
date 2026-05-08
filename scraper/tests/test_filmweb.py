@@ -21,6 +21,8 @@ def test_scrape_warsaw_showtimes():
     assert matched_movie is not None, "No movies with showtimes found"
 
     assert "title" in matched_movie
+    assert "original_title" in matched_movie
+    assert "year" in matched_movie
     assert "cinemas" in matched_movie
 
     # Verify cinema details

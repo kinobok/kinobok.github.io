@@ -56,7 +56,9 @@ class FilmwebScraper:
                 showtimes_soup = BeautifulSoup(showtimes_response.text, "html.parser")
 
                 # Extract original title and year
-                alt_title_element = showtimes_soup.select_one(".preview__alternateTitle")
+                alt_title_element = showtimes_soup.select_one(
+                    ".preview__alternateTitle"
+                )
                 original_title = (
                     alt_title_element.text.strip() if alt_title_element else None
                 )

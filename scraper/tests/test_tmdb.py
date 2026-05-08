@@ -30,13 +30,13 @@ def test_tmdb_search(mock_get):
 
 @patch("httpx.get")
 def test_tmdb_search_retry_year(mock_get):
-    # Mocking TMDB API responses: 
+    # Mocking TMDB API responses:
     # 1. First call (2026) -> No results
     # 2. Second call (2025) -> Result found
     mock_response_empty = MagicMock()
     mock_response_empty.json.return_value = {"results": []}
     mock_response_empty.status_code = 200
-    
+
     mock_response_match = MagicMock()
     mock_response_match.json.return_value = {
         "results": [
@@ -49,7 +49,7 @@ def test_tmdb_search_retry_year(mock_get):
         ]
     }
     mock_response_match.status_code = 200
-    
+
     mock_get.side_effect = [mock_response_empty, mock_response_match]
 
     scraper = TMDBScraper(api_key="test_key")

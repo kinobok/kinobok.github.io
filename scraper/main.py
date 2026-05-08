@@ -93,14 +93,33 @@ def main():
 
             # 2. Match with TMDB to get English title and Year
             try:
-                tmdb_movie = tmdb.search_movie(title)
+                fw_title = fw_movie.get("title")
+                fw_original_title = fw_movie.get("original_title")
+                fw_year = fw_movie.get("year")
+
+                # Try original title first
+                tmdb_movie = tmdb.search_movie(
+                    fw_original_title or fw_title, year=fw_year
+                )
+
+                # Fallback to Polish title if original title search failed and they are different
+                if (
+                    not tmdb_movie
+                    and fw_original_title
+                    and fw_original_title != fw_title
+                ):
+                    print(
+                        f"info: TMDB search for original title '{fw_original_title}' failed. Retrying with Polish title '{fw_title}'..."
+                    )
+                    tmdb_movie = tmdb.search_movie(fw_title, year=fw_year)
+
                 if not tmdb_movie:
                     print(f"⚠️ Could not find '{title}' on TMDB. Skipping.")
                     failures.append(
                         {
                             "title": title,
                             "reason": "TMDB search failed",
-                            "details": f"No matches found for '{title}'",
+                            "details": f"No matches found for '{title}' (year: {fw_year})",
                         }
                     )
                     continue

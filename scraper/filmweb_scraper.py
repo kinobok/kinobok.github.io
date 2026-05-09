@@ -55,6 +55,21 @@ class FilmwebScraper:
                 showtimes_response.raise_for_status()
                 showtimes_soup = BeautifulSoup(showtimes_response.text, "html.parser")
 
+                # Extract original title and year
+                alt_title_element = showtimes_soup.select_one(
+                    ".preview__alternateTitle"
+                )
+                original_title = (
+                    alt_title_element.text.strip() if alt_title_element else None
+                )
+
+                year_element = showtimes_soup.select_one(".preview__year")
+                year = (
+                    int(year_element.text.strip())
+                    if year_element and year_element.text.strip().isdigit()
+                    else None
+                )
+
                 cinemas = {}
                 for cinema_section in showtimes_soup.select(".seanceTiles"):
                     name_element = cinema_section.select_one(".seanceTiles__title")
@@ -86,7 +101,14 @@ class FilmwebScraper:
                             "coords": {"lat": lat, "lng": lng} if lat and lng else None,
                         }
 
-                movies.append({"title": title, "cinemas": cinemas})
+                movies.append(
+                    {
+                        "title": title,
+                        "original_title": original_title,
+                        "year": year,
+                        "cinemas": cinemas,
+                    }
+                )
             except Exception as e:
                 print(f"Error scraping showtimes for {title}: {e}")
                 continue

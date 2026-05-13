@@ -36,7 +36,11 @@ def main():
             print(f"⚠️ Could not load existing data: {e}. Starting fresh.")
 
     today = datetime.date.today()
-    is_refresh_day = today.weekday() == 2  # Wednesday
+    is_refresh_day = today.weekday() in [
+        2,
+        3,
+        4,
+    ]  # Wednesday, Thursday and Friday are the dates that Filmweb most likely populates their schedules.
 
     showtimes = existing_data.get("showtimes")
 

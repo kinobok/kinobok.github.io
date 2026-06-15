@@ -51,7 +51,7 @@ export default function DateSelector({
                     fontWeight: "bold",
                     padding: "2px 6px",
                     borderRadius: "10px",
-                    boxShadow: "0 2px 4px rgba(0,0,0,0.3)"
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
                   }}
                 >
                   {count}

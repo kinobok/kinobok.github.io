@@ -217,8 +217,13 @@ export default function MatchSidebar({
                         alignItems: "center",
                         justifyContent: "center",
                       }}
-                      onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-                      onMouseLeave={(e) => (e.currentTarget.style.color = "var(--lb-text-secondary)")}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.color = "#fff")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.color =
+                          "var(--lb-text-secondary)")
+                      }
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -327,7 +332,8 @@ export default function MatchSidebar({
                   e.currentTarget.style.color = "var(--lb-orange)";
                 }}
               >
-                Restore {excludedCount} Hidden {excludedCount === 1 ? "Movie" : "Movies"}
+                Restore {excludedCount} Hidden{" "}
+                {excludedCount === 1 ? "Movie" : "Movies"}
               </button>
             </div>
           )}

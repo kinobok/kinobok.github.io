@@ -28,30 +28,29 @@ describe("findMatchesWithFilters", () => {
       ],
       "2026-05-08": [
         { movie_id: "m1", cinema_id: "c1", times: ["12:00", "15:00"] }, // m1 week=3, m2 week=2
-      ]
+      ],
     },
-    metadata: { last_scrape: "", total_movies: 3, available_dates: ["2026-05-07", "2026-05-08"], failures: [] }
+    metadata: {
+      last_scrape: "",
+      total_movies: 3,
+      available_dates: ["2026-05-07", "2026-05-08"],
+      failures: [],
+    },
   };
 
-  const allUris = ["https://boxd.it/uri1", "https://boxd.it/uri2", "https://boxd.it/uri3"];
+  const allUris = [
+    "https://boxd.it/uri1",
+    "https://boxd.it/uri2",
+    "https://boxd.it/uri3",
+  ];
 
   it("should find matches for a specific date", () => {
-    const result = findMatchesWithFilters(
-      allUris,
-      mockData,
-      [],
-      "2026-05-07",
-    );
+    const result = findMatchesWithFilters(allUris, mockData, [], "2026-05-07");
     expect(result.matches).toHaveLength(3);
   });
 
   it("should return empty if date is missing in showtimes", () => {
-    const result = findMatchesWithFilters(
-      allUris,
-      mockData,
-      [],
-      "2026-05-09",
-    );
+    const result = findMatchesWithFilters(allUris, mockData, [], "2026-05-09");
     expect(result.matches).toHaveLength(0);
   });
 
@@ -61,10 +60,10 @@ describe("findMatchesWithFilters", () => {
       mockData,
       [],
       "2026-05-07",
-      ["m1"] // exclude m1
+      ["m1"], // exclude m1
     );
     expect(result.matches).toHaveLength(2);
-    expect(result.matches.some(m => m.id === "m1")).toBe(false);
+    expect(result.matches.some((m) => m.id === "m1")).toBe(false);
   });
 
   it("should filter out excluded cinemas and drop movies only in that cinema", () => {
@@ -74,11 +73,11 @@ describe("findMatchesWithFilters", () => {
       [],
       "2026-05-07",
       [],
-      ["c2"] // exclude c2
+      ["c2"], // exclude c2
     );
     // m3 is only in c2 on 2026-05-07, so it should be dropped
     expect(result.matches).toHaveLength(2);
-    expect(result.matches.some(m => m.id === "m3")).toBe(false);
+    expect(result.matches.some((m) => m.id === "m3")).toBe(false);
   });
 
   it("should sort by rare-week (default)", () => {
@@ -89,7 +88,7 @@ describe("findMatchesWithFilters", () => {
       "2026-05-07",
       [],
       [],
-      "rare-week"
+      "rare-week",
     );
     // m1: week 3, day 1
     // m2: week 2, day 2
@@ -108,7 +107,7 @@ describe("findMatchesWithFilters", () => {
       "2026-05-07",
       [],
       [],
-      "alpha-asc"
+      "alpha-asc",
     );
     expect(result.matches[0].title).toBe("Movie A");
     expect(result.matches[1].title).toBe("Movie B");
@@ -118,23 +117,26 @@ describe("findMatchesWithFilters", () => {
 
 describe("calculateMatchCountsPerDay", () => {
   const mockData: CinemaData = {
-    movies: [
-      { id: "m1", title: "Movie B", boxd_uri: "https://boxd.it/uri1" },
-    ],
-    cinemas: [
-      { id: "c1", name: "Cinema 1", address: "Address 1" },
-    ],
+    movies: [{ id: "m1", title: "Movie B", boxd_uri: "https://boxd.it/uri1" }],
+    cinemas: [{ id: "c1", name: "Cinema 1", address: "Address 1" }],
     showtimes: {
-      "2026-05-07": [
-        { movie_id: "m1", cinema_id: "c1", times: ["12:00"] },
-      ],
-      "2026-05-08": []
+      "2026-05-07": [{ movie_id: "m1", cinema_id: "c1", times: ["12:00"] }],
+      "2026-05-08": [],
     },
-    metadata: { last_scrape: "", total_movies: 1, available_dates: ["2026-05-07", "2026-05-08"], failures: [] }
+    metadata: {
+      last_scrape: "",
+      total_movies: 1,
+      available_dates: ["2026-05-07", "2026-05-08"],
+      failures: [],
+    },
   };
 
   it("should return match counts for each day", () => {
-    const counts = calculateMatchCountsPerDay(["https://boxd.it/uri1"], mockData, []);
+    const counts = calculateMatchCountsPerDay(
+      ["https://boxd.it/uri1"],
+      mockData,
+      [],
+    );
     expect(counts["2026-05-07"]).toBe(1);
     expect(counts["2026-05-08"]).toBe(0);
   });

@@ -55,7 +55,11 @@ export default function ConfigMenu({
 
   return (
     <div className="config-menu-overlay" onClick={onClose}>
-      <div className="config-menu-content" onClick={(e) => e.stopPropagation()} style={{ overflowY: "auto" }}>
+      <div
+        className="config-menu-content"
+        onClick={(e) => e.stopPropagation()}
+        style={{ overflowY: "auto" }}
+      >
         <div className="config-menu-header">
           <h2 style={{ margin: 0 }}>kinꚘbok Warsaw</h2>
           <button className="icon-button" onClick={onClose}>
@@ -108,27 +112,44 @@ export default function ConfigMenu({
               marginTop: "10px",
             }}
           >
-            Independent cinemas are always visible unless manually disabled below.
+            Independent cinemas are always visible unless manually disabled
+            below.
           </p>
         </div>
 
         {allCinemas.length > 0 && onToggleCinema && (
           <div className="config-section">
             <h3>Individual Cinemas</h3>
-            <p style={{ fontSize: "0.9em", color: "var(--lb-text-secondary)", marginBottom: "10px" }}>
+            <p
+              style={{
+                fontSize: "0.9em",
+                color: "var(--lb-text-secondary)",
+                marginBottom: "10px",
+              }}
+            >
               Toggle specific locations on/off:
             </p>
             {Object.entries(cinemasByChain).map(([groupName, groupCinemas]) => {
               // Only show group if the chain is visible, or if it's independent
-              const isChainVisible = groupName === "Independent" || visibleChains.includes(groupName);
+              const isChainVisible =
+                groupName === "Independent" ||
+                visibleChains.includes(groupName);
               if (!isChainVisible || groupCinemas.length === 0) return null;
 
               return (
                 <div key={groupName} style={{ marginBottom: "10px" }}>
-                  <strong style={{ fontSize: "0.85em", color: "var(--lb-orange)" }}>{groupName}</strong>
+                  <strong
+                    style={{ fontSize: "0.85em", color: "var(--lb-orange)" }}
+                  >
+                    {groupName}
+                  </strong>
                   <div style={{ paddingLeft: "10px", marginTop: "4px" }}>
                     {groupCinemas.map((c) => (
-                      <label key={c.id} className="checkbox-label" style={{ fontSize: "0.85em" }}>
+                      <label
+                        key={c.id}
+                        className="checkbox-label"
+                        style={{ fontSize: "0.85em" }}
+                      >
                         <input
                           type="checkbox"
                           checked={!excludedCinemaIds.includes(c.id)}
@@ -148,15 +169,41 @@ export default function ConfigMenu({
         {excludedMovieIds.length > 0 && onRestoreMovie && (
           <div className="config-section">
             <h3>Excluded Movies</h3>
-            <p style={{ fontSize: "0.9em", color: "var(--lb-text-secondary)", marginBottom: "10px" }}>
+            <p
+              style={{
+                fontSize: "0.9em",
+                color: "var(--lb-text-secondary)",
+                marginBottom: "10px",
+              }}
+            >
               Movies you have hidden:
             </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+            >
               {excludedMovieIds.map((id) => {
                 const movie = allMovies.find((m) => m.id === id);
                 return (
-                  <div key={id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "var(--lb-card)", padding: "6px 10px", borderRadius: "4px" }}>
-                    <span style={{ fontSize: "0.85em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", maxWidth: "160px" }}>
+                  <div
+                    key={id}
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      background: "var(--lb-card)",
+                      padding: "6px 10px",
+                      borderRadius: "4px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "0.85em",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth: "160px",
+                      }}
+                    >
                       {movie ? movie.title : `Unknown ID: ${id}`}
                     </span>
                     <button

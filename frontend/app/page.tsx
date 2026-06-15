@@ -78,7 +78,9 @@ export default function Home() {
       }
     }
 
-    const savedExcludedCinemas = localStorage.getItem("kinobok_excluded_cinemas");
+    const savedExcludedCinemas = localStorage.getItem(
+      "kinobok_excluded_cinemas",
+    );
     if (savedExcludedCinemas) {
       try {
         setExcludedCinemaIds(JSON.parse(savedExcludedCinemas));
@@ -158,13 +160,19 @@ export default function Home() {
   const handleExcludeMovie = (movieId: string) => {
     const newExcluded = [...excludedMovieIds, movieId];
     setExcludedMovieIds(newExcluded);
-    localStorage.setItem("kinobok_excluded_movies", JSON.stringify(newExcluded));
+    localStorage.setItem(
+      "kinobok_excluded_movies",
+      JSON.stringify(newExcluded),
+    );
   };
 
   const handleRestoreMovie = (movieId: string) => {
     const newExcluded = excludedMovieIds.filter((id) => id !== movieId);
     setExcludedMovieIds(newExcluded);
-    localStorage.setItem("kinobok_excluded_movies", JSON.stringify(newExcluded));
+    localStorage.setItem(
+      "kinobok_excluded_movies",
+      JSON.stringify(newExcluded),
+    );
   };
 
   const handleRestoreAllMovies = () => {
@@ -180,7 +188,10 @@ export default function Home() {
       newExcluded = [...excludedCinemaIds, cinemaId];
     }
     setExcludedCinemaIds(newExcluded);
-    localStorage.setItem("kinobok_excluded_cinemas", JSON.stringify(newExcluded));
+    localStorage.setItem(
+      "kinobok_excluded_cinemas",
+      JSON.stringify(newExcluded),
+    );
   };
 
   const matchCounts = useMemo(() => {
@@ -201,7 +212,7 @@ export default function Home() {
       selectedDate,
       excludedMovieIds,
       excludedCinemaIds,
-      sortBy
+      sortBy,
     );
 
     if (searchQuery) {

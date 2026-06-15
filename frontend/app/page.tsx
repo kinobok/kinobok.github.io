@@ -3,7 +3,11 @@
 import dynamic from "next/dynamic";
 import { useEffect, useState, useMemo } from "react";
 import JSZip from "jszip";
-import { findMatchesWithFilters, CinemaData } from "../utils/matching_logic";
+import {
+  findMatchesWithFilters,
+  calculateMatchCountsPerDay,
+  CinemaData,
+} from "../utils/matching_logic";
 import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
 import DashboardModal from "../components/DashboardModal";
@@ -34,6 +38,11 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
 
+  // New Sort and Filter States
+  const [sortBy, setSortBy] = useState<string>("rare-week");
+  const [excludedMovieIds, setExcludedMovieIds] = useState<string[]>([]);
+  const [excludedCinemaIds, setExcludedCinemaIds] = useState<string[]>([]);
+
   useEffect(() => {
     fetch("/data.json")
       .then((res) => res.json())
@@ -47,7 +56,7 @@ export default function Home() {
         }
       });
 
-    // 1. Hydrate watchlist from localStorage
+    // Hydrate states from localStorage
     const savedUris = localStorage.getItem("kinobok_watchlist_uris");
     if (savedUris) {
       try {
@@ -57,7 +66,30 @@ export default function Home() {
       }
     }
 
-    // 2. Check guidance visibility
+    const savedSortBy = localStorage.getItem("kinobok_sort_by");
+    if (savedSortBy) setSortBy(savedSortBy);
+
+    const savedExcludedMovies = localStorage.getItem("kinobok_excluded_movies");
+    if (savedExcludedMovies) {
+      try {
+        setExcludedMovieIds(JSON.parse(savedExcludedMovies));
+      } catch (e) {
+        console.error("Failed to parse saved excluded movies", e);
+      }
+    }
+
+    const savedExcludedCinemas = localStorage.getItem(
+      "kinobok_excluded_cinemas",
+    );
+    if (savedExcludedCinemas) {
+      try {
+        setExcludedCinemaIds(JSON.parse(savedExcludedCinemas));
+      } catch (e) {
+        console.error("Failed to parse saved excluded cinemas", e);
+      }
+    }
+
+    // Check guidance visibility
     const hasSeenGuidance = localStorage.getItem("kinobok_guidance_seen");
     if (!hasSeenGuidance && !savedUris) {
       setShowGuidance(true);
@@ -105,35 +137,9 @@ export default function Home() {
     const uris = parseWatchlist(csvText);
     setWatchlistUris(uris);
 
-    // Save to localStorage
     localStorage.setItem("kinobok_watchlist_uris", JSON.stringify(uris));
     setIsMenuOpen(false);
   };
-
-  const { matches, filteredCinemas, matchedCinemaIds } = useMemo(() => {
-    const result = findMatchesWithFilters(
-      watchlistUris,
-      data,
-      visibleChains,
-      selectedDate,
-    );
-
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      // Filter matches by title or cinema name
-      result.matches = result.matches.filter(
-        (m) =>
-          m.title.toLowerCase().includes(q) ||
-          m.showtimes.some((s) => s.cinema?.toLowerCase().includes(q)),
-      );
-      // Filter cinemas by name (for display on map)
-      result.filteredCinemas = result.filteredCinemas.filter((c) =>
-        c.name.toLowerCase().includes(q),
-      );
-    }
-
-    return result;
-  }, [watchlistUris, data, visibleChains, searchQuery, selectedDate]);
 
   const handleToggleChain = (chain: string) => {
     setVisibleChains((prev) =>
@@ -144,6 +150,94 @@ export default function Home() {
   const handleLocationFound = (loc: { lat: number; lng: number }) => {
     setUserLocation(loc);
   };
+
+  // State Updates with Persistence
+  const handleSortChange = (newSortBy: string) => {
+    setSortBy(newSortBy);
+    localStorage.setItem("kinobok_sort_by", newSortBy);
+  };
+
+  const handleExcludeMovie = (movieId: string) => {
+    const newExcluded = [...excludedMovieIds, movieId];
+    setExcludedMovieIds(newExcluded);
+    localStorage.setItem(
+      "kinobok_excluded_movies",
+      JSON.stringify(newExcluded),
+    );
+  };
+
+  const handleRestoreMovie = (movieId: string) => {
+    const newExcluded = excludedMovieIds.filter((id) => id !== movieId);
+    setExcludedMovieIds(newExcluded);
+    localStorage.setItem(
+      "kinobok_excluded_movies",
+      JSON.stringify(newExcluded),
+    );
+  };
+
+  const handleRestoreAllMovies = () => {
+    setExcludedMovieIds([]);
+    localStorage.setItem("kinobok_excluded_movies", JSON.stringify([]));
+  };
+
+  const handleToggleCinema = (cinemaId: string) => {
+    let newExcluded;
+    if (excludedCinemaIds.includes(cinemaId)) {
+      newExcluded = excludedCinemaIds.filter((id) => id !== cinemaId);
+    } else {
+      newExcluded = [...excludedCinemaIds, cinemaId];
+    }
+    setExcludedCinemaIds(newExcluded);
+    localStorage.setItem(
+      "kinobok_excluded_cinemas",
+      JSON.stringify(newExcluded),
+    );
+  };
+
+  const matchCounts = useMemo(() => {
+    return calculateMatchCountsPerDay(
+      watchlistUris,
+      data,
+      visibleChains,
+      excludedMovieIds,
+      excludedCinemaIds,
+    );
+  }, [watchlistUris, data, visibleChains, excludedMovieIds, excludedCinemaIds]);
+
+  const { matches, filteredCinemas, matchedCinemaIds } = useMemo(() => {
+    const result = findMatchesWithFilters(
+      watchlistUris,
+      data,
+      visibleChains,
+      selectedDate,
+      excludedMovieIds,
+      excludedCinemaIds,
+      sortBy,
+    );
+
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result.matches = result.matches.filter(
+        (m) =>
+          m.title.toLowerCase().includes(q) ||
+          m.showtimes.some((s) => s.cinema?.toLowerCase().includes(q)),
+      );
+      result.filteredCinemas = result.filteredCinemas.filter((c) =>
+        c.name.toLowerCase().includes(q),
+      );
+    }
+
+    return result;
+  }, [
+    watchlistUris,
+    data,
+    visibleChains,
+    searchQuery,
+    selectedDate,
+    excludedMovieIds,
+    excludedCinemaIds,
+    sortBy,
+  ]);
 
   if (!data) return <div>Loading kinꚘbok Warsaw...</div>;
 
@@ -177,6 +271,7 @@ export default function Home() {
           dates={Object.keys(data.showtimes).sort()}
           selectedDate={selectedDate}
           onDateChange={setSelectedDate}
+          matchCounts={matchCounts}
         />
       )}
 
@@ -186,12 +281,23 @@ export default function Home() {
         visibleChains={visibleChains}
         onToggleChain={handleToggleChain}
         handleFileUpload={handleFileUpload}
+        allCinemas={data.cinemas}
+        excludedCinemaIds={excludedCinemaIds}
+        onToggleCinema={handleToggleCinema}
+        excludedMovieIds={excludedMovieIds}
+        allMovies={data.movies}
+        onRestoreMovie={handleRestoreMovie}
       />
 
       <MatchSidebar
         matches={matches}
         isExpanded={isSidebarExpanded}
         onToggleExpand={setIsSidebarExpanded}
+        sortBy={sortBy}
+        onSortChange={handleSortChange}
+        onExcludeMovie={handleExcludeMovie}
+        excludedCount={excludedMovieIds.length}
+        onRestoreAllMovies={handleRestoreAllMovies}
       />
 
       <div style={{ flex: 1, position: "relative" }}>

@@ -7,12 +7,22 @@ interface MatchSidebarProps {
   matches: Match[];
   isExpanded: boolean;
   onToggleExpand: (expanded: boolean) => void;
+  sortBy?: string;
+  onSortChange?: (newSortBy: string) => void;
+  onExcludeMovie?: (movieId: string) => void;
+  excludedCount?: number;
+  onRestoreAllMovies?: () => void;
 }
 
 export default function MatchSidebar({
   matches,
   isExpanded,
   onToggleExpand,
+  sortBy,
+  onSortChange,
+  onExcludeMovie,
+  excludedCount = 0,
+  onRestoreAllMovies,
 }: MatchSidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -92,41 +102,67 @@ export default function MatchSidebar({
 
         <div
           style={{
-            marginTop:
-              isMobile && isExpanded
-                ? "40px"
-                : !isMobile && !isExpanded
-                  ? "70px"
-                  : "0px",
+            marginTop: isMobile ? (isExpanded ? "40px" : "0px") : "0px",
             textAlign: "left",
           }}
         >
-          <h3
+          <div
             style={{
-              fontSize: "1.1em",
-              color: "var(--lb-text-primary)",
-              margin: 0,
               display: "flex",
+              justifyContent: "space-between",
               alignItems: "center",
-              justifyContent: isMobile ? "center" : "flex-start",
-              gap: "10px",
+              marginBottom: "15px",
             }}
           >
-            Matches Found
-            <span
+            <h3
               style={{
-                background: "var(--lb-green)",
-                color: "#000",
-                padding: "2px 8px",
-                borderRadius: "10px",
-                fontSize: "0.8em",
+                fontSize: "1.1em",
+                color: "var(--lb-text-primary)",
+                margin: 0,
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
               }}
             >
-              {matches.length}
-            </span>
-          </h3>
+              Matches Found
+              <span
+                style={{
+                  background: "var(--lb-green)",
+                  color: "#000",
+                  padding: "2px 8px",
+                  borderRadius: "10px",
+                  fontSize: "0.8em",
+                }}
+              >
+                {matches.length}
+              </span>
+            </h3>
 
-          <div style={{ marginTop: "20px" }}>
+            {onSortChange && matches.length > 0 && (
+              <select
+                value={sortBy}
+                onChange={(e) => onSortChange(e.target.value)}
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                  background: "var(--lb-card)",
+                  color: "var(--lb-text-primary)",
+                  border: "1px solid #444",
+                  borderRadius: "4px",
+                  padding: "4px 8px",
+                  fontSize: "0.85em",
+                  cursor: "pointer",
+                }}
+              >
+                <option value="rare-week">Rare Screenings</option>
+                <option value="rare-day">Rare Today</option>
+                <option value="most-screenings">Most Screenings</option>
+                <option value="alpha-asc">Title (A-Z)</option>
+                <option value="alpha-desc">Title (Z-A)</option>
+              </select>
+            )}
+          </div>
+
+          <div style={{ marginTop: "10px" }}>
             {matches.length === 0 ? (
               <p
                 style={{
@@ -142,6 +178,7 @@ export default function MatchSidebar({
                 <div
                   key={match.id}
                   style={{
+                    position: "relative",
                     display: "flex",
                     gap: "12px",
                     marginBottom: "16px",
@@ -158,6 +195,54 @@ export default function MatchSidebar({
                     (e.currentTarget.style.borderColor = "transparent")
                   }
                 >
+                  {onExcludeMovie && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onExcludeMovie(match.id);
+                      }}
+                      title="Hide this movie"
+                      style={{
+                        position: "absolute",
+                        top: "4px",
+                        right: "4px",
+                        background: "rgba(0, 0, 0, 0.6)",
+                        color: "var(--lb-text-secondary)",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "26px",
+                        height: "26px",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.color = "#fff")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.color =
+                          "var(--lb-text-secondary)")
+                      }
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+                        <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+                        <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+                        <line x1="2" y1="2" x2="22" y2="22" />
+                      </svg>
+                    </button>
+                  )}
                   <img
                     src={match.poster || "/poster-placeholder.svg"}
                     alt={match.title}
@@ -175,7 +260,7 @@ export default function MatchSidebar({
                         "/poster-placeholder.svg";
                     }}
                   />
-                  <div style={{ overflow: "hidden" }}>
+                  <div style={{ overflow: "hidden", paddingRight: "20px" }}>
                     <div
                       style={{
                         fontWeight: "bold",
@@ -218,6 +303,40 @@ export default function MatchSidebar({
               ))
             )}
           </div>
+          {onRestoreAllMovies && excludedCount > 0 && (
+            <div style={{ marginBottom: "15px" }}>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRestoreAllMovies();
+                }}
+                style={{
+                  background: "none",
+                  color: "var(--lb-orange)",
+                  border: "1px solid var(--lb-card)",
+                  borderRadius: "4px",
+                  padding: "6px 12px",
+                  fontSize: "0.85em",
+                  cursor: "pointer",
+                  fontWeight: "light",
+                  width: "100%",
+                  textAlign: "center",
+                  transition: "all 0.2s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = "var(--lb-orange)";
+                  e.currentTarget.style.color = "#000";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = "none";
+                  e.currentTarget.style.color = "var(--lb-orange)";
+                }}
+              >
+                Restore {excludedCount} Hidden{" "}
+                {excludedCount === 1 ? "Movie" : "Movies"}
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>

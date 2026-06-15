@@ -428,3 +428,13 @@ body,
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Desktop layout overrides to prevent overlapping/colliding with sidebar */
+@media (min-width: 768px) {
+  .search-bar-container {
+    left: 365px !important; /* Sidebar width (350px) + gap (15px) */
+  }
+  .date-selector {
+    left: 365px !important; /* Sidebar width (350px) + gap (15px) */
+  }
+}

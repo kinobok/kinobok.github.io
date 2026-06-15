@@ -102,12 +102,7 @@ export default function MatchSidebar({
 
         <div
           style={{
-            marginTop:
-              isMobile && isExpanded
-                ? "40px"
-                : !isMobile && !isExpanded
-                  ? "70px"
-                  : "0px",
+            marginTop: isMobile ? (isExpanded ? "40px" : "0px") : "0px",
             textAlign: "left",
           }}
         >

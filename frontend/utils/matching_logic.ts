@@ -73,6 +73,9 @@ export function findMatchesWithFilters(
   data: CinemaData | null,
   visibleChains: string[],
   selectedDate: string,
+  excludedMovieIds: string[] = [],
+  excludedCinemaIds: string[] = [],
+  sortBy: string = "rare-week",
 ): { matches: Match[]; filteredCinemas: Cinema[]; matchedCinemaIds: string[] } {
   if (!data || !selectedDate || !data.showtimes[selectedDate])
     return { matches: [], filteredCinemas: [], matchedCinemaIds: [] };
@@ -84,13 +87,16 @@ export function findMatchesWithFilters(
     );
   }
 
-  const filteredCinemas = data.cinemas.filter((c) =>
-    isVisible(c.name, visibleChains),
+  const filteredCinemas = data.cinemas.filter(
+    (c) =>
+      isVisible(c.name, visibleChains) && !excludedCinemaIds.includes(c.id),
   );
   const filteredCinemaIds = new Set(filteredCinemas.map((c) => c.id));
 
-  const matchingMovies = data.movies.filter((movie) =>
-    watchlistUris.includes(movie.boxd_uri),
+  const matchingMovies = data.movies.filter(
+    (movie) =>
+      watchlistUris.includes(movie.boxd_uri) &&
+      !excludedMovieIds.includes(movie.id),
   );
 
   const finalMatches: Match[] = matchingMovies
@@ -112,6 +118,57 @@ export function findMatchesWithFilters(
     })
     .filter((m): m is Match => m !== null);
 
+  // Pre-calculate screenings for sorting
+  const movieScreeningsWeek: Record<string, number> = {};
+  const movieScreeningsDay: Record<string, number> = {};
+
+  if (
+    sortBy === "rare-week" ||
+    sortBy === "rare-day" ||
+    sortBy === "most-screenings"
+  ) {
+    for (const match of finalMatches) {
+      let weekCount = 0;
+      let dayCount = 0;
+
+      for (const [date, showtimes] of Object.entries(data.showtimes)) {
+        for (const s of showtimes) {
+          if (s.movie_id === match.id) {
+            weekCount += s.times.length;
+            if (date === selectedDate) {
+              dayCount += s.times.length;
+            }
+          }
+        }
+      }
+      movieScreeningsWeek[match.id] = weekCount;
+      movieScreeningsDay[match.id] = dayCount;
+    }
+
+    finalMatches.sort((a, b) => {
+      const aWeek = movieScreeningsWeek[a.id];
+      const bWeek = movieScreeningsWeek[b.id];
+      const aDay = movieScreeningsDay[a.id];
+      const bDay = movieScreeningsDay[b.id];
+
+      if (sortBy === "rare-week") {
+        if (aWeek !== bWeek) return aWeek - bWeek;
+        if (aDay !== bDay) return aDay - bDay;
+      } else if (sortBy === "rare-day") {
+        if (aDay !== bDay) return aDay - bDay;
+        if (aWeek !== bWeek) return aWeek - bWeek;
+      } else if (sortBy === "most-screenings") {
+        if (aWeek !== bWeek) return bWeek - aWeek;
+        if (aDay !== bDay) return bDay - aDay;
+      }
+      return a.title.localeCompare(b.title);
+    });
+  } else if (sortBy === "alpha-asc") {
+    finalMatches.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (sortBy === "alpha-desc") {
+    finalMatches.sort((a, b) => b.title.localeCompare(a.title));
+  }
+
   const matchedCinemaIds = Array.from(
     new Set(finalMatches.flatMap((m) => m.showtimes.map((s) => s.cinema_id))),
   );
@@ -121,4 +178,29 @@ export function findMatchesWithFilters(
     filteredCinemas,
     matchedCinemaIds,
   };
+}
+
+export function calculateMatchCountsPerDay(
+  watchlistUris: string[],
+  data: CinemaData | null,
+  visibleChains: string[],
+  excludedMovieIds: string[] = [],
+  excludedCinemaIds: string[] = [],
+): Record<string, number> {
+  const counts: Record<string, number> = {};
+  if (!data || !data.showtimes) return counts;
+
+  for (const date of Object.keys(data.showtimes)) {
+    const { matches } = findMatchesWithFilters(
+      watchlistUris,
+      data,
+      visibleChains,
+      date,
+      excludedMovieIds,
+      excludedCinemaIds,
+      "alpha-asc", // sorting doesn't matter for counting
+    );
+    counts[date] = matches.length;
+  }
+  return counts;
 }

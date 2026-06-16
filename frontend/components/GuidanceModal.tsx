@@ -86,16 +86,16 @@ const GuidanceModal: React.FC<GuidanceModalProps> = ({
               <path
                 fill="var(--lb-blue)"
                 stroke="var(--lb-orange)"
-                fill-rule="evenodd"
+                fillRule="evenodd"
                 d="M12.6577283,22.7532553 L12,23.3275712 L11.3422717,22.7532553 C5.81130786,17.9237218 3,13.70676 3,10 C3,4.7506636 7.09705254,1 12,1 C16.9029475,1 21,4.7506636 21,10 C21,13.70676 18.1886921,17.9237218 12.6577283,22.7532553 Z M5,10 C5,12.8492324 7.30661202,16.4335466 12,20.6634039 C16.693388,16.4335466 19,12.8492324 19,10 C19,5.8966022 15.8358849,3 12,3 C8.16411512,3 5,5.8966022 5,10 Z"
               />
               <g
                 transform="translate(8.2, 6.2) scale(0.32)"
                 stroke="var(--lb-green)"
                 fill="var(--lb-sidebar)"
-                stroke-width="2.5"
-                stroke-linecap="round"
-                stroke-linejoin="round"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
                 <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18" />
                 <line x1="7" y1="2" x2="7" y2="22" />

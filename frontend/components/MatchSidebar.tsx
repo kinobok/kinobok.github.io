@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Match } from "../utils/matching_logic";
+import Image from "next/image";
 
 interface MatchSidebarProps {
   matches: Match[];
@@ -106,6 +107,71 @@ export default function MatchSidebar({
             textAlign: "left",
           }}
         >
+          <div
+            style={{ display: isMobile ? "none" : "block", padding: "10px" }}
+          >
+            <div
+              style={{
+                display: "block",
+                justifyContent: "center",
+                textAlign: "center",
+                alignItems: "center",
+                gap: "12px",
+                width: "-moz-available",
+              }}
+            >
+              <svg
+                width="100px"
+                height="100px"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{ flexShrink: 0 }}
+              >
+                <path
+                  fill="var(--lb-blue)"
+                  stroke="var(--lb-orange)"
+                  fillRule="evenodd"
+                  d="M12.6577283,22.7532553 L12,23.3275712 L11.3422717,22.7532553 C5.81130786,17.9237218 3,13.70676 3,10 C3,4.7506636 7.09705254,1 12,1 C16.9029475,1 21,4.7506636 21,10 C21,13.70676 18.1886921,17.9237218 12.6577283,22.7532553 Z M5,10 C5,12.8492324 7.30661202,16.4335466 12,20.6634039 C16.693388,16.4335466 19,12.8492324 19,10 C19,5.8966022 15.8358849,3 12,3 C8.16411512,3 5,5.8966022 5,10 Z"
+                />
+                <g
+                  transform="translate(8.2, 6.2) scale(0.32)"
+                  stroke="var(--lb-green)"
+                  fill="var(--lb-sidebar)"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect
+                    x="2"
+                    y="2"
+                    width="20"
+                    height="20"
+                    rx="2.18"
+                    ry="2.18"
+                  />
+                  <line x1="7" y1="2" x2="7" y2="22" />
+                  <line x1="17" y1="2" x2="17" y2="22" />
+                  <line x1="2" y1="12" x2="22" y2="12" />
+                  <line x1="2" y1="7" x2="7" y2="7" />
+                  <line x1="2" y1="17" x2="7" y2="17" />
+                  <line x1="17" y1="17" x2="22" y2="17" />
+                  <line x1="17" y1="7" x2="22" y2="7" />
+                </g>
+              </svg>
+              <h2
+                style={{
+                  margin: 0,
+                  color: "var(--lb-text-primary)",
+                  fontSize: "24px",
+                  fontWeight: "bold",
+                }}
+              >
+                kin<span style={{ color: "var(--lb-orange" }}>o</span>
+                <span style={{ color: "var(--lb-green" }}>o</span>
+                <span style={{ color: "var(--lb-blue" }}>o</span>bok
+              </h2>
+            </div>
+          </div>
           <div
             style={{
               display: "flex",
@@ -244,13 +310,13 @@ export default function MatchSidebar({
                       </svg>
                     </button>
                   )}
-                  <img
+                  <Image
                     src={match.poster || "/poster-placeholder.svg"}
                     alt={match.title}
+                    width={45}
+                    height={67}
                     loading="lazy"
                     style={{
-                      width: "45px",
-                      height: "67px",
                       objectFit: "cover",
                       borderRadius: "2px",
                       background: "#333",

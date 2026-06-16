@@ -105,9 +105,9 @@ const UpdateReminderModal: React.FC<UpdateReminderModalProps> = ({
             }}
           >
             Your current watchlist was last uploaded on{" "}
-            <strong>{lastUploadDate}</strong>. Since you've probably added some
-            movies to your Letterboxd watchlist since then, it's worth a shot to
-            keep your data up to date!
+            <strong>{lastUploadDate}</strong>. Since you&apos;ve probably added
+            some movies to your Letterboxd watchlist since then, it&apos;s worth
+            a shot to keep your data up to date!
           </p>
 
           <div className="onboarding-steps" style={{ marginBottom: "24px" }}>

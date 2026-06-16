@@ -184,6 +184,10 @@ body,
   flex: 1;
 }
 
+.modal-export-link {
+  color: var(--lb-green);
+}
+
 .dashboard-stats {
   display: flex;
   flex-direction: column;

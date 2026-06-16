@@ -42,6 +42,11 @@ export default function Home() {
   const [sortBy, setSortBy] = useState<string>("rare-week");
   const [excludedMovieIds, setExcludedMovieIds] = useState<string[]>([]);
   const [excludedCinemaIds, setExcludedCinemaIds] = useState<string[]>([]);
+  const [showAllScreenings, setShowAllScreenings] = useState<boolean>(true);
+
+  // Onboarding & Error Handling States
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [uploadError, setUploadError] = useState<string>("");
 
   useEffect(() => {
     fetch("/data.json")
@@ -57,13 +62,25 @@ export default function Home() {
       });
 
     // Hydrate states from localStorage
+    let hasWatchlist = false;
     const savedUris = localStorage.getItem("kinobok_watchlist_uris");
     if (savedUris) {
       try {
-        setWatchlistUris(JSON.parse(savedUris));
+        const parsed = JSON.parse(savedUris);
+        setWatchlistUris(parsed);
+        if (parsed && parsed.length > 0) {
+          hasWatchlist = true;
+        }
       } catch (e) {
         console.error("Failed to parse saved watchlist", e);
       }
+    }
+
+    const savedShowAll = localStorage.getItem("kinobok_show_all_screenings");
+    if (savedShowAll !== null) {
+      setShowAllScreenings(savedShowAll === "true");
+    } else {
+      setShowAllScreenings(!hasWatchlist);
     }
 
     const savedSortBy = localStorage.getItem("kinobok_sort_by");
@@ -96,19 +113,13 @@ export default function Home() {
     }
   }, []);
 
-  const handleCloseGuidance = () => {
-    setShowGuidance(false);
-    localStorage.setItem("kinobok_guidance_seen", "true");
-  };
+  const processUploadedFile = async (file: File) => {
+    setIsProcessing(true);
+    setUploadError("");
+    try {
+      let csvText = "";
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    let csvText = "";
-
-    if (file.name.endsWith(".zip")) {
-      try {
+      if (file.name.endsWith(".zip")) {
         const zip = new JSZip();
         const contents = await zip.loadAsync(file);
         const watchlistFile = Object.keys(contents.files).find((path) =>
@@ -118,26 +129,51 @@ export default function Home() {
         if (watchlistFile) {
           csvText = await contents.files[watchlistFile].async("text");
         } else {
-          alert(
-            "Error: 'watchlist.csv' not found in the uploaded ZIP. Please ensure you are uploading the full Letterboxd export. If you believe this is a bug, please raise an issue at: https://github.com/kinobok/kinobok.github.io/issues/",
+          throw new Error(
+            "Error: 'watchlist.csv' not found in the uploaded ZIP. Please ensure you are uploading the full Letterboxd export.",
           );
-          return;
         }
-      } catch (error) {
-        console.error("Error unzipping file:", error);
-        alert(
-          "Failed to process ZIP file. Please try uploading the CSV directly.",
+      } else if (file.name.endsWith(".csv")) {
+        csvText = await file.text();
+      } else {
+        throw new Error(
+          "Invalid file type. Please upload a .csv or .zip file.",
         );
-        return;
       }
-    } else {
-      csvText = await file.text();
+
+      const uris = parseWatchlist(csvText);
+      setWatchlistUris(uris);
+
+      localStorage.setItem("kinobok_watchlist_uris", JSON.stringify(uris));
+      setShowAllScreenings(false);
+      localStorage.setItem("kinobok_show_all_screenings", "false");
+
+      // Success: Close guidance and reset errors
+      setShowGuidance(false);
+      localStorage.setItem("kinobok_guidance_seen", "true");
+    } catch (error) {
+      console.error("Error processing file:", error);
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Failed to process watchlist file.";
+      setUploadError(message);
+    } finally {
+      setIsProcessing(false);
     }
+  };
 
-    const uris = parseWatchlist(csvText);
-    setWatchlistUris(uris);
+  const handleBrowseWithoutWatchlist = () => {
+    setShowAllScreenings(true);
+    localStorage.setItem("kinobok_show_all_screenings", "true");
+    setShowGuidance(false);
+    localStorage.setItem("kinobok_guidance_seen", "true");
+  };
 
-    localStorage.setItem("kinobok_watchlist_uris", JSON.stringify(uris));
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    await processUploadedFile(file);
     setIsMenuOpen(false);
   };
 
@@ -194,6 +230,11 @@ export default function Home() {
     );
   };
 
+  const handleToggleShowAllScreenings = (val: boolean) => {
+    setShowAllScreenings(val);
+    localStorage.setItem("kinobok_show_all_screenings", String(val));
+  };
+
   const matchCounts = useMemo(() => {
     return calculateMatchCountsPerDay(
       watchlistUris,
@@ -201,8 +242,16 @@ export default function Home() {
       visibleChains,
       excludedMovieIds,
       excludedCinemaIds,
+      showAllScreenings,
     );
-  }, [watchlistUris, data, visibleChains, excludedMovieIds, excludedCinemaIds]);
+  }, [
+    watchlistUris,
+    data,
+    visibleChains,
+    excludedMovieIds,
+    excludedCinemaIds,
+    showAllScreenings,
+  ]);
 
   const { matches, filteredCinemas, matchedCinemaIds } = useMemo(() => {
     const result = findMatchesWithFilters(
@@ -213,6 +262,7 @@ export default function Home() {
       excludedMovieIds,
       excludedCinemaIds,
       sortBy,
+      showAllScreenings,
     );
 
     if (searchQuery) {
@@ -237,6 +287,7 @@ export default function Home() {
     excludedMovieIds,
     excludedCinemaIds,
     sortBy,
+    showAllScreenings,
   ]);
 
   if (!data) return <div>Loading kinꚘbok Warsaw...</div>;
@@ -251,7 +302,13 @@ export default function Home() {
         position: "relative",
       }}
     >
-      {showGuidance && <GuidanceModal onClose={handleCloseGuidance} />}
+      <GuidanceModal
+        isOpen={showGuidance}
+        onUpload={processUploadedFile}
+        onBrowseWithoutWatchlist={handleBrowseWithoutWatchlist}
+        error={uploadError}
+        isProcessing={isProcessing}
+      />
 
       <DashboardModal
         isOpen={showDashboard}
@@ -287,6 +344,8 @@ export default function Home() {
         excludedMovieIds={excludedMovieIds}
         allMovies={data.movies}
         onRestoreMovie={handleRestoreMovie}
+        showAllScreenings={showAllScreenings}
+        onToggleShowAllScreenings={handleToggleShowAllScreenings}
       />
 
       <MatchSidebar

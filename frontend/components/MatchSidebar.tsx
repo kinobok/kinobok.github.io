@@ -149,6 +149,7 @@ export default function MatchSidebar({
                   border: "1px solid #444",
                   borderRadius: "4px",
                   padding: "4px 8px",
+                  margin: "0 0 0 4px",
                   fontSize: "0.85em",
                   cursor: "pointer",
                 }}

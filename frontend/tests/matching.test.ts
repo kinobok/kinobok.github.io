@@ -113,19 +113,55 @@ describe("findMatchesWithFilters", () => {
     expect(result.matches[1].title).toBe("Movie B");
     expect(result.matches[2].title).toBe("Movie C");
   });
+
+  it("should return all movies when showAllScreenings is true even if watchlist is empty", () => {
+    const result = findMatchesWithFilters(
+      [], // empty watchlist
+      mockData,
+      [],
+      "2026-05-07",
+      [],
+      [],
+      "alpha-asc",
+      true, // showAllScreenings
+    );
+    expect(result.matches).toHaveLength(3);
+    expect(result.matches[0].title).toBe("Movie A");
+  });
+
+  it("should still filter excluded movies when showAllScreenings is true", () => {
+    const result = findMatchesWithFilters(
+      [], // empty watchlist
+      mockData,
+      [],
+      "2026-05-07",
+      ["m2"], // exclude Movie A (m2)
+      [],
+      "alpha-asc",
+      true, // showAllScreenings
+    );
+    expect(result.matches).toHaveLength(2);
+    expect(result.matches.some((m) => m.id === "m2")).toBe(false);
+  });
 });
 
 describe("calculateMatchCountsPerDay", () => {
   const mockData: CinemaData = {
-    movies: [{ id: "m1", title: "Movie B", boxd_uri: "https://boxd.it/uri1" }],
+    movies: [
+      { id: "m1", title: "Movie B", boxd_uri: "https://boxd.it/uri1" },
+      { id: "m2", title: "Movie A", boxd_uri: "https://boxd.it/uri2" },
+    ],
     cinemas: [{ id: "c1", name: "Cinema 1", address: "Address 1" }],
     showtimes: {
-      "2026-05-07": [{ movie_id: "m1", cinema_id: "c1", times: ["12:00"] }],
+      "2026-05-07": [
+        { movie_id: "m1", cinema_id: "c1", times: ["12:00"] },
+        { movie_id: "m2", cinema_id: "c1", times: ["14:00"] },
+      ],
       "2026-05-08": [],
     },
     metadata: {
       last_scrape: "",
-      total_movies: 1,
+      total_movies: 2,
       available_dates: ["2026-05-07", "2026-05-08"],
       failures: [],
     },
@@ -138,6 +174,19 @@ describe("calculateMatchCountsPerDay", () => {
       [],
     );
     expect(counts["2026-05-07"]).toBe(1);
+    expect(counts["2026-05-08"]).toBe(0);
+  });
+
+  it("should return total movie counts when showAllScreenings is true", () => {
+    const counts = calculateMatchCountsPerDay(
+      [], // empty watchlist
+      mockData,
+      [],
+      [],
+      [],
+      true, // showAllScreenings
+    );
+    expect(counts["2026-05-07"]).toBe(2);
     expect(counts["2026-05-08"]).toBe(0);
   });
 });

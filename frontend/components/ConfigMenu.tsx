@@ -73,9 +73,30 @@ export default function ConfigMenu({
 
         <div className="config-section">
           <h3>Upload Watchlist</h3>
-          <p style={{ fontSize: "0.9em", color: "var(--lb-text-secondary)" }}>
-            Letterboxd export ZIP or CSV
-          </p>
+          Download your data:
+          <ul>
+            <li>
+              <a
+                href="https://letterboxd.com/data/export/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="modal-export-link"
+              >
+                from a direct Letterboxd data export url
+              </a>{" "}
+            </li>
+            <li>
+              {" "}
+              <a
+                href="https://letterboxd.com/settings/data/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="modal-export-link"
+              >
+                from Letterboxd settings/data page
+              </a>
+            </li>
+          </ul>
           <div
             style={{
               background: "var(--lb-card)",

@@ -12,11 +12,11 @@
     - [x] Sub-task: Implement Feature
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Guidance Modal UI' (Protocol in workflow.md)
 
-## Phase 3: State Management & Integration
-- [ ] Task: Integrate `GuidanceModal` into `page.tsx` and manage visibility state
-    - [ ] Sub-task: Write Tests
-    - [ ] Sub-task: Implement Feature
-- [ ] Task: Implement "Browse without watchlist" fallback mode
-    - [ ] Sub-task: Write Tests
-    - [ ] Sub-task: Implement Feature
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: State Management & Integration' (Protocol in workflow.md)
+## Phase 3: State Management & Integration [checkpoint: cc2167f]
+- [x] Task: Integrate `GuidanceModal` into `page.tsx` and manage visibility state
+    - [x] Sub-task: Write Tests
+    - [x] Sub-task: Implement Feature
+- [x] Task: Implement "Browse without watchlist" fallback mode
+    - [x] Sub-task: Write Tests
+    - [x] Sub-task: Implement Feature
+- [x] Task: Conductor - User Manual Verification 'Phase 3: State Management & Integration' (Protocol in workflow.md)

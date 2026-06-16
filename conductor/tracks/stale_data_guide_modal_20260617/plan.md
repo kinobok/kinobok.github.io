@@ -15,9 +15,9 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2: UI Component Implementation' (Protocol in workflow.md) [4ec4153]
 
 ## Phase 3: Main App Integration
-- [ ] Task: Integrate Modal into Application
-    - [ ] Write tests ensuring the main app evaluates the age/snooze state and conditionally renders the modal.
-    - [ ] Implement the state evaluation hook/logic in the main container.
-    - [ ] Connect the "Upload" button to the existing file picker logic and the "Close" button to the snooze logic.
-    - [ ] Run tests to ensure complete functionality.
+- [x] Task: Integrate Modal into Application [a5141bc]
+    - [x] Write tests ensuring the main app evaluates the age/snooze state and conditionally renders the modal.
+    - [x] Implement the state evaluation hook/logic in the main container.
+    - [x] Connect the "Upload" button to the existing file picker logic and the "Close" button to the snooze logic.
+    - [x] Run tests to ensure complete functionality.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Main App Integration' (Protocol in workflow.md)

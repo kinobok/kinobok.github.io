@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
-import { Upload, X, MapPin, Eye, FileSpreadsheet } from "lucide-react";
+import { Upload, Eye } from "lucide-react";
 
 interface GuidanceModalProps {
   isOpen: boolean;
-  onClose: () => void;
+  onClose?: () => void;
   onUpload: (file: File) => void;
   onBrowseWithoutWatchlist: () => void;
   error?: string;
@@ -12,7 +12,6 @@ interface GuidanceModalProps {
 
 const GuidanceModal: React.FC<GuidanceModalProps> = ({
   isOpen,
-  onClose,
   onUpload,
   onBrowseWithoutWatchlist,
   error,
@@ -51,54 +50,98 @@ const GuidanceModal: React.FC<GuidanceModalProps> = ({
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
+    <div className="modal-overlay">
       <div
         className="modal-content onboarding-modal"
         onClick={(e) => e.stopPropagation()}
         style={{ maxWidth: "550px" }}
       >
-        <div className="modal-header">
-          <div className="brand-logo-container">
-            <h2>Welcome to kinꚘbok</h2>
-            <p className="brand-tagline">Privacy-first Warsaw cinema matching</p>
+        <div
+          className="modal-header"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            borderBottom: "1px solid var(--lb-card)",
+            paddingBottom: "16px",
+            marginBottom: "20px",
+          }}
+        >
+          <div
+            style={{
+              display: "block",
+              justifyContent: "center",
+              textAlign: "center",
+              alignItems: "center",
+              gap: "12px",
+              width: "-moz-available",
+            }}
+          >
+            <svg
+              width="100px"
+              height="100px"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+              style={{ flexShrink: 0 }}
+            >
+              <path
+                fill="var(--lb-blue)"
+                stroke="var(--lb-orange)"
+                fill-rule="evenodd"
+                d="M12.6577283,22.7532553 L12,23.3275712 L11.3422717,22.7532553 C5.81130786,17.9237218 3,13.70676 3,10 C3,4.7506636 7.09705254,1 12,1 C16.9029475,1 21,4.7506636 21,10 C21,13.70676 18.1886921,17.9237218 12.6577283,22.7532553 Z M5,10 C5,12.8492324 7.30661202,16.4335466 12,20.6634039 C16.693388,16.4335466 19,12.8492324 19,10 C19,5.8966022 15.8358849,3 12,3 C8.16411512,3 5,5.8966022 5,10 Z"
+              />
+              <g
+                transform="translate(8.2, 6.2) scale(0.32)"
+                stroke="var(--lb-green)"
+                fill="var(--lb-sidebar)"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18" />
+                <line x1="7" y1="2" x2="7" y2="22" />
+                <line x1="17" y1="2" x2="17" y2="22" />
+                <line x1="2" y1="12" x2="22" y2="12" />
+                <line x1="2" y1="7" x2="7" y2="7" />
+                <line x1="2" y1="17" x2="7" y2="17" />
+                <line x1="17" y1="17" x2="22" y2="17" />
+                <line x1="17" y1="7" x2="22" y2="7" />
+              </g>
+            </svg>
+            <h2
+              style={{
+                margin: 0,
+                color: "var(--lb-text-primary)",
+                fontSize: "24px",
+                fontWeight: "bold",
+              }}
+            >
+              kin<span style={{ color: "var(--lb-orange" }}>o</span>
+              <span style={{ color: "var(--lb-green" }}>o</span>
+              <span style={{ color: "var(--lb-blue" }}>o</span>bok
+            </h2>
           </div>
-          <button className="close-button" onClick={onClose} aria-label="Close">
-            <X size={20} />
-          </button>
         </div>
 
         <div className="modal-body">
           <div className="onboarding-steps">
-            <h3>How it works:</h3>
             <ol className="steps-list">
               <li>
-                <span className="step-num">1</span>
                 <div>
-                  <strong>Get your Watchlist:</strong> Export your data on{" "}
+                  <strong>Get your Watchlist:</strong> Download your data{" "}
                   <a
-                    href="https://letterboxd.com/settings/data/"
+                    href="https://letterboxd.com/data/export/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="onboarding-link"
+                    className="modal-export-link"
                   >
-                    Letterboxd Import/Export
+                    from Letterboxd data export
                   </a>
-                  .
                 </div>
               </li>
               <li>
-                <span className="step-num">2</span>
                 <div>
-                  <strong>Upload file:</strong> Drop your exported{" "}
-                  <code>.zip</code> file or the extracted{" "}
-                  <code>watchlist.csv</code> here.
-                </div>
-              </li>
-              <li>
-                <span className="step-num">3</span>
-                <div>
-                  <strong>Explore Warsaw:</strong> See which of your watchlist
-                  movies are playing today or this week on the map!
+                  <strong>Upload:</strong> Drop your exported <code>.zip</code>{" "}
+                  file down below.
                 </div>
               </li>
             </ol>
@@ -119,7 +162,7 @@ const GuidanceModal: React.FC<GuidanceModalProps> = ({
               textAlign: "center",
               cursor: "pointer",
               backgroundColor: isDragging
-                ? "rgba(224, 86, 36, 0.08)"
+                ? "rgba(36, 224, 42, 0.08)"
                 : "rgba(30, 30, 30, 0.4)",
               transition: "all 0.2s ease",
               marginTop: "20px",
@@ -135,15 +178,23 @@ const GuidanceModal: React.FC<GuidanceModalProps> = ({
               disabled={isProcessing}
             />
 
-            <div className="dropzone-content" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "12px" }}>
+            <div
+              className="dropzone-content"
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "12px",
+              }}
+            >
               <div
                 className="upload-icon-container"
                 style={{
                   width: "48px",
                   height: "48px",
                   borderRadius: "50%",
-                  backgroundColor: "rgba(224, 86, 36, 0.1)",
-                  color: "var(--accent-color, #e05624)",
+                  backgroundColor: "var(--lb-card)",
+                  color: "var(--lb-green)",
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
@@ -153,7 +204,9 @@ const GuidanceModal: React.FC<GuidanceModalProps> = ({
               </div>
               <div>
                 <p style={{ margin: 0, fontWeight: 500, fontSize: "15px" }}>
-                  {isProcessing ? "Processing..." : "Click or drag Letterboxd export here"}
+                  {isProcessing
+                    ? "Processing..."
+                    : "Click or drag Letterboxd export here"}
                 </p>
                 <p
                   style={{
@@ -216,23 +269,7 @@ const GuidanceModal: React.FC<GuidanceModalProps> = ({
               }}
             >
               <Eye size={16} />
-              Browse without watchlist (Show all screenings)
-            </button>
-
-            <button
-              className="btn btn-link"
-              onClick={onClose}
-              style={{
-                background: "none",
-                border: "none",
-                color: "var(--text-muted, #888)",
-                fontSize: "13px",
-                textDecoration: "underline",
-                cursor: "pointer",
-                padding: "4px",
-              }}
-            >
-              Dismiss instructions
+              Browse without watchlist
             </button>
           </div>
         </div>

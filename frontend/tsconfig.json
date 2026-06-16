@@ -11,7 +11,7 @@
     "moduleResolution": "node10", // https://www.typescriptlang.org/tsconfig/#moduleResolution, https://github.com/kinobok/kinobok.github.io/issues/16
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "plugins": [
       {
         "name": "next"

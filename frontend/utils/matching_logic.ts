@@ -76,6 +76,7 @@ export function findMatchesWithFilters(
   excludedMovieIds: string[] = [],
   excludedCinemaIds: string[] = [],
   sortBy: string = "rare-week",
+  showAllScreenings: boolean = false,
 ): { matches: Match[]; filteredCinemas: Cinema[]; matchedCinemaIds: string[] } {
   if (!data || !selectedDate || !data.showtimes[selectedDate])
     return { matches: [], filteredCinemas: [], matchedCinemaIds: [] };
@@ -95,7 +96,7 @@ export function findMatchesWithFilters(
 
   const matchingMovies = data.movies.filter(
     (movie) =>
-      watchlistUris.includes(movie.boxd_uri) &&
+      (showAllScreenings || watchlistUris.includes(movie.boxd_uri)) &&
       !excludedMovieIds.includes(movie.id),
   );
 
@@ -186,6 +187,7 @@ export function calculateMatchCountsPerDay(
   visibleChains: string[],
   excludedMovieIds: string[] = [],
   excludedCinemaIds: string[] = [],
+  showAllScreenings: boolean = false,
 ): Record<string, number> {
   const counts: Record<string, number> = {};
   if (!data || !data.showtimes) return counts;
@@ -199,6 +201,7 @@ export function calculateMatchCountsPerDay(
       excludedMovieIds,
       excludedCinemaIds,
       "alpha-asc", // sorting doesn't matter for counting
+      showAllScreenings,
     );
     counts[date] = matches.length;
   }

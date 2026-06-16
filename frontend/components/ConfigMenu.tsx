@@ -15,6 +15,8 @@ interface ConfigMenuProps {
   excludedMovieIds?: string[];
   allMovies?: Movie[];
   onRestoreMovie?: (movieId: string) => void;
+  showAllScreenings?: boolean;
+  onToggleShowAllScreenings?: (val: boolean) => void;
 }
 
 export default function ConfigMenu({
@@ -29,6 +31,8 @@ export default function ConfigMenu({
   excludedMovieIds = [],
   allMovies = [],
   onRestoreMovie,
+  showAllScreenings = false,
+  onToggleShowAllScreenings,
 }: ConfigMenuProps) {
   const chains = ["Multikino", "Cinema City", "Helios"];
 
@@ -87,6 +91,22 @@ export default function ConfigMenu({
               style={{ fontSize: "0.8em", width: "100%" }}
             />
           </div>
+        </div>
+
+        <div className="config-section">
+          <h3>Screening Settings</h3>
+          <label className="checkbox-label" style={{ fontSize: "0.95em" }}>
+            <input
+              type="checkbox"
+              checked={showAllScreenings}
+              onChange={(e) => onToggleShowAllScreenings && onToggleShowAllScreenings(e.target.checked)}
+              style={{ accentColor: "var(--lb-green)" }}
+            />
+            Show All Screenings
+          </label>
+          <p style={{ fontSize: "0.8em", color: "var(--lb-text-secondary)", marginTop: "4px" }}>
+            Enable to see every movie playing. Disable to focus strictly on your Letterboxd watchlist.
+          </p>
         </div>
 
         <div className="config-section">

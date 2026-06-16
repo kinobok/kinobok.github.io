@@ -11,6 +11,8 @@ import {
 import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
 import DashboardModal from "../components/DashboardModal";
+import UpdateReminderModal from "../components/UpdateReminderModal";
+import { shouldShowReminder } from "../utils/watchlist_reminder_helper";
 import SearchBar from "../components/SearchBar";
 import ConfigMenu from "../components/ConfigMenu";
 import DateSelector from "../components/DateSelector";
@@ -37,6 +39,8 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [showReminder, setShowReminder] = useState(false);
+  const [lastUploadDateString, setLastUploadDateString] = useState("");
 
   // New Sort and Filter States
   const [sortBy, setSortBy] = useState<string>("rare-week");
@@ -106,10 +110,28 @@ export default function Home() {
       }
     }
 
-    // Check guidance visibility
+    // Check guidance and reminder visibility
     const hasSeenGuidance = localStorage.getItem("kinobok_guidance_seen");
     if (!hasSeenGuidance && !savedUris) {
       setShowGuidance(true);
+    } else if (hasWatchlist) {
+      const uploadTimeStr = localStorage.getItem(
+        "kinobok_watchlist_upload_time",
+      );
+      const snoozeTimeStr = localStorage.getItem(
+        "kinobok_watchlist_snooze_time",
+      );
+      const uploadTime = uploadTimeStr ? parseInt(uploadTimeStr, 10) : null;
+      const snoozeTime = snoozeTimeStr ? parseInt(snoozeTimeStr, 10) : null;
+
+      if (uploadTime) {
+        const dateObj = new Date(uploadTime);
+        setLastUploadDateString(dateObj.toISOString().split("T")[0]);
+
+        if (shouldShowReminder(uploadTime, snoozeTime, Date.now())) {
+          setShowReminder(true);
+        }
+      }
     }
   }, []);
 
@@ -144,13 +166,20 @@ export default function Home() {
       const uris = parseWatchlist(csvText);
       setWatchlistUris(uris);
 
+      const now = Date.now();
       localStorage.setItem("kinobok_watchlist_uris", JSON.stringify(uris));
+      localStorage.setItem("kinobok_watchlist_upload_time", String(now));
+      setLastUploadDateString(new Date(now).toISOString().split("T")[0]);
+
       setShowAllScreenings(false);
       localStorage.setItem("kinobok_show_all_screenings", "false");
 
       // Success: Close guidance and reset errors
       setShowGuidance(false);
       localStorage.setItem("kinobok_guidance_seen", "true");
+
+      // Close reminder if active
+      setShowReminder(false);
     } catch (error) {
       console.error("Error processing file:", error);
       const message =
@@ -168,6 +197,11 @@ export default function Home() {
     localStorage.setItem("kinobok_show_all_screenings", "true");
     setShowGuidance(false);
     localStorage.setItem("kinobok_guidance_seen", "true");
+  };
+
+  const handleCloseReminder = () => {
+    localStorage.setItem("kinobok_watchlist_snooze_time", String(Date.now()));
+    setShowReminder(false);
   };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -308,6 +342,13 @@ export default function Home() {
         onBrowseWithoutWatchlist={handleBrowseWithoutWatchlist}
         error={uploadError}
         isProcessing={isProcessing}
+      />
+
+      <UpdateReminderModal
+        isOpen={showReminder}
+        lastUploadDate={lastUploadDateString}
+        onClose={handleCloseReminder}
+        onUpload={processUploadedFile}
       />
 
       <DashboardModal

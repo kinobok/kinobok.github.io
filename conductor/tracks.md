@@ -3,3 +3,11 @@
 This file tracks all major tracks for the project. Each track has its own detailed plan in its respective folder.
 
 ---
+
+- [x] **Track: create a "let's get started"  user guide modal for uploading letterboxd watchlist and handle case when user fails to upload the watchlist, or have no watchlist (not a letterboxd user).**
+  *Link: [./tracks/user_guide_modal_20260616/](./tracks/user_guide_modal_20260616/)*
+
+---
+
+- [ ] **Track: add user guide modal for a reminder to update stale data - show it when user watchlist in storage is at least a week old**
+*Link: [./tracks/stale_data_guide_modal_20260617/](./tracks/stale_data_guide_modal_20260617/)*

@@ -23,7 +23,11 @@ const UpdateReminderModal: React.FC<UpdateReminderModalProps> = ({
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose} style={{ cursor: "pointer" }}>
+    <div
+      className="modal-overlay"
+      onClick={onClose}
+      style={{ cursor: "pointer" }}
+    >
       <div
         className="modal-content onboarding-modal"
         onClick={(e) => e.stopPropagation()}
@@ -100,7 +104,10 @@ const UpdateReminderModal: React.FC<UpdateReminderModalProps> = ({
               textAlign: "center",
             }}
           >
-            Your current watchlist was last uploaded on <strong>{lastUploadDate}</strong>. Since cinema showtimes change weekly, keeping your watchlist fresh ensures you never miss the latest matches!
+            Your current watchlist was last uploaded on{" "}
+            <strong>{lastUploadDate}</strong>. Since you've probably added some
+            movies to your Letterboxd watchlist since then, it's worth a shot to
+            keep your data up to date!
           </p>
 
           <div className="onboarding-steps" style={{ marginBottom: "24px" }}>
@@ -114,8 +121,17 @@ const UpdateReminderModal: React.FC<UpdateReminderModalProps> = ({
             >
               How to update:
             </h3>
-            <ol className="steps-list" style={{ paddingLeft: "20px", margin: 0 }}>
-              <li style={{ fontSize: "13px", marginBottom: "8px", lineHeight: "1.4" }}>
+            <ol
+              className="steps-list"
+              style={{ paddingLeft: "20px", margin: 0 }}
+            >
+              <li
+                style={{
+                  fontSize: "13px",
+                  marginBottom: "8px",
+                  lineHeight: "1.4",
+                }}
+              >
                 Export your fresh watchlist{" "}
                 <a
                   href="https://letterboxd.com/data/export/"
@@ -135,7 +151,8 @@ const UpdateReminderModal: React.FC<UpdateReminderModalProps> = ({
                 </a>
               </li>
               <li style={{ fontSize: "13px", lineHeight: "1.4" }}>
-                Upload the new <code>.zip</code> or <code>watchlist.csv</code> file below.
+                Upload the new <code>.zip</code> or <code>watchlist.csv</code>{" "}
+                file below.
               </li>
             </ol>
           </div>

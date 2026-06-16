@@ -115,8 +115,12 @@ export default function Home() {
     if (!hasSeenGuidance && !savedUris) {
       setShowGuidance(true);
     } else if (hasWatchlist) {
-      const uploadTimeStr = localStorage.getItem("kinobok_watchlist_upload_time");
-      const snoozeTimeStr = localStorage.getItem("kinobok_watchlist_snooze_time");
+      const uploadTimeStr = localStorage.getItem(
+        "kinobok_watchlist_upload_time",
+      );
+      const snoozeTimeStr = localStorage.getItem(
+        "kinobok_watchlist_snooze_time",
+      );
       const uploadTime = uploadTimeStr ? parseInt(uploadTimeStr, 10) : null;
       const snoozeTime = snoozeTimeStr ? parseInt(snoozeTimeStr, 10) : null;
 

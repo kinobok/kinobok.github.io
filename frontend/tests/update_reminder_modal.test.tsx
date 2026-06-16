@@ -35,7 +35,8 @@ describe("UpdateReminderModal", () => {
 
     // Verify last upload date is mentioned in the body
     const body = content.props.children.find(
-      (child: any) => child && child.props && child.props.className === "modal-body",
+      (child: any) =>
+        child && child.props && child.props.className === "modal-body",
     );
     expect(body).toBeDefined();
   });
@@ -68,10 +69,12 @@ describe("UpdateReminderModal", () => {
 
     const content = result.props.children;
     const body = content.props.children.find(
-      (child: any) => child && child.props && child.props.className === "modal-body",
+      (child: any) =>
+        child && child.props && child.props.className === "modal-body",
     );
     const actions = body.props.children.find(
-      (child: any) => child && child.props && child.props.className === "onboarding-actions",
+      (child: any) =>
+        child && child.props && child.props.className === "onboarding-actions",
     );
     const input = actions.props.children.find(
       (child: any) => child && child.props && child.props.type === "file",
@@ -99,10 +102,12 @@ describe("UpdateReminderModal", () => {
 
     const content = result.props.children;
     const body = content.props.children.find(
-      (child: any) => child && child.props && child.props.className === "modal-body",
+      (child: any) =>
+        child && child.props && child.props.className === "modal-body",
     );
     const actions = body.props.children.find(
-      (child: any) => child && child.props && child.props.className === "onboarding-actions",
+      (child: any) =>
+        child && child.props && child.props.className === "onboarding-actions",
     );
     const input = actions.props.children.find(
       (child: any) => child && child.props && child.props.type === "file",

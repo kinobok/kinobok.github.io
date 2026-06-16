@@ -10,7 +10,7 @@ export function parseWatchlist(csv: string): string[] {
 
   if (!headers || !headers.includes("Letterboxd URI")) {
     throw new Error(
-      "Invalid file format. Could not find 'Letterboxd URI' column. Please make sure you are uploading a valid Letterboxd watchlist CSV."
+      "Invalid file format. Could not find 'Letterboxd URI' column. Please make sure you are uploading a valid Letterboxd watchlist CSV.",
     );
   }
 
@@ -18,4 +18,3 @@ export function parseWatchlist(csv: string): string[] {
     .map((row: any) => row["Letterboxd URI"])
     .filter((uri: string) => uri !== undefined && uri !== "");
 }
-

@@ -10,7 +10,9 @@ test("extracts URIs from watchlist.csv", () => {
 
 test("throws error when CSV is empty", () => {
   expect(() => parseWatchlist("")).toThrow("The uploaded file is empty.");
-  expect(() => parseWatchlist("   \n\n")).toThrow("The uploaded file is empty.");
+  expect(() => parseWatchlist("   \n\n")).toThrow(
+    "The uploaded file is empty.",
+  );
 });
 
 test("throws error when Letterboxd URI column is missing", () => {
@@ -19,4 +21,3 @@ test("throws error when Letterboxd URI column is missing", () => {
     "Invalid file format. Could not find 'Letterboxd URI' column. Please make sure you are uploading a valid Letterboxd watchlist CSV.",
   );
 });
-

@@ -99,13 +99,23 @@ export default function ConfigMenu({
             <input
               type="checkbox"
               checked={showAllScreenings}
-              onChange={(e) => onToggleShowAllScreenings && onToggleShowAllScreenings(e.target.checked)}
+              onChange={(e) =>
+                onToggleShowAllScreenings &&
+                onToggleShowAllScreenings(e.target.checked)
+              }
               style={{ accentColor: "var(--lb-green)" }}
             />
             Show All Screenings
           </label>
-          <p style={{ fontSize: "0.8em", color: "var(--lb-text-secondary)", marginTop: "4px" }}>
-            Enable to see every movie playing. Disable to focus strictly on your Letterboxd watchlist.
+          <p
+            style={{
+              fontSize: "0.8em",
+              color: "var(--lb-text-secondary)",
+              marginTop: "4px",
+            }}
+          >
+            Enable to see every movie playing. Disable to focus strictly on your
+            Letterboxd watchlist.
           </p>
         </div>
 

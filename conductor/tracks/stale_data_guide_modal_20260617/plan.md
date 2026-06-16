@@ -1,10 +1,10 @@
 # Implementation Plan: User Guide Modal for Stale Data Reminder
 
 ## Phase 1: State Management & Logic
-- [ ] Task: Implement Watchlist Age and Snooze Logic
-    - [ ] Write failing unit tests for checking data age (> 7 days) and snooze state (24 hours).
-    - [ ] Implement storage logic to record watchlist upload timestamp and snooze timestamp in `localStorage`.
-    - [ ] Run tests and verify >80% coverage.
+- [x] Task: Implement Watchlist Age and Snooze Logic [bbae188]
+    - [x] Write failing unit tests for checking data age (> 7 days) and snooze state (24 hours).
+    - [x] Implement storage logic to record watchlist upload timestamp and snooze timestamp in `localStorage`.
+    - [x] Run tests and verify >80% coverage.
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: State Management & Logic' (Protocol in workflow.md)
 
 ## Phase 2: UI Component Implementation

@@ -21,3 +21,6 @@
     - [x] Connect the "Upload" button to the existing file picker logic and the "Close" button to the snooze logic.
     - [x] Run tests to ensure complete functionality.
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Main App Integration' (Protocol in workflow.md) [5a138b7]
+
+## Phase: Review Fixes
+- [x] Task: Apply review suggestions [86b414e]

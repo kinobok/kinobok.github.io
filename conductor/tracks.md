@@ -9,5 +9,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: add user guide modal for a reminder to update stale data - show it when user watchlist in storage is at least a week old**
+- [x] **Track: add user guide modal for a reminder to update stale data - show it when user watchlist in storage is at least a week old**
 *Link: [./tracks/stale_data_guide_modal_20260617/](./tracks/stale_data_guide_modal_20260617/)*

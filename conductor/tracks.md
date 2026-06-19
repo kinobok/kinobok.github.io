@@ -9,5 +9,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: UX revamp when user clicks cinema map points and typeaheads for search bar**
+- [x] **Track: UX revamp when user clicks cinema map points and typeaheads for search bar**
 *Link: [./tracks/map_search_ux_20260619/](./tracks/map_search_ux_20260619/)*

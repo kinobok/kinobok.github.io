@@ -217,6 +217,50 @@ describe("MatchSidebar", () => {
 
     expect(onToggleExpand).toHaveBeenCalledWith(false);
   });
+
+  test("renders Show All Screenings toggle button", () => {
+    const onToggleShowAll = vi.fn();
+    const result = MatchSidebar({
+      matches: [],
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+      showAllScreenings: true,
+      onToggleShowAllScreenings: onToggleShowAll,
+    });
+
+    // Find the toggle button
+    const toggleButton = findElement(result, (el) => {
+      return el && el.type === "button" && el.props.title === "Toggle show all screenings";
+    });
+
+    expect(toggleButton).toBeDefined();
+    expect(toggleButton).not.toBeNull();
+
+    // Trigger click
+    toggleButton.props.onClick({ stopPropagation: vi.fn() });
+    expect(onToggleShowAll).toHaveBeenCalled();
+  });
+
+  test("renders minimized state on mobile", () => {
+    globalThis.__MOCK_IS_MOBILE__ = true;
+    const onToggleMinimize = vi.fn();
+
+    const result = MatchSidebar({
+      matches: [],
+      isExpanded: false,
+      onToggleExpand: vi.fn(),
+      isMinimized: true,
+      onToggleMinimize,
+    });
+
+    // Verify it renders the 'Tap to see screenings' text
+    const labelNode = findElement(result, (el) => {
+      return el && typeof el === "object" && JSON.stringify(el.props).includes("Tap to see screenings");
+    });
+
+    expect(labelNode).toBeDefined();
+    expect(labelNode).not.toBeNull();
+  });
 });
 
 // Declare global variable type for TypeScript safety

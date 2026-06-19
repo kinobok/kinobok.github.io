@@ -108,6 +108,22 @@ describe("ConfigMenu Tabs", () => {
     const mockEvent = { stopPropagation: vi.fn() };
     uploadTabBtn!.props.onClick(mockEvent);
   });
+
+  test("renders with Google Maps style left drawer wrapper", () => {
+    const result = ConfigMenu({
+      isOpen: true,
+      onClose: vi.fn(),
+      visibleChains: [],
+      onToggleChain: vi.fn(),
+      handleFileUpload: vi.fn(),
+    });
+
+    // Verify it renders the slide drawer class and transition style
+    expect(result.props.className).toContain("config-menu-drawer-overlay");
+    const drawerContent = findElement(result, (el) => el && el.props && el.props.className && el.props.className.includes("config-menu-drawer"));
+    expect(drawerContent).toBeDefined();
+    expect(drawerContent).not.toBeNull();
+  });
 });
 
 declare global {

@@ -528,23 +528,35 @@ export default function MatchSidebar({
                         </svg>
                       </button>
                     )}
-                    <Image
-                      src={match.poster || "/poster-placeholder.svg"}
-                      alt={match.title}
-                      width={45}
-                      height={67}
-                      loading="lazy"
+                    <a
+                      href={match.boxd_uri}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       style={{
-                        objectFit: "cover",
-                        borderRadius: "2px",
-                        background: "#333",
-                        flexShrink: 0,
+                        color: "var(--lb-text-primary)",
+                        textDecoration: "none",
                       }}
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src =
-                          "/poster-placeholder.svg";
-                      }}
-                    />
+                    >
+                      {" "}
+                      <Image
+                        src={match.poster || "/poster-placeholder.svg"}
+                        alt={match.title}
+                        width={45}
+                        height={67}
+                        loading="lazy"
+                        style={{
+                          objectFit: "cover",
+                          borderRadius: "2px",
+                          background: "#333",
+                          flexShrink: 0,
+                        }}
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src =
+                            "/poster-placeholder.svg";
+                        }}
+                      />
+                    </a>
+
                     <div style={{ overflow: "hidden", paddingRight: "20px" }}>
                       <div
                         style={{
@@ -576,10 +588,19 @@ export default function MatchSidebar({
                       >
                         {match.showtimes.map((s, idx) => (
                           <div key={idx} style={{ marginBottom: "2px" }}>
-                            <span style={{ color: "var(--lb-orange)" }}>
-                              {s.cinema}
-                            </span>
-                            : {s.times.join(", ")}
+                            <a
+                              style={{
+                                textDecoration: "none",
+                                color: "var(--lb-text-secondary)",
+                              }}
+                              href={`https://www.google.com/search?q=cinema+${s.cinema}`}
+                            >
+                              {" "}
+                              <span style={{ color: "var(--lb-orange)" }}>
+                                {s.cinema}
+                              </span>
+                              : {s.times.join(", ")}
+                            </a>
                           </div>
                         ))}
                       </div>

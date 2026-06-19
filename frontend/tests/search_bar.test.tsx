@@ -10,6 +10,10 @@ vi.mock("react", async (importOriginal) => {
       // Allow us to mock internal state by checking initial values or using a global setter
       return [globalThis.__MOCK_STATE__ ?? (typeof initVal === "function" ? initVal() : initVal), vi.fn()];
     },
+    useEffect: (effect: any) => {
+      effect();
+      return undefined;
+    },
   };
 });
 

@@ -13,12 +13,12 @@
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: SearchBar Cleanup & ConfigMenu Tab Layout' (Protocol in workflow.md)
 
 ## Phase 2: Left Side Sliding Drawer UX & Animations
-- [~] Task: Write Tests for Left Drawer Styling and Transitions
-    - [ ] Write test to assert on left-side drawer CSS classes or transition style states being rendered in `ConfigMenu`.
-- [ ] Task: Implement Left-Side Sliding Drawer
-    - [ ] Create `.config-menu-drawer` CSS in `globals.css` with a sleek width (~390px), `position: fixed`, `left: 0`, and `height: 100%`.
-    - [ ] Implement transition transitions (`transform 0.3s ease-in-out` with `translateX(-100%)` for hidden state and `translateX(0)` for active state).
-    - [ ] Refactor `ConfigMenu.tsx` root container to utilize this new sliding drawer style.
+- [x] Task: Write Tests for Left Drawer Styling and Transitions (6686306)
+    - [x] Write test to assert on left-side drawer CSS classes or transition style states being rendered in `ConfigMenu`.
+- [~] Task: Implement Left-Side Sliding Drawer
+    - [~] Create `.config-menu-drawer` CSS in `globals.css` with a sleek width (~390px), `position: fixed`, `left: 0`, and `height: 100%`.
+    - [~] Implement transition transitions (`transform 0.3s ease-in-out` with `translateX(-100%)` for hidden state and `translateX(0)` for active state).
+    - [~] Refactor `ConfigMenu.tsx` root container to utilize this new sliding drawer style.
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Left Side Sliding Drawer UX & Animations' (Protocol in workflow.md)
 
 ## Phase 3: Scrape Dashboard Relocation & Refactoring

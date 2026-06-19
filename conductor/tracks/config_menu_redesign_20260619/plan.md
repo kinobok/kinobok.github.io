@@ -4,16 +4,16 @@
 - [x] Task: Write Tests for Tabbed ConfigMenu (7b07925)
     - [x] Create tests in `frontend/tests/` to verify `ConfigMenu` renders the four category tab buttons (Upload, Cinemas, Excluded Movies, Other).
     - [x] Write test verifying that clicking a tab switches the active panel content.
-- [~] Task: Implement ConfigMenu Tabbed Structure
-    - [~] Add state for `activeTab` inside `ConfigMenu.tsx` (defaulting to "Upload").
-    - [~] Refactor the component JSX to partition content into four distinct tab layouts based on the specification.
-- [~] Task: Clean up SearchBar Toolbar
-    - [~] Remove the Scrape Dashboard (📊) button from `SearchBar.tsx`.
-    - [~] Adjust `SearchBar` layout and spacing (and update corresponding test cases in `search_bar.test.tsx` if they assert on the dashboard button).
+- [x] Task: Implement ConfigMenu Tabbed Structure (7ee5af1)
+    - [x] Add state for `activeTab` inside `ConfigMenu.tsx` (defaulting to "Upload").
+    - [x] Refactor the component JSX to partition content into four distinct tab layouts based on the specification.
+- [x] Task: Clean up SearchBar Toolbar (7ee5af1)
+    - [x] Remove the Scrape Dashboard (📊) button from `SearchBar.tsx`.
+    - [x] Adjust `SearchBar` layout and spacing (and update corresponding test cases in `search_bar.test.tsx` if they assert on the dashboard button).
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: SearchBar Cleanup & ConfigMenu Tab Layout' (Protocol in workflow.md)
 
 ## Phase 2: Left Side Sliding Drawer UX & Animations
-- [ ] Task: Write Tests for Left Drawer Styling and Transitions
+- [~] Task: Write Tests for Left Drawer Styling and Transitions
     - [ ] Write test to assert on left-side drawer CSS classes or transition style states being rendered in `ConfigMenu`.
 - [ ] Task: Implement Left-Side Sliding Drawer
     - [ ] Create `.config-menu-drawer` CSS in `globals.css` with a sleek width (~390px), `position: fixed`, `left: 0`, and `height: 100%`.

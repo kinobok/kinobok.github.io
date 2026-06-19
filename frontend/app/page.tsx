@@ -300,6 +300,7 @@ export default function Home() {
       excludedMovieIds,
       excludedCinemaIds,
       showAllScreenings,
+      selectedCinemaId,
     );
   }, [
     watchlistUris,
@@ -308,6 +309,7 @@ export default function Home() {
     excludedMovieIds,
     excludedCinemaIds,
     showAllScreenings,
+    selectedCinemaId,
   ]);
 
   const { matches, filteredCinemas, matchedCinemaIds } = useMemo(() => {

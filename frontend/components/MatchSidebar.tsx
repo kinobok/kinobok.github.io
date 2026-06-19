@@ -474,7 +474,7 @@ export default function MatchSidebar({
                       transition: "border-color 0.2s",
                     }}
                     onMouseEnter={(e) =>
-                      (e.currentTarget.style.borderColor = "var(--lb-green)")
+                      (e.currentTarget.style.borderColor = "var(--lb-blue)")
                     }
                     onMouseLeave={(e) =>
                       (e.currentTarget.style.borderColor = "transparent")
@@ -491,7 +491,7 @@ export default function MatchSidebar({
                           position: "absolute",
                           top: "4px",
                           right: "4px",
-                          background: "rgba(0, 0, 0, 0.6)",
+                          background: "var(--lb-bg)",
                           color: "var(--lb-text-secondary)",
                           border: "none",
                           borderRadius: "50%",
@@ -502,13 +502,6 @@ export default function MatchSidebar({
                           alignItems: "center",
                           justifyContent: "center",
                         }}
-                        onMouseEnter={(e) =>
-                          (e.currentTarget.style.color = "#fff")
-                        }
-                        onMouseLeave={(e) =>
-                          (e.currentTarget.style.color =
-                            "var(--lb-text-secondary)")
-                        }
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -516,7 +509,7 @@ export default function MatchSidebar({
                           height="14"
                           viewBox="0 0 24 24"
                           fill="none"
-                          stroke="currentColor"
+                          stroke="var(--lb-text-secondary)"
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"

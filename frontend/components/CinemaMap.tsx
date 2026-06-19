@@ -8,7 +8,7 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import L from "leaflet";
 import { Cinema } from "../utils/matching_logic";
 
@@ -20,6 +20,7 @@ interface CinemaMapProps {
   userLocation?: { lat: number; lng: number } | null;
   onLocationFound?: (loc: { lat: number; lng: number }) => void;
   onSelectCinema?: (cinemaId: string | null) => void;
+  isMinimized?: boolean;
 }
 
 const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
@@ -46,6 +47,7 @@ function MapController({
   onZoomChange: (zoom: number) => void;
 }) {
   const map = useMap();
+  const lastCenterRef = useRef<[number, number] | null>(null);
 
   useMapEvents({
     zoomend: () => {
@@ -55,7 +57,15 @@ function MapController({
 
   useEffect(() => {
     if (center) {
-      map.setView(center, DEFAULT_ZOOM_VALUE);
+      const hasChanged =
+        !lastCenterRef.current ||
+        lastCenterRef.current[0] !== center[0] ||
+        lastCenterRef.current[1] !== center[1];
+
+      if (hasChanged) {
+        map.setView(center, DEFAULT_ZOOM_VALUE);
+        lastCenterRef.current = center;
+      }
     }
   }, [center, map]);
 
@@ -77,12 +87,18 @@ export default function CinemaMap({
   userLocation,
   onLocationFound,
   onSelectCinema,
+  isMinimized = false,
 }: CinemaMapProps) {
   const [isClient, setIsClient] = useState(false);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   if (!isClient) {
@@ -131,13 +147,14 @@ export default function CinemaMap({
         className="map-controls-container"
         style={{
           position: "absolute",
-          bottom: "30px",
+          bottom: isMobile ? (isMinimized ? "80px" : "220px") : "30px",
           right: "15px",
           zIndex: 1000,
           display: "flex",
           flexDirection: "column",
           gap: "10px",
           alignItems: "flex-end",
+          transition: "bottom 0.3s ease-in-out",
         }}
       >
         <button

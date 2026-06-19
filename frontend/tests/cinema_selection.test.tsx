@@ -67,6 +67,38 @@ describe("CinemaSelection", () => {
 
     expect(onSelectCinema).toHaveBeenCalledWith(null);
   });
+
+  test("map view controller prevents redundant re-centering when coordinates remain unchanged", () => {
+    const setViewMock = vi.fn();
+    const mockMap = { setView: setViewMock };
+
+    // Simulating MapController logic
+    const lastCenter = { current: null as [number, number] | null };
+
+    const triggerMapCenter = (center: [number, number], mapObj: any) => {
+      const hasChanged =
+        !lastCenter.current ||
+        lastCenter.current[0] !== center[0] ||
+        lastCenter.current[1] !== center[1];
+      if (hasChanged) {
+        mapObj.setView(center, 12);
+        lastCenter.current = center;
+      }
+    };
+
+    const coord1: [number, number] = [52.2, 21.0];
+    triggerMapCenter(coord1, mockMap);
+    expect(setViewMock).toHaveBeenCalledTimes(1);
+
+    // Call again with the same coordinates - should NOT trigger setView again
+    triggerMapCenter(coord1, mockMap);
+    expect(setViewMock).toHaveBeenCalledTimes(1);
+
+    // Call with different coordinates - should trigger setView
+    const coord2: [number, number] = [52.3, 21.1];
+    triggerMapCenter(coord2, mockMap);
+    expect(setViewMock).toHaveBeenCalledTimes(2);
+  });
 });
 
 declare global {

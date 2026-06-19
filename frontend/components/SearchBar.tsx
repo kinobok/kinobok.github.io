@@ -6,7 +6,6 @@ import { Cinema } from "../utils/matching_logic";
 
 interface SearchBarProps {
   onMenuToggle: () => void;
-  onDashboardToggle: () => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
   allCinemas?: Cinema[];
@@ -15,7 +14,6 @@ interface SearchBarProps {
 
 export default function SearchBar({
   onMenuToggle,
-  onDashboardToggle,
   searchQuery,
   onSearchChange,
   allCinemas,
@@ -148,14 +146,6 @@ export default function SearchBar({
           </div>
         )}
       </div>
-      <button
-        className="icon-button"
-        onClick={onDashboardToggle}
-        title="Scrape Dashboard"
-        style={{ pointerEvents: "auto" }}
-      >
-        📊
-      </button>
     </div>
   );
 }

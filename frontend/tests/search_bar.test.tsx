@@ -22,7 +22,7 @@ vi.mock("react", async (importOriginal) => {
 });
 
 import SearchBar from "../components/SearchBar";
-import { X, Search } from "lucide-react";
+import { X } from "lucide-react";
 
 // Utility to recursively find a React element by its type or a condition
 function findElement(element: any, predicate: (el: any) => boolean): any {
@@ -69,7 +69,6 @@ describe("SearchBar", () => {
   test("renders basic structure", () => {
     const result = SearchBar({
       onMenuToggle: vi.fn(),
-      onDashboardToggle: vi.fn(),
       searchQuery: "",
       onSearchChange: vi.fn(),
     });
@@ -82,7 +81,6 @@ describe("SearchBar", () => {
   test("renders X (Clear) button when query is populated", () => {
     const result = SearchBar({
       onMenuToggle: vi.fn(),
-      onDashboardToggle: vi.fn(),
       searchQuery: "Multikino",
       onSearchChange: vi.fn(),
     });
@@ -107,7 +105,6 @@ describe("SearchBar", () => {
 
     const result = SearchBar({
       onMenuToggle: vi.fn(),
-      onDashboardToggle: vi.fn(),
       searchQuery: "Multikino",
       onSearchChange,
       onSelectCinema,
@@ -138,7 +135,6 @@ describe("SearchBar", () => {
 
     const result = SearchBar({
       onMenuToggle: vi.fn(),
-      onDashboardToggle: vi.fn(),
       searchQuery: "Multi",
       onSearchChange: vi.fn(),
       allCinemas: cinemas,
@@ -170,7 +166,6 @@ describe("SearchBar", () => {
 
     const result = SearchBar({
       onMenuToggle: vi.fn(),
-      onDashboardToggle: vi.fn(),
       searchQuery: "Kinoteka",
       onSearchChange: vi.fn(),
       allCinemas: cinemas,

@@ -1,10 +1,10 @@
 # Implementation Plan: UX Revamp for Map Points & Searchbar Typeahead
 
 ## Phase 1: Searchbar Typeahead & Clearing Logic
-- [ ] Task: Write Tests for Searchbar Typeahead and Clear Button
-    - [ ] Create tests in `frontend/tests/` to verify typeahead dropdown renders when input length > 1.
-    - [ ] Write test for the `X` (Clear) button appearing when input is populated and clearing input when clicked.
-- [ ] Task: Implement Searchbar Typeahead
+- [x] Task: Write Tests for Searchbar Typeahead and Clear Button (d0a15c2)
+    - [x] Create tests in `frontend/tests/` to verify typeahead dropdown renders when input length > 1.
+    - [x] Write test for the `X` (Clear) button appearing when input is populated and clearing input when clicked.
+- [~] Task: Implement Searchbar Typeahead
     - [ ] Add state for typeahead suggestions in `SearchBar.tsx` or parent component.
     - [ ] Implement dropdown UI below the search input listing matching cinema names based on existing `data.cinemas`.
 - [ ] Task: Implement Clear Button

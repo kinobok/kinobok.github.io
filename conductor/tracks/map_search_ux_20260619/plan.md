@@ -13,14 +13,14 @@
 - [~] Task: Conductor - User Manual Verification 'Phase 1: Searchbar Typeahead & Clearing Logic' (Protocol in workflow.md)
 
 ## Phase 2: Map Point Click Integration & Global Selection State
-- [ ] Task: Write Tests for Map Point Selection State
-    - [ ] Update map tests or sidebar tests to verify that a selected cinema ID filters the `matches` list.
-    - [ ] Verify that clicking empty map space clears the selected cinema state.
-- [ ] Task: Implement Global Selected Cinema State
-    - [ ] Lift state up to `page.tsx` (e.g., `selectedCinemaId`) to manage the currently focused cinema.
-    - [ ] Pass the setter down to `CinemaMap` (for marker clicks and map background clicks) and `SearchBar` (for typeahead clicks).
-- [ ] Task: Apply Filtering to MatchSidebar
-    - [ ] Update the `matches` prop passed to `MatchSidebar` to be filtered by `selectedCinemaId` if it is set.
+- [x] Task: Write Tests for Map Point Selection State (f91e540)
+    - [x] Update map tests or sidebar tests to verify that a selected cinema ID filters the `matches` list.
+    - [x] Verify that clicking empty map space clears the selected cinema state.
+- [~] Task: Implement Global Selected Cinema State
+    - [~] Lift state up to `page.tsx` (e.g., `selectedCinemaId`) to manage the currently focused cinema.
+    - [~] Pass the setter down to `CinemaMap` (for marker clicks and map background clicks) and `SearchBar` (for typeahead clicks).
+- [~] Task: Apply Filtering to MatchSidebar
+    - [~] Update the `matches` prop passed to `MatchSidebar` to be filtered by `selectedCinemaId` if it is set.
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Map Point Click Integration & Global Selection State' (Protocol in workflow.md)
 
 ## Phase 3: Sidebar Enhancements (Toggle & Minimized State)

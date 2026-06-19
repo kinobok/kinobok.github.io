@@ -10,14 +10,13 @@ import {
 } from "react-leaflet";
 import { useEffect, useState } from "react";
 import L from "leaflet";
-import { Match, Cinema } from "../utils/matching_logic";
+import { Cinema } from "../utils/matching_logic";
 
 const DEFAULT_ZOOM_VALUE = 12;
 
 interface CinemaMapProps {
   cinemas: Cinema[];
   highlightedCinemaIds?: string[];
-  matches?: Match[];
   userLocation?: { lat: number; lng: number } | null;
   onLocationFound?: (loc: { lat: number; lng: number }) => void;
   onSelectCinema?: (cinemaId: string | null) => void;
@@ -75,7 +74,6 @@ function MapEventsController({ onMapClick }: { onMapClick: () => void }) {
 export default function CinemaMap({
   cinemas,
   highlightedCinemaIds = [],
-  matches = [],
   userLocation,
   onLocationFound,
   onSelectCinema,
@@ -194,10 +192,6 @@ export default function CinemaMap({
         )}
 
         {cinemas.map((cinema) => {
-          const cinemaMatches = matches.filter((m) =>
-            m.showtimes.some((s) => s.cinema_id === cinema.id),
-          );
-
           const isHighlighted = highlightedCinemaIds.includes(cinema.id);
           const color = isHighlighted ? "#00e054" : "#ff8000";
           const icon = createMarkerIcon(color, cinema.name, zoom >= 13);
@@ -233,41 +227,6 @@ export default function CinemaMap({
                   >
                     {cinema.address}
                   </span>
-                  {cinemaMatches.length > 0 && (
-                    <div
-                      style={{
-                        marginTop: "10px",
-                        borderTop: "1px solid var(--lb-card)",
-                        paddingTop: "5px",
-                      }}
-                    >
-                      <strong
-                        style={{ fontSize: "0.85em", color: "var(--lb-green)" }}
-                      >
-                        Watchlist Matches:
-                      </strong>
-                      <ul
-                        style={{
-                          margin: "5px 0 0 0",
-                          paddingLeft: "18px",
-                          fontSize: "0.9em",
-                        }}
-                      >
-                        {cinemaMatches.map((m) => (
-                          <li key={m.id}>
-                            <a
-                              href={m.boxd_uri}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ color: "var(--lb-blue)" }}
-                            >
-                              {m.title}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
                 </Popup>
               </Marker>
             )

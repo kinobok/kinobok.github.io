@@ -40,6 +40,11 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
+
+  const selectedCinema = useMemo(() => {
+    if (!selectedCinemaId || !data?.cinemas) return null;
+    return data.cinemas.find((c) => c.id === selectedCinemaId) || null;
+  }, [selectedCinemaId, data]);
   const [showReminder, setShowReminder] = useState(false);
   const [lastUploadDateString, setLastUploadDateString] = useState("");
 
@@ -265,6 +270,23 @@ export default function Home() {
     );
   };
 
+  const handleSelectCinema = (cinemaId: string | null) => {
+    setSelectedCinemaId(cinemaId);
+    if (cinemaId === null) {
+      setIsSidebarMinimized(true);
+      setSearchQuery("");
+    } else {
+      setIsSidebarMinimized(false);
+      setIsSidebarExpanded(false);
+      if (data?.cinemas) {
+        const cinema = data.cinemas.find((c) => c.id === cinemaId);
+        if (cinema) {
+          setSearchQuery(cinema.name);
+        }
+      }
+    }
+  };
+
   const handleToggleShowAllScreenings = (val: boolean) => {
     setShowAllScreenings(val);
     localStorage.setItem("kinobok_show_all_screenings", String(val));
@@ -376,12 +398,7 @@ export default function Home() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         allCinemas={data?.cinemas}
-        onSelectCinema={(cinemaId) => {
-          setSelectedCinemaId(cinemaId);
-          if (cinemaId === null) {
-            setIsSidebarMinimized(true);
-          }
-        }}
+        onSelectCinema={handleSelectCinema}
       />
 
       <ConfigMenu
@@ -422,21 +439,16 @@ export default function Home() {
         onToggleShowAllScreenings={handleToggleShowAllScreenings}
         isMinimized={isSidebarMinimized}
         onToggleMinimize={setIsSidebarMinimized}
+        selectedCinema={selectedCinema}
       />
 
       <div style={{ flex: 1, position: "relative" }}>
         <CinemaMap
           cinemas={filteredCinemas}
           highlightedCinemaIds={matchedCinemaIds}
-          matches={matches}
           userLocation={userLocation}
           onLocationFound={handleLocationFound}
-          onSelectCinema={(cinemaId) => {
-            setSelectedCinemaId(cinemaId);
-            if (cinemaId === null) {
-              setIsSidebarMinimized(true);
-            }
-          }}
+          onSelectCinema={handleSelectCinema}
         />
       </div>
     </main>

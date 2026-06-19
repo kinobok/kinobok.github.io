@@ -270,6 +270,33 @@ describe("MatchSidebar", () => {
     expect(labelNode).toBeDefined();
     expect(labelNode).not.toBeNull();
   });
+
+  test("renders selected cinema information when selectedCinema is provided", () => {
+    const selectedCinema = {
+      id: "c1",
+      name: "Kinoteka",
+      address: "Plac Defilad 1",
+    };
+
+    const result = MatchSidebar({
+      matches: [],
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+      selectedCinema,
+    });
+
+    // Find cinema name rendering inside the sidebar
+    const cinemaInfoNode = findElement(result, (el) => {
+      return (
+        el &&
+        typeof el === "object" &&
+        JSON.stringify(el.props).includes("Kinoteka")
+      );
+    });
+
+    expect(cinemaInfoNode).toBeDefined();
+    expect(cinemaInfoNode).not.toBeNull();
+  });
 });
 
 // Declare global variable type for TypeScript safety

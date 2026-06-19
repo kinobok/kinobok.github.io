@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Match } from "../utils/matching_logic";
+import { Match, Cinema } from "../utils/matching_logic";
 import Image from "next/image";
 import DateSelector from "./DateSelector";
 import { ChevronDown, Search, ChevronUp } from "lucide-react";
@@ -21,6 +21,7 @@ interface MatchSidebarProps {
   onToggleShowAllScreenings?: (val: boolean) => void;
   isMinimized?: boolean;
   onToggleMinimize?: (minimized: boolean) => void;
+  selectedCinema?: Cinema | null;
 }
 
 export default function MatchSidebar({
@@ -38,6 +39,7 @@ export default function MatchSidebar({
   onToggleShowAllScreenings,
   isMinimized = false,
   onToggleMinimize,
+  selectedCinema,
 }: MatchSidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -334,18 +336,41 @@ export default function MatchSidebar({
                 marginBottom: "15px",
               }}
             >
-              <h3
+              <div
                 style={{
-                  fontSize: "1.1em",
-                  color: "var(--lb-text-primary)",
-                  margin: 0,
                   display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
+                  flexDirection: "column",
+                  gap: "2px",
+                  alignItems: "flex-start",
                 }}
               >
-                Matches Found
-              </h3>
+                <h3
+                  style={{
+                    fontSize: "1.1em",
+                    color: "var(--lb-text-primary)",
+                    margin: 0,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  Matches Found
+                </h3>
+                {selectedCinema && (
+                  <span
+                    style={{
+                      fontSize: "0.8em",
+                      color: "var(--lb-text-secondary)",
+                    }}
+                  >
+                    at{" "}
+                    <strong style={{ color: "var(--lb-green)" }}>
+                      {selectedCinema.name}
+                    </strong>
+                    , Warsaw, Poland
+                  </span>
+                )}
+              </div>
 
               <div
                 style={{ display: "flex", alignItems: "center", gap: "8px" }}

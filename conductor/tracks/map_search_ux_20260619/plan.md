@@ -24,13 +24,13 @@
 - [~] Task: Conductor - User Manual Verification 'Phase 2: Map Point Click Integration & Global Selection State' (Protocol in workflow.md)
 
 ## Phase 3: Sidebar Enhancements (Toggle & Minimized State)
-- [~] Task: Write Tests for Sidebar Enhancements
-    - [ ] Test the presence and toggle behavior of the "Show all screenings" button in `MatchSidebar`.
-    - [ ] Test the "minimized" state rendering ("Tap to see screenings" and `ChevronUp`) when expanded is false and state is minimized.
-- [ ] Task: Implement "Show all screenings" Toggle
-    - [ ] Add the toggle UI to `MatchSidebar` and wire it up using the existing `onToggleShowAllScreenings` handler from `page.tsx`.
-- [ ] Task: Implement Minimized State UX
-    - [ ] Update `MatchSidebar` mobile logic: Add a third state or adjust `isExpanded=false` to represent the "almost completely hidden" minimized state.
-    - [ ] Render the `ChevronUp` and "Tap to see screenings" label in this minimized state.
-    - [ ] Update `handleTouchEnd` swipe logic and empty map click logic to trigger this minimized state.
+- [x] Task: Write Tests for Sidebar Enhancements (db081e6)
+    - [x] Test the presence and toggle behavior of the "Show all screenings" button in `MatchSidebar`.
+    - [x] Test the "minimized" state rendering ("Tap to see screenings" and `ChevronUp`) when expanded is false and state is minimized.
+- [~] Task: Implement "Show all screenings" Toggle
+    - [~] Add the toggle UI to `MatchSidebar` and wire it up using the existing `onToggleShowAllScreenings` handler from `page.tsx`.
+- [~] Task: Implement Minimized State UX
+    - [~] Update `MatchSidebar` mobile logic: Add a third state or adjust `isExpanded=false` to represent the "almost completely hidden" minimized state.
+    - [~] Render the `ChevronUp` and "Tap to see screenings" label in this minimized state.
+    - [~] Update `handleTouchEnd` swipe logic and empty map click logic to trigger this minimized state.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: Sidebar Enhancements' (Protocol in workflow.md)

@@ -396,7 +396,6 @@ export default function Home() {
 
       <SearchBar
         onMenuToggle={() => setIsMenuOpen(true)}
-        onDashboardToggle={() => setShowDashboard(true)}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         allCinemas={data?.cinemas}
@@ -419,6 +418,10 @@ export default function Home() {
         onToggleShowAllScreenings={handleToggleShowAllScreenings}
         sortBy={sortBy}
         onSortChange={handleSortChange}
+        onDashboardToggle={() => {
+          setShowDashboard(true);
+          setIsMenuOpen(false);
+        }}
       />
 
       <MatchSidebar

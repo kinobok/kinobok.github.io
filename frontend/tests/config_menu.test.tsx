@@ -124,6 +124,33 @@ describe("ConfigMenu Tabs", () => {
     expect(drawerContent).toBeDefined();
     expect(drawerContent).not.toBeNull();
   });
+
+  test("renders full-width Scrape Dashboard button inside Other tab", () => {
+    globalThis.__MOCK_ACTIVE_TAB__ = "Other";
+    const onDashboardToggle = vi.fn();
+
+    const result = ConfigMenu({
+      isOpen: true,
+      onClose: vi.fn(),
+      visibleChains: [],
+      onToggleChain: vi.fn(),
+      handleFileUpload: vi.fn(),
+      onDashboardToggle,
+    });
+
+    // Find the Scrape Dashboard button
+    const dashboardBtn = findElement(result, (el) => {
+      return el && el.type === "button" && el.props.className === "dashboard-button";
+    });
+
+    expect(dashboardBtn).toBeDefined();
+    expect(dashboardBtn).not.toBeNull();
+    expect(JSON.stringify(dashboardBtn.props.children)).toContain("Scrape Dashboard");
+
+    // Click trigger callback
+    dashboardBtn.props.onClick({ stopPropagation: vi.fn() });
+    expect(onDashboardToggle).toHaveBeenCalled();
+  });
 });
 
 declare global {

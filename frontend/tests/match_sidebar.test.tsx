@@ -203,7 +203,10 @@ describe("MatchSidebar", () => {
     });
 
     // Find the expanded mobile header
-    const expandedHeader = findElement(result, (el) => el && el.props && el.props.onTouchStart !== undefined);
+    const expandedHeader = findElement(
+      result,
+      (el) => el && el.props && el.props.onTouchStart !== undefined,
+    );
     expect(expandedHeader).toBeDefined();
     expect(expandedHeader).not.toBeNull();
 

@@ -58,7 +58,12 @@ export default function MatchSidebar({
   };
 
   const handleTouchEnd = () => {
-    if (!isMobile || touchStartY.current === null || touchCurrentY.current === null) return;
+    if (
+      !isMobile ||
+      touchStartY.current === null ||
+      touchCurrentY.current === null
+    )
+      return;
     const deltaY = touchCurrentY.current - touchStartY.current;
 
     if (deltaY < -50) {

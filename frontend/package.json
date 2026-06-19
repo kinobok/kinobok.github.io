@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest run",
-    "format": "npx prettier . --write **/*.{ts,tsx,js,md}"
+    "format": "npx prettier . --write **/*.{ts,tsx}"
   },
   "dependencies": {
     "jszip": "^3.10.1",

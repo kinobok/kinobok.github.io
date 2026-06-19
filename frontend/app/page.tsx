@@ -398,6 +398,8 @@ export default function Home() {
         onRestoreMovie={handleRestoreMovie}
         showAllScreenings={showAllScreenings}
         onToggleShowAllScreenings={handleToggleShowAllScreenings}
+        sortBy={sortBy}
+        onSortChange={handleSortChange}
       />
 
       <MatchSidebar
@@ -409,8 +411,6 @@ export default function Home() {
             setIsSidebarMinimized(false);
           }
         }}
-        sortBy={sortBy}
-        onSortChange={handleSortChange}
         onExcludeMovie={handleExcludeMovie}
         excludedCount={excludedMovieIds.length}
         onRestoreAllMovies={handleRestoreAllMovies}

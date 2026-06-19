@@ -17,6 +17,8 @@ interface ConfigMenuProps {
   onRestoreMovie?: (movieId: string) => void;
   showAllScreenings?: boolean;
   onToggleShowAllScreenings?: (val: boolean) => void;
+  sortBy?: string;
+  onSortChange?: (newSortBy: string) => void;
 }
 
 export default function ConfigMenu({
@@ -33,6 +35,8 @@ export default function ConfigMenu({
   onRestoreMovie,
   showAllScreenings = false,
   onToggleShowAllScreenings,
+  sortBy,
+  onSortChange,
 }: ConfigMenuProps) {
   const chains = ["Multikino", "Cinema City", "Helios"];
 
@@ -188,6 +192,45 @@ export default function ConfigMenu({
             Enable to see every movie playing. Disable to focus strictly on your
             Letterboxd watchlist.
           </p>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "10px",
+              background: "var(--lb-card)",
+              padding: "10px 12px",
+              borderRadius: "4px",
+              marginTop: "12px",
+            }}
+          >
+            <span style={{ fontSize: "0.95em", fontWeight: "bold" }}>
+              Sort Screenings By
+            </span>
+            {onSortChange && (
+              <select
+                value={sortBy}
+                onChange={(e) => onSortChange(e.target.value)}
+                style={{
+                  background: "var(--lb-sidebar, #14181c)",
+                  color: "var(--lb-text-primary, #fff)",
+                  border: "1px solid var(--lb-card, #2c3440)",
+                  borderRadius: "4px",
+                  padding: "6px 12px",
+                  fontSize: "0.9em",
+                  cursor: "pointer",
+                  outline: "none",
+                }}
+              >
+                <option value="rare-week">Rare Screenings (Weekly)</option>
+                <option value="rare-day">Rare Screenings (Today)</option>
+                <option value="most-screenings">Most Screenings First</option>
+                <option value="alpha-asc">Title (A-Z)</option>
+                <option value="alpha-desc">Title (Z-A)</option>
+              </select>
+            )}
+          </div>
         </div>
 
         <div className="config-section">

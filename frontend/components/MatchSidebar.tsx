@@ -10,8 +10,6 @@ interface MatchSidebarProps {
   matches: Match[];
   isExpanded: boolean;
   onToggleExpand: (expanded: boolean) => void;
-  sortBy?: string;
-  onSortChange?: (newSortBy: string) => void;
   onExcludeMovie?: (movieId: string) => void;
   excludedCount?: number;
   onRestoreAllMovies?: () => void;
@@ -29,8 +27,6 @@ export default function MatchSidebar({
   matches,
   isExpanded,
   onToggleExpand,
-  sortBy,
-  onSortChange,
   onExcludeMovie,
   excludedCount = 0,
   onRestoreAllMovies,
@@ -422,29 +418,6 @@ export default function MatchSidebar({
                       </span>
                     </label>
                   </div>
-                )}
-                {onSortChange && matches.length > 0 && (
-                  <select
-                    value={sortBy}
-                    onChange={(e) => onSortChange(e.target.value)}
-                    onClick={(e) => e.stopPropagation()}
-                    style={{
-                      background: "var(--lb-card)",
-                      color: "var(--lb-text-primary)",
-                      border: "1px solid #444",
-                      borderRadius: "4px",
-                      padding: "4px 8px",
-                      margin: "0 0 0 4px",
-                      fontSize: "0.85em",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <option value="rare-week">Rare Screenings</option>
-                    <option value="rare-day">Rare Today</option>
-                    <option value="most-screenings">Most Screenings</option>
-                    <option value="alpha-asc">Title (A-Z)</option>
-                    <option value="alpha-desc">Title (Z-A)</option>
-                  </select>
                 )}
               </div>
             </div>

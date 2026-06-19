@@ -9,5 +9,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: UX revamped for sidepanel**
+- [x] **Track: UX revamped for sidepanel**
 *Link: [./tracks/sidepanel_ux_20260619/](./tracks/sidepanel_ux_20260619/)*

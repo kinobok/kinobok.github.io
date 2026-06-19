@@ -168,6 +168,7 @@ Before marking any task complete, verify:
 
 ### Before Committing
 ```bash
+npm run format # for triggering prettier
 # Example: Commands to run all pre-commit checks (e.g., format, lint, type check, run tests)
 # e.g., for a Node.js project: npm run check
 # e.g., for a Go project: make check (if a Makefile exists)

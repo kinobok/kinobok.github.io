@@ -5,6 +5,7 @@ interface DateSelectorProps {
   selectedDate: string;
   onDateChange: (date: string) => void;
   matchCounts?: Record<string, number>;
+  isInline?: boolean;
 }
 
 export default function DateSelector({
@@ -12,6 +13,7 @@ export default function DateSelector({
   selectedDate,
   onDateChange,
   matchCounts,
+  isInline = false,
 }: DateSelectorProps) {
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -22,7 +24,7 @@ export default function DateSelector({
   };
 
   return (
-    <div className="date-selector">
+    <div className={isInline ? "date-selector-inline" : "date-selector"}>
       <div className="date-scroll">
         {dates.map((date) => {
           const { weekday, day, month } = formatDate(date);

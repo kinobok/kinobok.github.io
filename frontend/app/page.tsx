@@ -15,7 +15,6 @@ import UpdateReminderModal from "../components/UpdateReminderModal";
 import { shouldShowReminder } from "../utils/watchlist_reminder_helper";
 import SearchBar from "../components/SearchBar";
 import ConfigMenu from "../components/ConfigMenu";
-import DateSelector from "../components/DateSelector";
 
 // Dynamically import the map component to avoid SSR issues with Leaflet
 const CinemaMap = dynamic(() => import("../components/CinemaMap"), {
@@ -364,15 +363,6 @@ export default function Home() {
         onSearchChange={setSearchQuery}
       />
 
-      {data?.showtimes && (
-        <DateSelector
-          dates={Object.keys(data.showtimes).sort()}
-          selectedDate={selectedDate}
-          onDateChange={setSelectedDate}
-          matchCounts={matchCounts}
-        />
-      )}
-
       <ConfigMenu
         isOpen={isMenuOpen}
         onClose={() => setIsMenuOpen(false)}
@@ -398,6 +388,10 @@ export default function Home() {
         onExcludeMovie={handleExcludeMovie}
         excludedCount={excludedMovieIds.length}
         onRestoreAllMovies={handleRestoreAllMovies}
+        dates={data?.showtimes ? Object.keys(data.showtimes).sort() : undefined}
+        selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
+        matchCounts={matchCounts}
       />
 
       <div style={{ flex: 1, position: "relative" }}>

@@ -317,6 +317,12 @@ body,
   justify-content: center;
 }
 
+.date-selector-inline {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 .date-scroll {
   display: flex;
   gap: 8px;

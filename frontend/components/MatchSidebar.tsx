@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { Match } from "../utils/matching_logic";
 import Image from "next/image";
+import DateSelector from "./DateSelector";
 
 interface MatchSidebarProps {
   matches: Match[];
@@ -13,6 +14,10 @@ interface MatchSidebarProps {
   onExcludeMovie?: (movieId: string) => void;
   excludedCount?: number;
   onRestoreAllMovies?: () => void;
+  dates?: string[];
+  selectedDate?: string;
+  onDateChange?: (date: string) => void;
+  matchCounts?: Record<string, number>;
 }
 
 export default function MatchSidebar({
@@ -24,6 +29,10 @@ export default function MatchSidebar({
   onExcludeMovie,
   excludedCount = 0,
   onRestoreAllMovies,
+  dates,
+  selectedDate,
+  onDateChange,
+  matchCounts,
 }: MatchSidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -33,6 +42,16 @@ export default function MatchSidebar({
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  const handleSearchFocus = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const searchInput = document.querySelector(
+      ".search-input-wrapper input",
+    ) as HTMLInputElement;
+    if (searchInput) {
+      searchInput.focus();
+    }
+  };
 
   const containerStyle: React.CSSProperties = isMobile
     ? {
@@ -77,26 +96,55 @@ export default function MatchSidebar({
             }}
           >
             {isExpanded ? (
-              <button
-                className="icon-button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggleExpand(false);
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  width: "100%",
+                  marginBottom: "15px",
                 }}
-                style={{ position: "absolute", left: "15px", top: "15px" }}
               >
-                <span style={{ fontSize: 20 }}>⌄</span> {/*ChevronDown*/}
-              </button>
+                <button
+                  className="icon-button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleExpand(false);
+                  }}
+                  style={{ display: "flex", alignItems: "center" }}
+                  title="Hide sidebar"
+                >
+                  <span style={{ fontSize: 24, lineHeight: "24px" }}>⌄</span>
+                </button>
+                <button
+                  className="icon-button"
+                  onClick={handleSearchFocus}
+                  style={{ display: "flex", alignItems: "center" }}
+                  title="Search map"
+                >
+                  <span style={{ fontSize: 18 }}>🔍</span>
+                </button>
+              </div>
             ) : (
               <div
                 style={{
-                  width: "40px",
-                  height: "4px",
-                  background: "var(--lb-card)",
-                  borderRadius: "2px",
-                  marginBottom: 20,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  width: "100%",
+                  marginBottom: "15px",
                 }}
-              />
+              >
+                <div
+                  style={{
+                    width: "40px",
+                    height: "4px",
+                    background: "var(--lb-card)",
+                    borderRadius: "2px",
+                    marginBottom: 10,
+                  }}
+                />
+              </div>
             )}
           </div>
         )}
@@ -172,6 +220,20 @@ export default function MatchSidebar({
               </h2>
             </div>
           </div>
+
+          {/* Timeline Selector Relocation */}
+          {dates && selectedDate && onDateChange && (
+            <div style={{ marginBottom: "20px" }}>
+              <DateSelector
+                dates={dates}
+                selectedDate={selectedDate}
+                onDateChange={onDateChange}
+                matchCounts={matchCounts}
+                isInline={true}
+              />
+            </div>
+          )}
+
           <div
             style={{
               display: "flex",
@@ -204,29 +266,41 @@ export default function MatchSidebar({
               </span>
             </h3>
 
-            {onSortChange && matches.length > 0 && (
-              <select
-                value={sortBy}
-                onChange={(e) => onSortChange(e.target.value)}
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  background: "var(--lb-card)",
-                  color: "var(--lb-text-primary)",
-                  border: "1px solid #444",
-                  borderRadius: "4px",
-                  padding: "4px 8px",
-                  margin: "0 0 0 4px",
-                  fontSize: "0.85em",
-                  cursor: "pointer",
-                }}
-              >
-                <option value="rare-week">Rare Screenings</option>
-                <option value="rare-day">Rare Today</option>
-                <option value="most-screenings">Most Screenings</option>
-                <option value="alpha-asc">Title (A-Z)</option>
-                <option value="alpha-desc">Title (Z-A)</option>
-              </select>
-            )}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              {!isMobile && (
+                <button
+                  className="icon-button"
+                  onClick={handleSearchFocus}
+                  title="Search map"
+                  style={{ marginRight: "4px" }}
+                >
+                  🔍
+                </button>
+              )}
+              {onSortChange && matches.length > 0 && (
+                <select
+                  value={sortBy}
+                  onChange={(e) => onSortChange(e.target.value)}
+                  onClick={(e) => e.stopPropagation()}
+                  style={{
+                    background: "var(--lb-card)",
+                    color: "var(--lb-text-primary)",
+                    border: "1px solid #444",
+                    borderRadius: "4px",
+                    padding: "4px 8px",
+                    margin: "0 0 0 4px",
+                    fontSize: "0.85em",
+                    cursor: "pointer",
+                  }}
+                >
+                  <option value="rare-week">Rare Screenings</option>
+                  <option value="rare-day">Rare Today</option>
+                  <option value="most-screenings">Most Screenings</option>
+                  <option value="alpha-asc">Title (A-Z)</option>
+                  <option value="alpha-desc">Title (Z-A)</option>
+                </select>
+              )}
+            </div>
           </div>
 
           <div style={{ marginTop: "10px" }}>

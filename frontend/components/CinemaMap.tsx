@@ -20,6 +20,8 @@ interface CinemaMapProps {
   matches?: Match[];
   userLocation?: { lat: number; lng: number } | null;
   onLocationFound?: (loc: { lat: number; lng: number }) => void;
+  selectedCinemaId?: string | null;
+  onSelectCinema?: (cinemaId: string | null) => void;
 }
 
 const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
@@ -62,12 +64,23 @@ function MapController({
   return null;
 }
 
+function MapEventsController({ onMapClick }: { onMapClick: () => void }) {
+  useMapEvents({
+    click: () => {
+      onMapClick();
+    },
+  });
+  return null;
+}
+
 export default function CinemaMap({
   cinemas,
   highlightedCinemaIds = [],
   matches = [],
   userLocation,
   onLocationFound,
+  selectedCinemaId,
+  onSelectCinema,
 }: CinemaMapProps) {
   const [isClient, setIsClient] = useState(false);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
@@ -163,6 +176,11 @@ export default function CinemaMap({
           center={userLocation ? [userLocation.lat, userLocation.lng] : null}
           onZoomChange={setZoom}
         />
+        <MapEventsController
+          onMapClick={() => {
+            if (onSelectCinema) onSelectCinema(null);
+          }}
+        />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
@@ -193,6 +211,16 @@ export default function CinemaMap({
                 key={cinema.id}
                 position={[cinema.coords.lat, cinema.coords.lng]}
                 icon={icon}
+                eventHandlers={{
+                  click: (e) => {
+                    if (e.originalEvent) {
+                      e.originalEvent.stopPropagation();
+                    }
+                    if (onSelectCinema) {
+                      onSelectCinema(cinema.id);
+                    }
+                  }
+                }}
               >
                 <Popup>
                   <strong style={{ color: "var(--lb-text-primary)" }}>

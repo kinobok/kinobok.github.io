@@ -36,6 +36,7 @@ export default function Home() {
   const [showGuidance, setShowGuidance] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [showReminder, setShowReminder] = useState(false);
@@ -310,12 +311,22 @@ export default function Home() {
       );
     }
 
+    if (selectedCinemaId) {
+      result.matches = result.matches
+        .map((m) => ({
+          ...m,
+          showtimes: m.showtimes.filter((s) => s.cinema_id === selectedCinemaId),
+        }))
+        .filter((m) => m.showtimes.length > 0);
+    }
+
     return result;
   }, [
     watchlistUris,
     data,
     visibleChains,
     searchQuery,
+    selectedCinemaId,
     selectedDate,
     excludedMovieIds,
     excludedCinemaIds,
@@ -361,6 +372,8 @@ export default function Home() {
         onDashboardToggle={() => setShowDashboard(true)}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        allCinemas={data?.cinemas}
+        onSelectCinema={setSelectedCinemaId}
       />
 
       <ConfigMenu
@@ -401,6 +414,8 @@ export default function Home() {
           matches={matches}
           userLocation={userLocation}
           onLocationFound={handleLocationFound}
+          selectedCinemaId={selectedCinemaId}
+          onSelectCinema={setSelectedCinemaId}
         />
       </div>
     </main>

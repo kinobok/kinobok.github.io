@@ -20,7 +20,6 @@ interface CinemaMapProps {
   matches?: Match[];
   userLocation?: { lat: number; lng: number } | null;
   onLocationFound?: (loc: { lat: number; lng: number }) => void;
-  selectedCinemaId?: string | null;
   onSelectCinema?: (cinemaId: string | null) => void;
 }
 
@@ -79,7 +78,6 @@ export default function CinemaMap({
   matches = [],
   userLocation,
   onLocationFound,
-  selectedCinemaId,
   onSelectCinema,
 }: CinemaMapProps) {
   const [isClient, setIsClient] = useState(false);
@@ -219,7 +217,7 @@ export default function CinemaMap({
                     if (onSelectCinema) {
                       onSelectCinema(cinema.id);
                     }
-                  }
+                  },
                 }}
               >
                 <Popup>

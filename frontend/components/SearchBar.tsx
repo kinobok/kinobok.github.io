@@ -2,13 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { Search, X } from "lucide-react";
+import { Cinema } from "../utils/matching_logic";
 
 interface SearchBarProps {
   onMenuToggle: () => void;
   onDashboardToggle: () => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
-  allCinemas?: any[];
+  allCinemas?: Cinema[];
   onSelectCinema?: (cinemaId: string | null) => void;
 }
 
@@ -20,13 +21,13 @@ export default function SearchBar({
   allCinemas,
   onSelectCinema,
 }: SearchBarProps) {
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<Cinema[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     if (searchQuery.length > 1 && allCinemas) {
       const filtered = allCinemas.filter((cinema) =>
-        cinema.name.toLowerCase().includes(searchQuery.toLowerCase())
+        cinema.name.toLowerCase().includes(searchQuery.toLowerCase()),
       );
       setSuggestions(filtered);
       setShowSuggestions(true);
@@ -37,7 +38,7 @@ export default function SearchBar({
   }, [searchQuery, allCinemas]);
 
   return (
-    <div className="search-bar-container" style={{ position: "relative" }}>
+    <div className="search-bar-container">
       <button
         className="icon-button"
         onClick={onMenuToggle}

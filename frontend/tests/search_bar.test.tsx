@@ -8,7 +8,11 @@ vi.mock("react", async (importOriginal) => {
     ...original,
     useState: (initVal: any) => {
       // Allow us to mock internal state by checking initial values or using a global setter
-      return [globalThis.__MOCK_STATE__ ?? (typeof initVal === "function" ? initVal() : initVal), vi.fn()];
+      return [
+        globalThis.__MOCK_STATE__ ??
+          (typeof initVal === "function" ? initVal() : initVal),
+        vi.fn(),
+      ];
     },
     useEffect: (effect: any) => {
       effect();
@@ -35,7 +39,11 @@ function findElement(element: any, predicate: (el: any) => boolean): any {
 }
 
 // Utility to recursively find all React elements matching a predicate
-function findAllElements(element: any, predicate: (el: any) => boolean, results: any[] = []): any[] {
+function findAllElements(
+  element: any,
+  predicate: (el: any) => boolean,
+  results: any[] = [],
+): any[] {
   if (!element) return results;
   if (predicate(element)) {
     results.push(element);
@@ -137,12 +145,19 @@ describe("SearchBar", () => {
     });
 
     // Find the suggestions dropdown list
-    const dropdown = findElement(result, (el) => el && el.props && el.props.className === "search-suggestions-dropdown");
+    const dropdown = findElement(
+      result,
+      (el) =>
+        el && el.props && el.props.className === "search-suggestions-dropdown",
+    );
     expect(dropdown).toBeDefined();
     expect(dropdown).not.toBeNull();
 
     // Find the suggestion item
-    const item = findElement(dropdown, (el) => el && el.props && el.props.className === "suggestion-item");
+    const item = findElement(
+      dropdown,
+      (el) => el && el.props && el.props.className === "suggestion-item",
+    );
     expect(item).toBeDefined();
     expect(item).not.toBeNull();
     expect(JSON.stringify(item.props.children)).toContain("Multikino Ursynow");

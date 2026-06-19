@@ -7,7 +7,11 @@ vi.mock("react", async (importOriginal) => {
   return {
     ...original,
     useState: (initVal: any) => {
-      return [globalThis.__MOCK_SELECTION__ ?? (typeof initVal === "function" ? initVal() : initVal), vi.fn()];
+      return [
+        globalThis.__MOCK_SELECTION__ ??
+          (typeof initVal === "function" ? initVal() : initVal),
+        vi.fn(),
+      ];
     },
     useRef: (initVal: any) => {
       return { current: initVal };
@@ -37,7 +41,7 @@ describe("CinemaSelection", () => {
     };
 
     const selectedCinemaId = "c1";
-    
+
     // Test the logic directly: filtering movie matches by selectedCinemaId
     const filteredMatches = [mockMatch]
       .map((m) => ({
@@ -53,7 +57,7 @@ describe("CinemaSelection", () => {
 
   test("clicking empty map space triggers onSelectCinema(null)", () => {
     const onSelectCinema = vi.fn();
-    
+
     // Create a mock container or element that registers Leaflet Map Container click behavior
     const triggerMapClick = (onSelect: any) => {
       onSelect(null);

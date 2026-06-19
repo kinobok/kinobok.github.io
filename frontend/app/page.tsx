@@ -39,6 +39,7 @@ export default function Home() {
   const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
   const [showReminder, setShowReminder] = useState(false);
   const [lastUploadDateString, setLastUploadDateString] = useState("");
 
@@ -315,7 +316,9 @@ export default function Home() {
       result.matches = result.matches
         .map((m) => ({
           ...m,
-          showtimes: m.showtimes.filter((s) => s.cinema_id === selectedCinemaId),
+          showtimes: m.showtimes.filter(
+            (s) => s.cinema_id === selectedCinemaId,
+          ),
         }))
         .filter((m) => m.showtimes.length > 0);
     }
@@ -373,7 +376,12 @@ export default function Home() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         allCinemas={data?.cinemas}
-        onSelectCinema={setSelectedCinemaId}
+        onSelectCinema={(cinemaId) => {
+          setSelectedCinemaId(cinemaId);
+          if (cinemaId === null) {
+            setIsSidebarMinimized(true);
+          }
+        }}
       />
 
       <ConfigMenu
@@ -395,7 +403,12 @@ export default function Home() {
       <MatchSidebar
         matches={matches}
         isExpanded={isSidebarExpanded}
-        onToggleExpand={setIsSidebarExpanded}
+        onToggleExpand={(val) => {
+          setIsSidebarExpanded(val);
+          if (val) {
+            setIsSidebarMinimized(false);
+          }
+        }}
         sortBy={sortBy}
         onSortChange={handleSortChange}
         onExcludeMovie={handleExcludeMovie}
@@ -405,6 +418,10 @@ export default function Home() {
         selectedDate={selectedDate}
         onDateChange={setSelectedDate}
         matchCounts={matchCounts}
+        showAllScreenings={showAllScreenings}
+        onToggleShowAllScreenings={handleToggleShowAllScreenings}
+        isMinimized={isSidebarMinimized}
+        onToggleMinimize={setIsSidebarMinimized}
       />
 
       <div style={{ flex: 1, position: "relative" }}>
@@ -414,8 +431,12 @@ export default function Home() {
           matches={matches}
           userLocation={userLocation}
           onLocationFound={handleLocationFound}
-          selectedCinemaId={selectedCinemaId}
-          onSelectCinema={setSelectedCinemaId}
+          onSelectCinema={(cinemaId) => {
+            setSelectedCinemaId(cinemaId);
+            if (cinemaId === null) {
+              setIsSidebarMinimized(true);
+            }
+          }}
         />
       </div>
     </main>

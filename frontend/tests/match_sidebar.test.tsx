@@ -230,7 +230,11 @@ describe("MatchSidebar", () => {
 
     // Find the toggle button
     const toggleButton = findElement(result, (el) => {
-      return el && el.type === "button" && el.props.title === "Toggle show all screenings";
+      return (
+        el &&
+        el.type === "button" &&
+        el.props.title === "Toggle show all screenings"
+      );
     });
 
     expect(toggleButton).toBeDefined();
@@ -255,7 +259,11 @@ describe("MatchSidebar", () => {
 
     // Verify it renders the 'Tap to see screenings' text
     const labelNode = findElement(result, (el) => {
-      return el && typeof el === "object" && JSON.stringify(el.props).includes("Tap to see screenings");
+      return (
+        el &&
+        typeof el === "object" &&
+        JSON.stringify(el.props).includes("Tap to see screenings")
+      );
     });
 
     expect(labelNode).toBeDefined();

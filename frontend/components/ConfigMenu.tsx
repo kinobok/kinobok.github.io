@@ -62,14 +62,37 @@ export default function ConfigMenu({
     return grouped;
   }, [allCinemas]);
 
-  if (!isOpen) return null;
-
   return (
-    <div className="config-menu-overlay" onClick={onClose}>
+    <div
+      className={`config-menu-drawer-overlay ${isOpen ? "active" : ""}`}
+      onClick={onClose}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: isOpen ? "rgba(0, 0, 0, 0.5)" : "rgba(0, 0, 0, 0)",
+        zIndex: 1300,
+        pointerEvents: isOpen ? "auto" : "none",
+        transition: "background 0.3s ease-in-out",
+      }}
+    >
       <div
-        className="config-menu-content"
+        className={`config-menu-drawer ${isOpen ? "open" : ""}`}
         onClick={(e) => e.stopPropagation()}
-        style={{ overflowY: "auto" }}
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          bottom: 0,
+          width: "390px",
+          maxWidth: "100%",
+          background: "var(--lb-sidebar)",
+          padding: "20px",
+          boxShadow: "2px 0 10px rgba(0, 0, 0, 0.5)",
+          transform: isOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform 0.3s ease-in-out",
+          overflowY: "auto",
+          boxSizing: "border-box",
+        }}
       >
         <div className="config-menu-header">
           <h2 style={{ margin: 0 }}>kinꚘbok Warsaw</h2>

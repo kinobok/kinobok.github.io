@@ -16,15 +16,15 @@
 - [x] Task: Write Tests for Map Point Selection State (f91e540)
     - [x] Update map tests or sidebar tests to verify that a selected cinema ID filters the `matches` list.
     - [x] Verify that clicking empty map space clears the selected cinema state.
-- [~] Task: Implement Global Selected Cinema State
-    - [~] Lift state up to `page.tsx` (e.g., `selectedCinemaId`) to manage the currently focused cinema.
-    - [~] Pass the setter down to `CinemaMap` (for marker clicks and map background clicks) and `SearchBar` (for typeahead clicks).
-- [~] Task: Apply Filtering to MatchSidebar
-    - [~] Update the `matches` prop passed to `MatchSidebar` to be filtered by `selectedCinemaId` if it is set.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Map Point Click Integration & Global Selection State' (Protocol in workflow.md)
+- [x] Task: Implement Global Selected Cinema State (a86fa91)
+    - [x] Lift state up to `page.tsx` (e.g., `selectedCinemaId`) to manage the currently focused cinema.
+    - [x] Pass the setter down to `CinemaMap` (for marker clicks and map background clicks) and `SearchBar` (for typeahead clicks).
+- [x] Task: Apply Filtering to MatchSidebar (a86fa91)
+    - [x] Update the `matches` prop passed to `MatchSidebar` to be filtered by `selectedCinemaId` if it is set.
+- [~] Task: Conductor - User Manual Verification 'Phase 2: Map Point Click Integration & Global Selection State' (Protocol in workflow.md)
 
 ## Phase 3: Sidebar Enhancements (Toggle & Minimized State)
-- [ ] Task: Write Tests for Sidebar Enhancements
+- [~] Task: Write Tests for Sidebar Enhancements
     - [ ] Test the presence and toggle behavior of the "Show all screenings" button in `MatchSidebar`.
     - [ ] Test the "minimized" state rendering ("Tap to see screenings" and `ChevronUp`) when expanded is false and state is minimized.
 - [ ] Task: Implement "Show all screenings" Toggle

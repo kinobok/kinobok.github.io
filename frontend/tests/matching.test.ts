@@ -189,6 +189,30 @@ describe("calculateMatchCountsPerDay", () => {
     expect(counts["2026-05-07"]).toBe(2);
     expect(counts["2026-05-08"]).toBe(0);
   });
+
+  it("should filter match counts by selectedCinemaId when provided", () => {
+    const countsC1 = calculateMatchCountsPerDay(
+      [],
+      mockData,
+      [],
+      [],
+      [],
+      true, // showAllScreenings
+      "c1", // selectedCinemaId
+    );
+    expect(countsC1["2026-05-07"]).toBe(2);
+
+    const countsC2 = calculateMatchCountsPerDay(
+      [],
+      mockData,
+      [],
+      [],
+      [],
+      true, // showAllScreenings
+      "c2", // selectedCinemaId
+    );
+    expect(countsC2["2026-05-07"]).toBe(0);
+  });
 });
 
 describe("Filtering Logic", () => {

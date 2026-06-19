@@ -217,6 +217,86 @@ describe("MatchSidebar", () => {
 
     expect(onToggleExpand).toHaveBeenCalledWith(false);
   });
+
+  test("renders Show All Screenings toggle button", () => {
+    const onToggleShowAll = vi.fn();
+    const result = MatchSidebar({
+      matches: [],
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+      showAllScreenings: true,
+      onToggleShowAllScreenings: onToggleShowAll,
+    });
+
+    // Find the toggle wrapper
+    const toggleWrapper = findElement(result, (el) => {
+      return el && el.props && el.props.title === "Toggle show all screenings";
+    });
+
+    expect(toggleWrapper).toBeDefined();
+    expect(toggleWrapper).not.toBeNull();
+
+    // Find input element inside wrapper
+    const input = findElement(toggleWrapper, (el) => el && el.type === "input");
+    expect(input).toBeDefined();
+    expect(input).not.toBeNull();
+
+    // Trigger change
+    input.props.onChange({ stopPropagation: vi.fn() });
+    expect(onToggleShowAll).toHaveBeenCalled();
+  });
+
+  test("renders minimized state on mobile", () => {
+    globalThis.__MOCK_IS_MOBILE__ = true;
+    const onToggleMinimize = vi.fn();
+
+    const result = MatchSidebar({
+      matches: [],
+      isExpanded: false,
+      onToggleExpand: vi.fn(),
+      isMinimized: true,
+      onToggleMinimize,
+    });
+
+    // Verify it renders the 'Tap to see screenings' text
+    const labelNode = findElement(result, (el) => {
+      return (
+        el &&
+        typeof el === "object" &&
+        JSON.stringify(el.props).includes("Tap to see screenings")
+      );
+    });
+
+    expect(labelNode).toBeDefined();
+    expect(labelNode).not.toBeNull();
+  });
+
+  test("renders selected cinema information when selectedCinema is provided", () => {
+    const selectedCinema = {
+      id: "c1",
+      name: "Kinoteka",
+      address: "Plac Defilad 1",
+    };
+
+    const result = MatchSidebar({
+      matches: [],
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+      selectedCinema,
+    });
+
+    // Find cinema name rendering inside the sidebar
+    const cinemaInfoNode = findElement(result, (el) => {
+      return (
+        el &&
+        typeof el === "object" &&
+        JSON.stringify(el.props).includes("Kinoteka")
+      );
+    });
+
+    expect(cinemaInfoNode).toBeDefined();
+    expect(cinemaInfoNode).not.toBeNull();
+  });
 });
 
 // Declare global variable type for TypeScript safety

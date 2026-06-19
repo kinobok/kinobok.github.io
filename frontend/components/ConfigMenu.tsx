@@ -17,6 +17,8 @@ interface ConfigMenuProps {
   onRestoreMovie?: (movieId: string) => void;
   showAllScreenings?: boolean;
   onToggleShowAllScreenings?: (val: boolean) => void;
+  sortBy?: string;
+  onSortChange?: (newSortBy: string) => void;
 }
 
 export default function ConfigMenu({
@@ -33,6 +35,8 @@ export default function ConfigMenu({
   onRestoreMovie,
   showAllScreenings = false,
   onToggleShowAllScreenings,
+  sortBy,
+  onSortChange,
 }: ConfigMenuProps) {
   const chains = ["Multikino", "Cinema City", "Helios"];
 
@@ -116,18 +120,68 @@ export default function ConfigMenu({
 
         <div className="config-section">
           <h3>Screening Settings</h3>
-          <label className="checkbox-label" style={{ fontSize: "0.95em" }}>
-            <input
-              type="checkbox"
-              checked={showAllScreenings}
-              onChange={(e) =>
-                onToggleShowAllScreenings &&
-                onToggleShowAllScreenings(e.target.checked)
-              }
-              style={{ accentColor: "var(--lb-green)" }}
-            />
-            Show All Screenings
-          </label>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "10px",
+              background: "var(--lb-card)",
+              padding: "10px 12px",
+              borderRadius: "4px",
+              marginTop: "8px",
+            }}
+          >
+            <span style={{ fontSize: "0.95em", fontWeight: "bold" }}>
+              Show All Screenings
+            </span>
+            <label
+              style={{
+                position: "relative",
+                display: "inline-block",
+                width: "44px",
+                height: "24px",
+                cursor: "pointer",
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={showAllScreenings}
+                onChange={(e) =>
+                  onToggleShowAllScreenings &&
+                  onToggleShowAllScreenings(e.target.checked)
+                }
+                style={{ opacity: 0, width: 0, height: 0 }}
+              />
+              <span
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  backgroundColor: showAllScreenings
+                    ? "var(--lb-green)"
+                    : "#444",
+                  transition: "0.3s",
+                  borderRadius: "24px",
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    height: "18px",
+                    width: "18px",
+                    left: showAllScreenings ? "23px" : "3px",
+                    bottom: "3px",
+                    backgroundColor: showAllScreenings ? "#000" : "#fff",
+                    transition: "0.3s",
+                    borderRadius: "50%",
+                  }}
+                />
+              </span>
+            </label>
+          </div>
           <p
             style={{
               fontSize: "0.8em",
@@ -138,6 +192,45 @@ export default function ConfigMenu({
             Enable to see every movie playing. Disable to focus strictly on your
             Letterboxd watchlist.
           </p>
+
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "10px",
+              background: "var(--lb-card)",
+              padding: "10px 12px",
+              borderRadius: "4px",
+              marginTop: "12px",
+            }}
+          >
+            <span style={{ fontSize: "0.95em", fontWeight: "bold" }}>
+              Sort Screenings By
+            </span>
+            {onSortChange && (
+              <select
+                value={sortBy}
+                onChange={(e) => onSortChange(e.target.value)}
+                style={{
+                  background: "var(--lb-sidebar, #14181c)",
+                  color: "var(--lb-text-primary, #fff)",
+                  border: "1px solid var(--lb-card, #2c3440)",
+                  borderRadius: "4px",
+                  padding: "6px 12px",
+                  fontSize: "0.9em",
+                  cursor: "pointer",
+                  outline: "none",
+                }}
+              >
+                <option value="rare-week">Rare Screenings (Weekly)</option>
+                <option value="rare-day">Rare Screenings (Today)</option>
+                <option value="most-screenings">Most Screenings First</option>
+                <option value="alpha-asc">Title (A-Z)</option>
+                <option value="alpha-desc">Title (Z-A)</option>
+              </select>
+            )}
+          </div>
         </div>
 
         <div className="config-section">

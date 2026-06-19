@@ -188,12 +188,13 @@ export function calculateMatchCountsPerDay(
   excludedMovieIds: string[] = [],
   excludedCinemaIds: string[] = [],
   showAllScreenings: boolean = false,
+  selectedCinemaId: string | null = null,
 ): Record<string, number> {
   const counts: Record<string, number> = {};
   if (!data || !data.showtimes) return counts;
 
   for (const date of Object.keys(data.showtimes)) {
-    const { matches } = findMatchesWithFilters(
+    let { matches } = findMatchesWithFilters(
       watchlistUris,
       data,
       visibleChains,
@@ -203,6 +204,18 @@ export function calculateMatchCountsPerDay(
       "alpha-asc", // sorting doesn't matter for counting
       showAllScreenings,
     );
+
+    if (selectedCinemaId) {
+      matches = matches
+        .map((m) => ({
+          ...m,
+          showtimes: m.showtimes.filter(
+            (s) => s.cinema_id === selectedCinemaId,
+          ),
+        }))
+        .filter((m) => m.showtimes.length > 0);
+    }
+
     counts[date] = matches.length;
   }
   return counts;

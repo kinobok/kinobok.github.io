@@ -36,8 +36,15 @@ export default function Home() {
   const [showGuidance, setShowGuidance] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
+
+  const selectedCinema = useMemo(() => {
+    if (!selectedCinemaId || !data?.cinemas) return null;
+    return data.cinemas.find((c) => c.id === selectedCinemaId) || null;
+  }, [selectedCinemaId, data]);
   const [showReminder, setShowReminder] = useState(false);
   const [lastUploadDateString, setLastUploadDateString] = useState("");
 
@@ -263,6 +270,23 @@ export default function Home() {
     );
   };
 
+  const handleSelectCinema = (cinemaId: string | null) => {
+    setSelectedCinemaId(cinemaId);
+    if (cinemaId === null) {
+      setIsSidebarMinimized(true);
+      setSearchQuery("");
+    } else {
+      setIsSidebarMinimized(false);
+      setIsSidebarExpanded(false);
+      if (data?.cinemas) {
+        const cinema = data.cinemas.find((c) => c.id === cinemaId);
+        if (cinema) {
+          setSearchQuery(cinema.name);
+        }
+      }
+    }
+  };
+
   const handleToggleShowAllScreenings = (val: boolean) => {
     setShowAllScreenings(val);
     localStorage.setItem("kinobok_show_all_screenings", String(val));
@@ -276,6 +300,7 @@ export default function Home() {
       excludedMovieIds,
       excludedCinemaIds,
       showAllScreenings,
+      selectedCinemaId,
     );
   }, [
     watchlistUris,
@@ -284,6 +309,7 @@ export default function Home() {
     excludedMovieIds,
     excludedCinemaIds,
     showAllScreenings,
+    selectedCinemaId,
   ]);
 
   const { matches, filteredCinemas, matchedCinemaIds } = useMemo(() => {
@@ -310,12 +336,24 @@ export default function Home() {
       );
     }
 
+    if (selectedCinemaId) {
+      result.matches = result.matches
+        .map((m) => ({
+          ...m,
+          showtimes: m.showtimes.filter(
+            (s) => s.cinema_id === selectedCinemaId,
+          ),
+        }))
+        .filter((m) => m.showtimes.length > 0);
+    }
+
     return result;
   }, [
     watchlistUris,
     data,
     visibleChains,
     searchQuery,
+    selectedCinemaId,
     selectedDate,
     excludedMovieIds,
     excludedCinemaIds,
@@ -361,6 +399,8 @@ export default function Home() {
         onDashboardToggle={() => setShowDashboard(true)}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
+        allCinemas={data?.cinemas}
+        onSelectCinema={handleSelectCinema}
       />
 
       <ConfigMenu
@@ -377,14 +417,19 @@ export default function Home() {
         onRestoreMovie={handleRestoreMovie}
         showAllScreenings={showAllScreenings}
         onToggleShowAllScreenings={handleToggleShowAllScreenings}
+        sortBy={sortBy}
+        onSortChange={handleSortChange}
       />
 
       <MatchSidebar
         matches={matches}
         isExpanded={isSidebarExpanded}
-        onToggleExpand={setIsSidebarExpanded}
-        sortBy={sortBy}
-        onSortChange={handleSortChange}
+        onToggleExpand={(val) => {
+          setIsSidebarExpanded(val);
+          if (val) {
+            setIsSidebarMinimized(false);
+          }
+        }}
         onExcludeMovie={handleExcludeMovie}
         excludedCount={excludedMovieIds.length}
         onRestoreAllMovies={handleRestoreAllMovies}
@@ -392,15 +437,20 @@ export default function Home() {
         selectedDate={selectedDate}
         onDateChange={setSelectedDate}
         matchCounts={matchCounts}
+        showAllScreenings={showAllScreenings}
+        onToggleShowAllScreenings={handleToggleShowAllScreenings}
+        isMinimized={isSidebarMinimized}
+        onToggleMinimize={setIsSidebarMinimized}
+        selectedCinema={selectedCinema}
       />
 
       <div style={{ flex: 1, position: "relative" }}>
         <CinemaMap
           cinemas={filteredCinemas}
           highlightedCinemaIds={matchedCinemaIds}
-          matches={matches}
           userLocation={userLocation}
           onLocationFound={handleLocationFound}
+          onSelectCinema={handleSelectCinema}
         />
       </div>
     </main>

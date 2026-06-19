@@ -10,16 +10,16 @@ import {
 } from "react-leaflet";
 import { useEffect, useState } from "react";
 import L from "leaflet";
-import { Match, Cinema } from "../utils/matching_logic";
+import { Cinema } from "../utils/matching_logic";
 
 const DEFAULT_ZOOM_VALUE = 12;
 
 interface CinemaMapProps {
   cinemas: Cinema[];
   highlightedCinemaIds?: string[];
-  matches?: Match[];
   userLocation?: { lat: number; lng: number } | null;
   onLocationFound?: (loc: { lat: number; lng: number }) => void;
+  onSelectCinema?: (cinemaId: string | null) => void;
 }
 
 const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
@@ -62,12 +62,21 @@ function MapController({
   return null;
 }
 
+function MapEventsController({ onMapClick }: { onMapClick: () => void }) {
+  useMapEvents({
+    click: () => {
+      onMapClick();
+    },
+  });
+  return null;
+}
+
 export default function CinemaMap({
   cinemas,
   highlightedCinemaIds = [],
-  matches = [],
   userLocation,
   onLocationFound,
+  onSelectCinema,
 }: CinemaMapProps) {
   const [isClient, setIsClient] = useState(false);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
@@ -163,6 +172,11 @@ export default function CinemaMap({
           center={userLocation ? [userLocation.lat, userLocation.lng] : null}
           onZoomChange={setZoom}
         />
+        <MapEventsController
+          onMapClick={() => {
+            if (onSelectCinema) onSelectCinema(null);
+          }}
+        />
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
@@ -178,10 +192,6 @@ export default function CinemaMap({
         )}
 
         {cinemas.map((cinema) => {
-          const cinemaMatches = matches.filter((m) =>
-            m.showtimes.some((s) => s.cinema_id === cinema.id),
-          );
-
           const isHighlighted = highlightedCinemaIds.includes(cinema.id);
           const color = isHighlighted ? "#00e054" : "#ff8000";
           const icon = createMarkerIcon(color, cinema.name, zoom >= 13);
@@ -193,57 +203,17 @@ export default function CinemaMap({
                 key={cinema.id}
                 position={[cinema.coords.lat, cinema.coords.lng]}
                 icon={icon}
-              >
-                <Popup>
-                  <strong style={{ color: "var(--lb-text-primary)" }}>
-                    {cinema.name}
-                  </strong>
-                  <br />
-                  <span
-                    style={{
-                      color: "var(--lb-text-secondary)",
-                      fontSize: "0.9em",
-                    }}
-                  >
-                    {cinema.address}
-                  </span>
-                  {cinemaMatches.length > 0 && (
-                    <div
-                      style={{
-                        marginTop: "10px",
-                        borderTop: "1px solid var(--lb-card)",
-                        paddingTop: "5px",
-                      }}
-                    >
-                      <strong
-                        style={{ fontSize: "0.85em", color: "var(--lb-green)" }}
-                      >
-                        Watchlist Matches:
-                      </strong>
-                      <ul
-                        style={{
-                          margin: "5px 0 0 0",
-                          paddingLeft: "18px",
-                          fontSize: "0.9em",
-                        }}
-                      >
-                        {cinemaMatches.map((m) => (
-                          <li key={m.id}>
-                            <a
-                              href={m.boxd_uri}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{ color: "var(--lb-blue)" }}
-                            >
-                              {m.title}
-                            </a>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </Popup>
-              </Marker>
+                eventHandlers={{
+                  click: (e) => {
+                    if (e.originalEvent) {
+                      e.originalEvent.stopPropagation();
+                    }
+                    if (onSelectCinema) {
+                      onSelectCinema(cinema.id);
+                    }
+                  },
+                }}
+              ></Marker>
             )
           );
         })}

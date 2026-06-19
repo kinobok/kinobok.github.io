@@ -95,7 +95,29 @@ export default function ConfigMenu({
         }}
       >
         <div className="config-menu-header">
-          <h2 style={{ margin: 0 }}>kinꚘbok Warsaw</h2>
+          <div
+            style={{
+              display: "block",
+              justifyContent: "center",
+              textAlign: "center",
+              alignItems: "center",
+              gap: "12px",
+              width: "-moz-available",
+            }}
+          >
+            <h2
+              style={{
+                margin: 0,
+                color: "var(--lb-text-primary)",
+                fontSize: "24px",
+                fontWeight: "bold",
+              }}
+            >
+              kin<span style={{ color: "var(--lb-orange" }}>o</span>
+              <span style={{ color: "var(--lb-green" }}>o</span>
+              <span style={{ color: "var(--lb-blue" }}>o</span>bok
+            </h2>
+          </div>
           <button className="icon-button" onClick={onClose}>
             ✕
           </button>
@@ -120,7 +142,7 @@ export default function ConfigMenu({
                 flex: 1,
                 padding: "8px 4px",
                 background:
-                  activeTab === tab ? "var(--lb-green)" : "var(--lb-card)",
+                  activeTab === tab ? "var(--lb-blue)" : "var(--lb-card)",
                 color: activeTab === tab ? "#000" : "var(--lb-text-primary)",
                 border: "none",
                 borderRadius: "4px",
@@ -163,6 +185,7 @@ export default function ConfigMenu({
                 </a>
               </li>
             </ul>
+            Upload your data:
             <div
               style={{
                 background: "var(--lb-card)",
@@ -483,7 +506,7 @@ export default function ConfigMenu({
                   width: "100%",
                   padding: "12px",
                   background: "var(--lb-green)",
-                  color: "#000",
+                  color: "black",
                   border: "none",
                   borderRadius: "4px",
                   cursor: "pointer",

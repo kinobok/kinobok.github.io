@@ -40,7 +40,11 @@ function findElement(element: any, predicate: (el: any) => boolean): any {
 }
 
 // Utility to recursively find all React elements matching a predicate
-function findAllElements(element: any, predicate: (el: any) => boolean, results: any[] = []): any[] {
+function findAllElements(
+  element: any,
+  predicate: (el: any) => boolean,
+  results: any[] = [],
+): any[] {
   if (!element) return results;
   if (predicate(element)) {
     results.push(element);
@@ -76,12 +80,17 @@ describe("ConfigMenu Tabs", () => {
 
     // Find tab buttons in the tab bar
     const tabButtons = findAllElements(result, (el) => {
-      return el && el.type === "button" && el.props.className && el.props.className.includes("tab-button");
+      return (
+        el &&
+        el.type === "button" &&
+        el.props.className &&
+        el.props.className.includes("tab-button")
+      );
     });
 
     expect(tabButtons).toHaveLength(4);
-    
-    const tabLabels = tabButtons.map(btn => btn.props.children);
+
+    const tabLabels = tabButtons.map((btn) => btn.props.children);
     expect(tabLabels).toContain("Upload");
     expect(tabLabels).toContain("Cinemas");
     expect(tabLabels).toContain("Excluded Movies");
@@ -98,10 +107,17 @@ describe("ConfigMenu Tabs", () => {
     });
 
     const tabButtons = findAllElements(result, (el) => {
-      return el && el.type === "button" && el.props.className && el.props.className.includes("tab-button");
+      return (
+        el &&
+        el.type === "button" &&
+        el.props.className &&
+        el.props.className.includes("tab-button")
+      );
     });
 
-    const uploadTabBtn = tabButtons.find(btn => btn.props.children === "Upload");
+    const uploadTabBtn = tabButtons.find(
+      (btn) => btn.props.children === "Upload",
+    );
     expect(uploadTabBtn).toBeDefined();
 
     // Triggers click callback
@@ -120,7 +136,14 @@ describe("ConfigMenu Tabs", () => {
 
     // Verify it renders the slide drawer class and transition style
     expect(result.props.className).toContain("config-menu-drawer-overlay");
-    const drawerContent = findElement(result, (el) => el && el.props && el.props.className && el.props.className.includes("config-menu-drawer"));
+    const drawerContent = findElement(
+      result,
+      (el) =>
+        el &&
+        el.props &&
+        el.props.className &&
+        el.props.className.includes("config-menu-drawer"),
+    );
     expect(drawerContent).toBeDefined();
     expect(drawerContent).not.toBeNull();
   });
@@ -140,12 +163,16 @@ describe("ConfigMenu Tabs", () => {
 
     // Find the Scrape Dashboard button
     const dashboardBtn = findElement(result, (el) => {
-      return el && el.type === "button" && el.props.className === "dashboard-button";
+      return (
+        el && el.type === "button" && el.props.className === "dashboard-button"
+      );
     });
 
     expect(dashboardBtn).toBeDefined();
     expect(dashboardBtn).not.toBeNull();
-    expect(JSON.stringify(dashboardBtn.props.children)).toContain("Scrape Dashboard");
+    expect(JSON.stringify(dashboardBtn.props.children)).toContain(
+      "Scrape Dashboard",
+    );
 
     // Click trigger callback
     dashboardBtn.props.onClick({ stopPropagation: vi.fn() });

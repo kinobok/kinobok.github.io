@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Match } from "../utils/matching_logic";
 import Image from "next/image";
 import DateSelector from "./DateSelector";
+import { ChevronDown, Search } from "lucide-react";
 
 interface MatchSidebarProps {
   matches: Match[];
@@ -43,8 +44,36 @@ export default function MatchSidebar({
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  const touchStartY = useRef<number | null>(null);
+  const touchCurrentY = useRef<number | null>(null);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isMobile) return;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (!isMobile) return;
+    touchCurrentY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = () => {
+    if (!isMobile || touchStartY.current === null || touchCurrentY.current === null) return;
+    const deltaY = touchCurrentY.current - touchStartY.current;
+
+    if (deltaY < -50) {
+      onToggleExpand(true);
+    } else if (deltaY > 50) {
+      onToggleExpand(false);
+    }
+
+    touchStartY.current = null;
+    touchCurrentY.current = null;
+  };
+
   const handleSearchFocus = (e: React.MouseEvent) => {
     e.stopPropagation();
+    onToggleExpand(false);
     const searchInput = document.querySelector(
       ".search-input-wrapper input",
     ) as HTMLInputElement;
@@ -86,7 +115,13 @@ export default function MatchSidebar({
   };
 
   return (
-    <div style={containerStyle} onClick={handleBarClick}>
+    <div
+      style={containerStyle}
+      onClick={handleBarClick}
+      onTouchStart={!isExpanded ? handleTouchStart : undefined}
+      onTouchMove={!isExpanded ? handleTouchMove : undefined}
+      onTouchEnd={!isExpanded ? handleTouchEnd : undefined}
+    >
       <div style={{ padding: "15px 20px" }}>
         {isMobile && (
           <div
@@ -102,8 +137,11 @@ export default function MatchSidebar({
                   justifyContent: "space-between",
                   alignItems: "center",
                   width: "100%",
-                  marginBottom: "15px",
+                  cursor: "ns-resize",
                 }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
               >
                 <button
                   className="icon-button"
@@ -114,7 +152,7 @@ export default function MatchSidebar({
                   style={{ display: "flex", alignItems: "center" }}
                   title="Hide sidebar"
                 >
-                  <span style={{ fontSize: 24, lineHeight: "24px" }}>⌄</span>
+                  <ChevronDown></ChevronDown>
                 </button>
                 <button
                   className="icon-button"
@@ -122,7 +160,7 @@ export default function MatchSidebar({
                   style={{ display: "flex", alignItems: "center" }}
                   title="Search map"
                 >
-                  <span style={{ fontSize: 18 }}>🔍</span>
+                  <Search></Search>
                 </button>
               </div>
             ) : (
@@ -253,30 +291,9 @@ export default function MatchSidebar({
               }}
             >
               Matches Found
-              <span
-                style={{
-                  background: "var(--lb-green)",
-                  color: "#000",
-                  padding: "2px 8px",
-                  borderRadius: "10px",
-                  fontSize: "0.8em",
-                }}
-              >
-                {matches.length}
-              </span>
             </h3>
 
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              {!isMobile && (
-                <button
-                  className="icon-button"
-                  onClick={handleSearchFocus}
-                  title="Search map"
-                  style={{ marginRight: "4px" }}
-                >
-                  🔍
-                </button>
-              )}
               {onSortChange && matches.length > 0 && (
                 <select
                   value={sortBy}

@@ -17,6 +17,9 @@ vi.mock("react", async (importOriginal) => {
       effect();
       return undefined;
     },
+    useRef: (initVal: any) => {
+      return { current: initVal };
+    },
   };
 });
 
@@ -83,23 +86,16 @@ describe("MatchSidebar", () => {
   });
 
   test("renders a Search button (magnifying glass) in the sidepanel header structure", () => {
+    globalThis.__MOCK_IS_MOBILE__ = true;
     const result = MatchSidebar({
       matches: [],
       isExpanded: true,
       onToggleExpand: vi.fn(),
     });
 
-    // Find the Search button - it should be a button element containing "🔍" or with a search-related identifier/class
+    // Find the Search button by its title prop
     const searchButton = findElement(result, (el) => {
-      if (el && el.type === "button") {
-        const text = JSON.stringify(el.props);
-        return (
-          text.includes("🔍") ||
-          text.includes("search") ||
-          (el.props.className && el.props.className.includes("search"))
-        );
-      }
-      return false;
+      return el && el.type === "button" && el.props.title === "Search map";
     });
 
     expect(searchButton).toBeDefined();
@@ -107,6 +103,7 @@ describe("MatchSidebar", () => {
   });
 
   test("clicking the Search button focuses the search input programmatically", () => {
+    globalThis.__MOCK_IS_MOBILE__ = true;
     const focusMock = vi.fn();
     // Mock document.querySelector to return an object with focus mock
     const originalQuerySelector = global.document
@@ -129,15 +126,7 @@ describe("MatchSidebar", () => {
     });
 
     const searchButton = findElement(result, (el) => {
-      if (el && el.type === "button") {
-        const text = JSON.stringify(el.props);
-        return (
-          text.includes("🔍") ||
-          text.includes("search") ||
-          (el.props.className && el.props.className.includes("search"))
-        );
-      }
-      return false;
+      return el && el.type === "button" && el.props.title === "Search map";
     });
 
     expect(searchButton).toBeDefined();
@@ -165,14 +154,65 @@ describe("MatchSidebar", () => {
     });
 
     // Expect a Hide button with chevron
-    const hideButton = findElement(result, (el) => el && el.type === "button" && el.props.title === "Hide sidebar");
+    const hideButton = findElement(
+      result,
+      (el) => el && el.type === "button" && el.props.title === "Hide sidebar",
+    );
     expect(hideButton).toBeDefined();
     expect(hideButton).not.toBeNull();
 
     // Expect a Search button
-    const searchButton = findElement(result, (el) => el && el.type === "button" && el.props.title === "Search map");
+    const searchButton = findElement(
+      result,
+      (el) => el && el.type === "button" && el.props.title === "Search map",
+    );
     expect(searchButton).toBeDefined();
     expect(searchButton).not.toBeNull();
+  });
+
+  test("swiping up on collapsed mobile root triggers expand", () => {
+    globalThis.__MOCK_IS_MOBILE__ = true;
+    const onToggleExpand = vi.fn();
+
+    const result = MatchSidebar({
+      matches: [],
+      isExpanded: false,
+      onToggleExpand,
+    });
+
+    expect(result.props.onTouchStart).toBeDefined();
+    expect(result.props.onTouchMove).toBeDefined();
+    expect(result.props.onTouchEnd).toBeDefined();
+
+    // Simulate swipe up (Y decreases, e.g. from 200 to 100)
+    result.props.onTouchStart({ touches: [{ clientY: 200 }] });
+    result.props.onTouchMove({ touches: [{ clientY: 100 }] });
+    result.props.onTouchEnd();
+
+    expect(onToggleExpand).toHaveBeenCalledWith(true);
+  });
+
+  test("swiping down on expanded mobile top header triggers collapse", () => {
+    globalThis.__MOCK_IS_MOBILE__ = true;
+    const onToggleExpand = vi.fn();
+
+    const result = MatchSidebar({
+      matches: [],
+      isExpanded: true,
+      onToggleExpand,
+    });
+
+    // Find the expanded mobile header
+    const expandedHeader = findElement(result, (el) => el && el.props && el.props.onTouchStart !== undefined);
+    expect(expandedHeader).toBeDefined();
+    expect(expandedHeader).not.toBeNull();
+
+    // Simulate swipe down (Y increases, e.g. from 100 to 200)
+    expandedHeader.props.onTouchStart({ touches: [{ clientY: 100 }] });
+    expandedHeader.props.onTouchMove({ touches: [{ clientY: 200 }] });
+    expandedHeader.props.onTouchEnd();
+
+    expect(onToggleExpand).toHaveBeenCalledWith(false);
   });
 });
 

@@ -454,6 +454,7 @@ export default function Home() {
           userLocation={userLocation}
           onLocationFound={handleLocationFound}
           onSelectCinema={handleSelectCinema}
+          isMinimized={isSidebarMinimized}
         />
       </div>
     </main>

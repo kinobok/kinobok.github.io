@@ -20,6 +20,7 @@ interface CinemaMapProps {
   userLocation?: { lat: number; lng: number } | null;
   onLocationFound?: (loc: { lat: number; lng: number }) => void;
   onSelectCinema?: (cinemaId: string | null) => void;
+  isMinimized?: boolean;
 }
 
 const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
@@ -86,6 +87,7 @@ export default function CinemaMap({
   userLocation,
   onLocationFound,
   onSelectCinema,
+  isMinimized = false,
 }: CinemaMapProps) {
   const [isClient, setIsClient] = useState(false);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
@@ -145,7 +147,7 @@ export default function CinemaMap({
         className="map-controls-container"
         style={{
           position: "absolute",
-          bottom: isMobile ? "220px" : "30px",
+          bottom: isMobile ? (isMinimized ? "80px" : "220px") : "30px",
           right: "15px",
           zIndex: 1000,
           display: "flex",

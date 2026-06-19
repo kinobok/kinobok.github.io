@@ -228,20 +228,21 @@ describe("MatchSidebar", () => {
       onToggleShowAllScreenings: onToggleShowAll,
     });
 
-    // Find the toggle button
-    const toggleButton = findElement(result, (el) => {
-      return (
-        el &&
-        el.type === "button" &&
-        el.props.title === "Toggle show all screenings"
-      );
+    // Find the toggle wrapper
+    const toggleWrapper = findElement(result, (el) => {
+      return el && el.props && el.props.title === "Toggle show all screenings";
     });
 
-    expect(toggleButton).toBeDefined();
-    expect(toggleButton).not.toBeNull();
+    expect(toggleWrapper).toBeDefined();
+    expect(toggleWrapper).not.toBeNull();
 
-    // Trigger click
-    toggleButton.props.onClick({ stopPropagation: vi.fn() });
+    // Find input element inside wrapper
+    const input = findElement(toggleWrapper, (el) => el && el.type === "input");
+    expect(input).toBeDefined();
+    expect(input).not.toBeNull();
+
+    // Trigger change
+    input.props.onChange({ stopPropagation: vi.fn() });
     expect(onToggleShowAll).toHaveBeenCalled();
   });
 

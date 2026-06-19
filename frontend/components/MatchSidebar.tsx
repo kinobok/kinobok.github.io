@@ -20,7 +20,7 @@ interface MatchSidebarProps {
   onDateChange?: (date: string) => void;
   matchCounts?: Record<string, number>;
   showAllScreenings?: boolean;
-  onToggleShowAllScreenings?: () => void;
+  onToggleShowAllScreenings?: (val: boolean) => void;
   isMinimized?: boolean;
   onToggleMinimize?: (minimized: boolean) => void;
 }
@@ -355,34 +355,73 @@ export default function MatchSidebar({
                 style={{ display: "flex", alignItems: "center", gap: "8px" }}
               >
                 {onToggleShowAllScreenings && (
-                  <button
-                    className="icon-button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onToggleShowAllScreenings();
-                    }}
+                  <div
                     title="Toggle show all screenings"
                     style={{
-                      padding: "4px 8px",
-                      background: showAllScreenings
-                        ? "var(--lb-green)"
-                        : "var(--lb-card)",
-                      color: showAllScreenings
-                        ? "#000"
-                        : "var(--lb-text-primary)",
-                      border: "1px solid #444",
-                      borderRadius: "4px",
-                      fontSize: "0.8em",
-                      cursor: "pointer",
-                      marginRight: "4px",
                       display: "flex",
                       alignItems: "center",
-                      gap: "4px",
+                      gap: "6px",
                       pointerEvents: "auto",
+                      marginRight: "4px",
                     }}
                   >
-                    {showAllScreenings ? "All Screenings" : "Watchlist Only"}
-                  </button>
+                    <span
+                      style={{
+                        fontSize: "0.75em",
+                        color: "var(--lb-text-secondary)",
+                      }}
+                    >
+                      {showAllScreenings ? "All" : "Watchlist"}
+                    </span>
+                    <label
+                      style={{
+                        position: "relative",
+                        display: "inline-block",
+                        width: "32px",
+                        height: "18px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={showAllScreenings}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          onToggleShowAllScreenings(!showAllScreenings);
+                        }}
+                        style={{ opacity: 0, width: 0, height: 0 }}
+                      />
+                      <span
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          backgroundColor: showAllScreenings
+                            ? "var(--lb-green)"
+                            : "#444",
+                          transition: "0.3s",
+                          borderRadius: "18px",
+                        }}
+                      >
+                        <span
+                          style={{
+                            position: "absolute",
+                            height: "12px",
+                            width: "12px",
+                            left: showAllScreenings ? "17px" : "3px",
+                            bottom: "3px",
+                            backgroundColor: showAllScreenings
+                              ? "#000"
+                              : "#fff",
+                            transition: "0.3s",
+                            borderRadius: "50%",
+                          }}
+                        />
+                      </span>
+                    </label>
+                  </div>
                 )}
                 {onSortChange && matches.length > 0 && (
                   <select

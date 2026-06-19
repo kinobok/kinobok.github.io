@@ -1,0 +1,36 @@
+# Implementation Plan: UX Revamp for Map Points & Searchbar Typeahead
+
+## Phase 1: Searchbar Typeahead & Clearing Logic
+- [ ] Task: Write Tests for Searchbar Typeahead and Clear Button
+    - [ ] Create tests in `frontend/tests/` to verify typeahead dropdown renders when input length > 1.
+    - [ ] Write test for the `X` (Clear) button appearing when input is populated and clearing input when clicked.
+- [ ] Task: Implement Searchbar Typeahead
+    - [ ] Add state for typeahead suggestions in `SearchBar.tsx` or parent component.
+    - [ ] Implement dropdown UI below the search input listing matching cinema names based on existing `data.cinemas`.
+- [ ] Task: Implement Clear Button
+    - [ ] Add the `X` icon from `lucide-react` to `SearchBar.tsx`.
+    - [ ] Wire up the click handler to clear the search query and the selected cinema state.
+- [ ] Task: Conductor - User Manual Verification 'Phase 1: Searchbar Typeahead & Clearing Logic' (Protocol in workflow.md)
+
+## Phase 2: Map Point Click Integration & Global Selection State
+- [ ] Task: Write Tests for Map Point Selection State
+    - [ ] Update map tests or sidebar tests to verify that a selected cinema ID filters the `matches` list.
+    - [ ] Verify that clicking empty map space clears the selected cinema state.
+- [ ] Task: Implement Global Selected Cinema State
+    - [ ] Lift state up to `page.tsx` (e.g., `selectedCinemaId`) to manage the currently focused cinema.
+    - [ ] Pass the setter down to `CinemaMap` (for marker clicks and map background clicks) and `SearchBar` (for typeahead clicks).
+- [ ] Task: Apply Filtering to MatchSidebar
+    - [ ] Update the `matches` prop passed to `MatchSidebar` to be filtered by `selectedCinemaId` if it is set.
+- [ ] Task: Conductor - User Manual Verification 'Phase 2: Map Point Click Integration & Global Selection State' (Protocol in workflow.md)
+
+## Phase 3: Sidebar Enhancements (Toggle & Minimized State)
+- [ ] Task: Write Tests for Sidebar Enhancements
+    - [ ] Test the presence and toggle behavior of the "Show all screenings" button in `MatchSidebar`.
+    - [ ] Test the "minimized" state rendering ("Tap to see screenings" and `ChevronUp`) when expanded is false and state is minimized.
+- [ ] Task: Implement "Show all screenings" Toggle
+    - [ ] Add the toggle UI to `MatchSidebar` and wire it up using the existing `onToggleShowAllScreenings` handler from `page.tsx`.
+- [ ] Task: Implement Minimized State UX
+    - [ ] Update `MatchSidebar` mobile logic: Add a third state or adjust `isExpanded=false` to represent the "almost completely hidden" minimized state.
+    - [ ] Render the `ChevronUp` and "Tap to see screenings" label in this minimized state.
+    - [ ] Update `handleTouchEnd` swipe logic and empty map click logic to trigger this minimized state.
+- [ ] Task: Conductor - User Manual Verification 'Phase 3: Sidebar Enhancements' (Protocol in workflow.md)

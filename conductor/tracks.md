@@ -14,5 +14,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: UX revamp for config menu - tabs, google maps left drawer style, and scrape dashboard button relocation**
+- [x] **Track: UX revamp for config menu - tabs, google maps left drawer style, and scrape dashboard button relocation**
 *Link: [./tracks/config_menu_redesign_20260619/](./tracks/config_menu_redesign_20260619/)*

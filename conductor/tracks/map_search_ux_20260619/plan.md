@@ -4,13 +4,13 @@
 - [x] Task: Write Tests for Searchbar Typeahead and Clear Button (d0a15c2)
     - [x] Create tests in `frontend/tests/` to verify typeahead dropdown renders when input length > 1.
     - [x] Write test for the `X` (Clear) button appearing when input is populated and clearing input when clicked.
-- [~] Task: Implement Searchbar Typeahead
-    - [ ] Add state for typeahead suggestions in `SearchBar.tsx` or parent component.
-    - [ ] Implement dropdown UI below the search input listing matching cinema names based on existing `data.cinemas`.
-- [ ] Task: Implement Clear Button
-    - [ ] Add the `X` icon from `lucide-react` to `SearchBar.tsx`.
-    - [ ] Wire up the click handler to clear the search query and the selected cinema state.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Searchbar Typeahead & Clearing Logic' (Protocol in workflow.md)
+- [x] Task: Implement Searchbar Typeahead (ed3c290)
+    - [x] Add state for typeahead suggestions in `SearchBar.tsx` or parent component.
+    - [x] Implement dropdown UI below the search input listing matching cinema names based on existing `data.cinemas`.
+- [x] Task: Implement Clear Button (ed3c290)
+    - [x] Add the `X` icon from `lucide-react` to `SearchBar.tsx`.
+    - [x] Wire up the click handler to clear the search query and the selected cinema state.
+- [~] Task: Conductor - User Manual Verification 'Phase 1: Searchbar Typeahead & Clearing Logic' (Protocol in workflow.md)
 
 ## Phase 2: Map Point Click Integration & Global Selection State
 - [ ] Task: Write Tests for Map Point Selection State

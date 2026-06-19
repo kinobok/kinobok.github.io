@@ -213,22 +213,7 @@ export default function CinemaMap({
                     }
                   },
                 }}
-              >
-                <Popup>
-                  <strong style={{ color: "var(--lb-text-primary)" }}>
-                    {cinema.name}
-                  </strong>
-                  <br />
-                  <span
-                    style={{
-                      color: "var(--lb-text-secondary)",
-                      fontSize: "0.9em",
-                    }}
-                  >
-                    {cinema.address}
-                  </span>
-                </Popup>
-              </Marker>
+              ></Marker>
             )
           );
         })}

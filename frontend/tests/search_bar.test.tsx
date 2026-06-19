@@ -162,6 +162,27 @@ describe("SearchBar", () => {
     expect(item).not.toBeNull();
     expect(JSON.stringify(item.props.children)).toContain("Multikino Ursynow");
   });
+
+  test("hides typeahead suggestions when the search query exactly matches a cinema name", () => {
+    const cinemas = [{ id: "c1", name: "Kinoteka" }];
+
+    globalThis.__MOCK_STATE__ = undefined;
+
+    const result = SearchBar({
+      onMenuToggle: vi.fn(),
+      onDashboardToggle: vi.fn(),
+      searchQuery: "Kinoteka",
+      onSearchChange: vi.fn(),
+      allCinemas: cinemas,
+    });
+
+    const dropdown = findElement(
+      result,
+      (el) =>
+        el && el.props && el.props.className === "search-suggestions-dropdown",
+    );
+    expect(dropdown).toBeNull();
+  });
 });
 
 declare global {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Cinema } from "../utils/matching_logic";
 
 interface SearchBarProps {
@@ -26,11 +26,20 @@ export default function SearchBar({
 
   useEffect(() => {
     if (searchQuery.length > 1 && allCinemas) {
-      const filtered = allCinemas.filter((cinema) =>
-        cinema.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      const hasExactMatch = allCinemas.some(
+        (cinema) => cinema.name.toLowerCase() === searchQuery.toLowerCase(),
       );
-      setSuggestions(filtered);
-      setShowSuggestions(true);
+
+      if (hasExactMatch) {
+        setSuggestions([]);
+        setShowSuggestions(false);
+      } else {
+        const filtered = allCinemas.filter((cinema) =>
+          cinema.name.toLowerCase().includes(searchQuery.toLowerCase()),
+        );
+        setSuggestions(filtered);
+        setShowSuggestions(true);
+      }
     } else {
       setSuggestions([]);
       setShowSuggestions(false);
@@ -57,10 +66,9 @@ export default function SearchBar({
           pointerEvents: "auto",
         }}
       >
-        <Search size={18} style={{ marginLeft: "10px" }} />
         <input
           type="text"
-          placeholder="Search movies or cinemas..."
+          placeholder="Find your cinema..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           style={{ paddingRight: searchQuery ? "35px" : "10px", width: "100%" }}

@@ -79,7 +79,7 @@ func main() {
 	letterboxdScraper := letterboxd.NewLetterboxdScraper()
 	tmdbApi := tmdb.NewTMDBApi(tmdbAPIKey)
 
-	outputPath := filepath.Join("frontend", "public", "data_go.json")
+	outputPath := filepath.Join("..", "frontend", "public", "data_go.json")
 
 	// Load existing data to support sliding window and ID consistency
 	existingData := export.ExportSchema{

@@ -14,5 +14,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Implement the kinobok scraper in Golang using Colly with Goroutines/Channels for concurrency, running in parallel with the Python scraper.**
+- [x] **Track: Implement the kinobok scraper in Golang using Colly with Goroutines/Channels for concurrency, running in parallel with the Python scraper.**
 *Link: [./tracks/golang_scraper_20260702/](./tracks/golang_scraper_20260702/)*

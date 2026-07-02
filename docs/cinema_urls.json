@@ -1,0 +1,1166 @@
+[
+  {
+    "name": "Multikino Stary Browar",
+    "url": "https://www.multikino.pl",
+    "lat": 52.40297,
+    "lng": 16.92974
+  },
+  {
+    "name": "Multikino Wola",
+    "url": "https://www.multikino.pl",
+    "lat": 52.2413843,
+    "lng": 20.9312364
+  },
+  {
+    "name": "Multikino Złote Tarasy",
+    "url": "https://www.multikino.pl",
+    "lat": 52.2301323,
+    "lng": 21.0039711
+  },
+  {
+    "name": "Multikino Targówek",
+    "url": "https://www.multikino.pl",
+    "lat": 52.30284,
+    "lng": 21.05753
+  },
+  {
+    "name": "Multikino Młociny",
+    "url": "https://www.multikino.pl",
+    "lat": 52.296605,
+    "lng": 20.93218
+  },
+  {
+    "name": "Multikino Atrium Reduta",
+    "url": "https://www.multikino.pl",
+    "lat": 52.212964,
+    "lng": 20.951165
+  },
+  {
+    "name": "Multikino Pasaż Grunwaldzki",
+    "url": "https://www.multikino.pl",
+    "lat": 51.11208,
+    "lng": 17.05991
+  },
+  {
+    "name": "Cinema City Wolność",
+    "url": "https://www.cinema-city.pl",
+    "lat": 50.7902581,
+    "lng": 18.9603885
+  },
+  {
+    "name": "Cinema City Galeria Jurajska",
+    "url": "https://www.cinema-city.pl",
+    "lat": 50.807603,
+    "lng": 19.13133
+  },
+  {
+    "name": "Cinema City Plaza",
+    "url": "https://www.cinema-city.pl",
+    "lat": 52.44066,
+    "lng": 16.91903
+  },
+  {
+    "name": "Cinema City Kinepolis",
+    "url": "https://www.cinema-city.pl",
+    "lat": 52.37429,
+    "lng": 16.98046
+  },
+  {
+    "name": "Cinema City Felicity",
+    "url": "https://www.cinema-city.pl",
+    "lat": 51.2312844,
+    "lng": 22.6118822
+  },
+  {
+    "name": "Cinema City Janki",
+    "url": "https://www.cinema-city.pl",
+    "lat": 52.12916,
+    "lng": 20.89884
+  },
+  {
+    "name": "Cinema City Bemowo",
+    "url": "https://www.cinema-city.pl",
+    "lat": 52.26579,
+    "lng": 20.9327
+  },
+  {
+    "name": "Cinema City Promenada",
+    "url": "https://www.cinema-city.pl",
+    "lat": 52.23157,
+    "lng": 21.10531
+  },
+  {
+    "name": "Cinema City Białołęka",
+    "url": "https://www.cinema-city.pl",
+    "lat": 52.318353,
+    "lng": 20.964228
+  },
+  {
+    "name": "Cinema City Arkadia",
+    "url": "https://www.cinema-city.pl",
+    "lat": 52.25652,
+    "lng": 20.98394
+  },
+  {
+    "name": "Cinema City Sadyba",
+    "url": "https://www.cinema-city.pl",
+    "lat": 52.18732,
+    "lng": 21.06116
+  },
+  {
+    "name": "Cinema City Mokotów",
+    "url": "https://www.cinema-city.pl",
+    "lat": 52.17892,
+    "lng": 21.00377
+  },
+  {
+    "name": "Cinema City Manufaktura",
+    "url": "https://www.cinema-city.pl",
+    "lat": 51.7808431,
+    "lng": 19.4478647
+  },
+  {
+    "name": "Cinema City Czerwona Droga",
+    "url": "https://www.cinema-city.pl",
+    "lat": 53.0145882,
+    "lng": 18.5996123
+  },
+  {
+    "name": "Cinema City Silesia",
+    "url": "https://www.cinema-city.pl",
+    "lat": 50.2648919,
+    "lng": 19.0237815
+  },
+  {
+    "name": "Cinema City Punkt 44",
+    "url": "https://www.cinema-city.pl",
+    "lat": 50.2624837,
+    "lng": 19.0060485
+  },
+  {
+    "name": "Cinema City Bonarka",
+    "url": "https://www.cinema-city.pl",
+    "lat": 50.0268833,
+    "lng": 19.9691239
+  },
+  {
+    "name": "Cinema City Zakopianka",
+    "url": "https://www.cinema-city.pl",
+    "lat": 50.0141512,
+    "lng": 19.9277186
+  },
+  {
+    "name": "Cinema City Kazimierz",
+    "url": "https://www.cinema-city.pl",
+    "lat": 50.0530022,
+    "lng": 19.9565344
+  },
+  {
+    "name": "Cinema City Wroclavia",
+    "url": "https://www.cinema-city.pl",
+    "lat": 51.096722,
+    "lng": 17.034161
+  },
+  {
+    "name": "Cinema City Korona",
+    "url": "https://www.cinema-city.pl",
+    "lat": 51.1418441,
+    "lng": 17.0874233
+  },
+  {
+    "name": "Helios CHR Kupiec",
+    "url": "https://www.helios.pl",
+    "lat": 53.4268,
+    "lng": 14.54198
+  },
+  {
+    "name": "Helios Outlet Park",
+    "url": "https://www.helios.pl",
+    "lat": 53.38139,
+    "lng": 14.67063
+  },
+  {
+    "name": "Helios Alfa",
+    "url": "https://www.helios.pl",
+    "lat": 53.1268639,
+    "lng": 23.1708355
+  },
+  {
+    "name": "Helios Biała",
+    "url": "https://www.helios.pl",
+    "lat": 53.1236361,
+    "lng": 23.1785917
+  },
+  {
+    "name": "Helios Jurowiecka",
+    "url": "https://www.helios.pl",
+    "lat": 53.196925,
+    "lng": 23.1948903
+  },
+  {
+    "name": "Helios Karolinka",
+    "url": "https://www.helios.pl",
+    "lat": 50.68220968943874,
+    "lng": 17.877473955287076
+  },
+  {
+    "name": "Helios Metropolia",
+    "url": "https://www.helios.pl",
+    "lat": 54.382403,
+    "lng": 18.606703
+  },
+  {
+    "name": "Helios Forum",
+    "url": "https://www.helios.pl",
+    "lat": 54.34935,
+    "lng": 18.643526
+  },
+  {
+    "name": "Helios Blue City",
+    "url": "https://www.helios.pl",
+    "lat": 52.212508,
+    "lng": 20.955564
+  },
+  {
+    "name": "Helios Sukcesja",
+    "url": "https://www.helios.pl",
+    "lat": 51.7504336,
+    "lng": 19.4465039
+  },
+  {
+    "name": "Helios Galeria",
+    "url": "https://www.helios.pl",
+    "lat": 50.04193,
+    "lng": 21.99819
+  },
+  {
+    "name": "Helios Magnolia Park",
+    "url": "https://www.helios.pl",
+    "lat": 51.12062,
+    "lng": 16.99319
+  },
+  {
+    "name": "Helios Aleja Bielany",
+    "url": "https://www.helios.pl",
+    "lat": 51.04904,
+    "lng": 16.959969
+  },
+  {
+    "name": "Novekino",
+    "url": "https://www.novekino.pl/kina/siedlce/",
+    "lat": 52.170408,
+    "lng": 22.2888797
+  },
+  {
+    "name": "Kino Kongres",
+    "url": "https://www.novekino.pl/kina/siedlce/",
+    "lat": 52.397568178018,
+    "lng": 22.019927501678
+  },
+  {
+    "name": "Kino za Rogiem",
+    "url": "https://kzrcafe.pl",
+    "lat": 51.987,
+    "lng": 22.781
+  },
+  {
+    "name": "Kino Sława",
+    "url": "https://www.miedzyrzec.pl/oferta/kino-slawa",
+    "lat": 51.987192,
+    "lng": 22.7808359
+  },
+  {
+    "name": "Kino Łuków",
+    "url": "https://kino.lukow.pl",
+    "lat": 51.926789,
+    "lng": 22.383317
+  },
+  {
+    "name": "Kino Sokół",
+    "url": "https://sokolowskakultura.pl",
+    "lat": 52.406529,
+    "lng": 22.241179
+  },
+  {
+    "name": "Pionier 1907",
+    "url": "https://pionier1907.pl",
+    "lat": 53.42634,
+    "lng": 14.54564
+  },
+  {
+    "name": "Kino SCK",
+    "url": "https://kino.sck.stargard.pl",
+    "lat": 53.3414428,
+    "lng": 15.0357349
+  },
+  {
+    "name": "Kino Kawiarnia",
+    "url": "http://www.kinogoleniow.pl",
+    "lat": 53.5618459,
+    "lng": 14.832512
+  },
+  {
+    "name": "Przedwiośnie",
+    "url": "http://kok.krotoszyn.pl",
+    "lat": 51.69545,
+    "lng": 17.442186
+  },
+  {
+    "name": "Kino Echo",
+    "url": "http://www.kino.jarocin.pl",
+    "lat": 51.973041,
+    "lng": 17.500703
+  },
+  {
+    "name": "Piast",
+    "url": "http://www.kino-piast.pl",
+    "lat": 51.426333946488256,
+    "lng": 17.929750961982755
+  },
+  {
+    "name": "Centrum 3D",
+    "url": "https://ckis.kalisz.pl/kino-3d/",
+    "lat": 51.7615133,
+    "lng": 18.0934609
+  },
+  {
+    "name": "Kino MDK",
+    "url": "https://mdkradomsko.pl",
+    "lat": 51.06481,
+    "lng": 19.44247
+  },
+  {
+    "name": "Kino MOK Centrum",
+    "url": "https://www.mok.pl",
+    "lat": 50.48551,
+    "lng": 19.43177
+  },
+  {
+    "name": "Kino Studyjne Iluzja",
+    "url": "http://okf.czest.pl",
+    "lat": 50.8130105,
+    "lng": 19.1046568
+  },
+  {
+    "name": "Kino Hel",
+    "url": "https://kinohel.pl",
+    "lat": 51.89683167279198,
+    "lng": 17.780758433108677
+  },
+  {
+    "name": "Zacisze",
+    "url": "https://www.kinozacisze.pl",
+    "lat": 50.374736358237755,
+    "lng": 18.94357399760339
+  },
+  {
+    "name": "Forum",
+    "url": "https://bok.bialystok.pl/kino-forum",
+    "lat": 53.1296905,
+    "lng": 23.158366
+  },
+  {
+    "name": "Jantar",
+    "url": "https://ock-ostroleka.pl/kino-jantar",
+    "lat": 53.0806676,
+    "lng": 21.5762355
+  },
+  {
+    "name": "Kino Centrum Kultury",
+    "url": "http://www.mokzambrow.pl",
+    "lat": 52.98654,
+    "lng": 22.24769
+  },
+  {
+    "name": "Ostrovia",
+    "url": "https://www.kinoostrovia.pl",
+    "lat": 52.804902,
+    "lng": 21.894783
+  },
+  {
+    "name": "Chemik",
+    "url": "http://www.kino.mok.com.pl",
+    "lat": 50.347406,
+    "lng": 18.21538
+  },
+  {
+    "name": "Cinema N 3D",
+    "url": "http://kino.nysa.pl",
+    "lat": 50.47245,
+    "lng": 17.3385
+  },
+  {
+    "name": "Kino Bajka",
+    "url": "https://kino.kluczbork.pl/",
+    "lat": 50.97277,
+    "lng": 18.20992
+  },
+  {
+    "name": "Kino Twierdza",
+    "url": "http://www.kino.mok.com.pl",
+    "lat": 50.33052,
+    "lng": 18.14543
+  },
+  {
+    "name": "Kino Meduza",
+    "url": "https://kinomeduza.pl",
+    "lat": 50.67417,
+    "lng": 17.93157
+  },
+  {
+    "name": "Kino Diana",
+    "url": "https://www.kinodiana.pl",
+    "lat": 50.31896505807487,
+    "lng": 17.576891196097858
+  },
+  {
+    "name": "Kino Centrum",
+    "url": "https://bck-brzeg.pl/dzialalnosc/kino-centrum",
+    "lat": 50.86084,
+    "lng": 17.470078
+  },
+  {
+    "name": "Kino Pałacowe",
+    "url": "https://kinopalacowe.pl",
+    "lat": 52.40795,
+    "lng": 16.91864
+  },
+  {
+    "name": "Charlie Monroe Kino Malta",
+    "url": "http://www.kinomalta.pl",
+    "lat": 52.40262,
+    "lng": 16.93205
+  },
+  {
+    "name": "Rialto",
+    "url": "https://kinorialto.poznan.pl",
+    "lat": 52.41188,
+    "lng": 16.90665
+  },
+  {
+    "name": "Moskwa",
+    "url": "http://www.kinomoskwa.pl",
+    "lat": 50.8707515,
+    "lng": 20.6262557
+  },
+  {
+    "name": "Kino Goplana",
+    "url": "https://ckpolczyn.pl",
+    "lat": 53.7642915,
+    "lng": 16.0936471
+  },
+  {
+    "name": "Wybrzeże",
+    "url": "http://www.rck.kolobrzeg.eu",
+    "lat": 54.1772804,
+    "lng": 15.5709958
+  },
+  {
+    "name": "Kryterium",
+    "url": "http://ck105.koszalin.pl",
+    "lat": 54.1900266,
+    "lng": 16.185671
+  },
+  {
+    "name": "Kino DK",
+    "url": "https://dokdarlowo.pl",
+    "lat": 54.362129644265,
+    "lng": 16.684085726738
+  },
+  {
+    "name": "Cinema1",
+    "url": "https://cinemaone.pl",
+    "lat": 54.352638,
+    "lng": 18.592836
+  },
+  {
+    "name": "Gdyńskie Centrum Filmowe",
+    "url": "https://gcf.org.pl",
+    "lat": 54.517008,
+    "lng": 18.542732
+  },
+  {
+    "name": "Kino Kameralne Cafe",
+    "url": "https://www.kinokameralnecafe.pl",
+    "lat": 54.3495366,
+    "lng": 18.65050480000002
+  },
+  {
+    "name": "Spektrum",
+    "url": "http://klubkot.pl",
+    "lat": 54.35231185883346,
+    "lng": 18.64726374701585
+  },
+  {
+    "name": "KinoPort",
+    "url": "https://laznia.pl",
+    "lat": 54.40006,
+    "lng": 18.6715409
+  },
+  {
+    "name": "Kino Letnie",
+    "url": "https://kinoletnie.pl",
+    "lat": 54.441581,
+    "lng": 18.5600956
+  },
+  {
+    "name": "Bajka",
+    "url": "http://kinobajka.pl",
+    "lat": 51.246412,
+    "lng": 22.5438753
+  },
+  {
+    "name": "Kino Lewart",
+    "url": "http://loklubartow.pl",
+    "lat": 51.46285,
+    "lng": 22.60989
+  },
+  {
+    "name": "Kino Awangarda 2",
+    "url": "http://awangarda.olsztyn.pl",
+    "lat": 53.77819,
+    "lng": 20.47945
+  },
+  {
+    "name": "Kino Narie",
+    "url": "http://morag.pl",
+    "lat": 53.9135380220815,
+    "lng": 19.9287489824147
+  },
+  {
+    "name": "Kino Ignacy",
+    "url": "https://kinoignacy.pl",
+    "lat": 54.12540555463158,
+    "lng": 20.573606353588684
+  },
+  {
+    "name": "Cinema Lumiere",
+    "url": "http://cinema-lumiere.pl",
+    "lat": 53.56390851749076,
+    "lng": 20.993517774448147
+  },
+  {
+    "name": "Kinoteka",
+    "url": "https://kinoteka.pl",
+    "lat": 52.2319,
+    "lng": 21.00683
+  },
+  {
+    "name": "Kultura",
+    "url": "http://www.kinokultura.pl",
+    "lat": 52.2434,
+    "lng": 21.01412
+  },
+  {
+    "name": "Kino Iluzjon",
+    "url": "http://www.iluzjon.fn.org.pl",
+    "lat": 52.20562,
+    "lng": 21.01084
+  },
+  {
+    "name": "KinoGram",
+    "url": "https://kinogram.pl",
+    "lat": 52.232234337745126,
+    "lng": 20.992035296271737
+  },
+  {
+    "name": "Atlantic",
+    "url": "https://www.novekino.pl/kina/atlantic/",
+    "lat": 52.23176,
+    "lng": 21.01274
+  },
+  {
+    "name": "Kinokawiarnia Stacja Falenica",
+    "url": "https://stacjafalenica.pl",
+    "lat": 52.1627087,
+    "lng": 21.2105548
+  },
+  {
+    "name": "Wisła",
+    "url": "https://www.novekino.pl/kina/wisla/",
+    "lat": 52.26948,
+    "lng": 20.98667
+  },
+  {
+    "name": "Kino na boku",
+    "url": "https://www.bok.waw.pl",
+    "lat": 52.3136055,
+    "lng": 20.9530589
+  },
+  {
+    "name": "Kino Głębocka 66",
+    "url": "https://www.bok.waw.pl",
+    "lat": 52.3115485,
+    "lng": 21.0675928
+  },
+  {
+    "name": "Luna",
+    "url": "https://www.kinoluna.waw.pl",
+    "lat": 52.21883,
+    "lng": 21.0189
+  },
+  {
+    "name": "Mazowiecki Teatr Muzyczny im. Jana Kiepury - Kino Praha",
+    "url": "https://mteatr.pl/repertuar-kina",
+    "lat": 52.25166,
+    "lng": 21.03566
+  },
+  {
+    "name": "U-jazdowski",
+    "url": "https://u-jazdowski.pl",
+    "lat": 52.21952,
+    "lng": 21.03053
+  },
+  {
+    "name": "Elektronik",
+    "url": "https://kinoelektronik.pl",
+    "lat": 52.2610064,
+    "lng": 20.9921773
+  },
+  {
+    "name": "Muranów",
+    "url": "https://kinomuranow.pl/repertuar/",
+    "lat": 52.24492,
+    "lng": 20.99954
+  },
+  {
+    "name": "Perła: Lublin",
+    "url": "https://kinoperla.pl/",
+    "lat": 51.244245,
+    "lng": 22.5672747
+  },
+  {
+    "name": "KINOMUZEUM",
+    "url": "https://artmuseum.pl",
+    "lat": 52.233094255598715,
+    "lng": 21.009184683361003
+  },
+  {
+    "name": "Amondo Kino",
+    "url": "http://www.kinoamondo.pl",
+    "lat": 52.228685,
+    "lng": 21.015765
+  },
+  {
+    "name": "Max Kino",
+    "url": "https://maxkino.eu",
+    "lat": 52.234507,
+    "lng": 15.533722
+  },
+  {
+    "name": "Kino ŚDK",
+    "url": "http://kino.swiebodzin.pl",
+    "lat": 52.24817320264516,
+    "lng": 15.536673047941754
+  },
+  {
+    "name": "Pionier",
+    "url": "https://www.kino-zary.pl",
+    "lat": 51.6391479,
+    "lng": 15.1361067
+  },
+  {
+    "name": "Europa",
+    "url": "https://kino-nowasol.pl",
+    "lat": 51.809216,
+    "lng": 15.712138
+  },
+  {
+    "name": "Charlie",
+    "url": "https://www.charlie.pl",
+    "lat": 51.7550687,
+    "lng": 19.4590472
+  },
+  {
+    "name": "Kino Fenix",
+    "url": "https://lok.art.pl",
+    "lat": 52.10812,
+    "lng": 19.93925
+  },
+  {
+    "name": "Narodowe Centrum Kultury Filmowej",
+    "url": "https://ec1lodz.pl",
+    "lat": 51.76809317367783,
+    "lng": 19.469695378026042
+  },
+  {
+    "name": "Kino ODEON",
+    "url": "http://kinoodeon.pl",
+    "lat": 52.230412,
+    "lng": 20.242287
+  },
+  {
+    "name": "Centrum Kultury",
+    "url": "https://centrumkultury.eu",
+    "lat": 52.1930083,
+    "lng": 20.6153687
+  },
+  {
+    "name": "Polonez",
+    "url": "http://www.kinopolonez.pl",
+    "lat": 51.960861823113,
+    "lng": 20.147230625153
+  },
+  {
+    "name": "Roma",
+    "url": "http://www.mdkrawa.pl",
+    "lat": 51.76293097868856,
+    "lng": 20.254193676187867
+  },
+  {
+    "name": "Kino Len",
+    "url": "http://kinolen.pl",
+    "lat": 52.056812,
+    "lng": 20.438779
+  },
+  {
+    "name": "Kinematograf",
+    "url": "https://muzeumkinematografii.pl",
+    "lat": 51.7593286,
+    "lng": 19.4742927
+  },
+  {
+    "name": "TME Polówka: Park Nad Jasieniem",
+    "url": "https://polowka.com/",
+    "lat": 51.75755348471929,
+    "lng": 19.491164609794136
+  },
+  {
+    "name": "TME Polówka: Port Łódź",
+    "url": "https://polowka.com/",
+    "lat": 51.70299948206847,
+    "lng": 19.409363753203476
+  },
+  {
+    "name": "MCSW Elektrownia",
+    "url": "https://mcswelektrownia.pl",
+    "lat": 51.398197,
+    "lng": 21.1498
+  },
+  {
+    "name": "Świt",
+    "url": "https://www.kino-swit.pl",
+    "lat": 51.35645231113736,
+    "lng": 21.58700014072217
+  },
+  {
+    "name": "Kino za Rogiem Cafe",
+    "url": "https://kzrcafe.pl",
+    "lat": 50.0417574976319,
+    "lng": 22.006314608644146
+  },
+  {
+    "name": "Zorza",
+    "url": "https://kinozorza.pl",
+    "lat": 50.03496,
+    "lng": 22.00082
+  },
+  {
+    "name": "Kino MCK",
+    "url": "https://milanowek.pl",
+    "lat": 50.26145623609078,
+    "lng": 22.418702832297527
+  },
+  {
+    "name": "Galaktyka",
+    "url": "http://www.kinogalaktyka.pl",
+    "lat": 50.2958667,
+    "lng": 21.4409594
+  },
+  {
+    "name": "Kino Jedność",
+    "url": "https://kinosedziszow.pl",
+    "lat": 50.06953373856831,
+    "lng": 21.69393987215157
+  },
+  {
+    "name": "Orzeł",
+    "url": "https://kino-orzel.pl",
+    "lat": 53.12737,
+    "lng": 17.99757
+  },
+  {
+    "name": "Kinomax",
+    "url": "http://kinomax.info.pl",
+    "lat": 52.7753767,
+    "lng": 18.2471683
+  },
+  {
+    "name": "Kinoteatr Rondo",
+    "url": "https://kinorondo.pl",
+    "lat": 53.35036559532,
+    "lng": 18.43440413475
+  },
+  {
+    "name": "Światowid",
+    "url": "https://swiatowid.katowice.pl",
+    "lat": 50.2597853,
+    "lng": 19.0196066
+  },
+  {
+    "name": "Kosmos",
+    "url": "https://kosmos.katowice.pl",
+    "lat": 50.268735,
+    "lng": 19.0200447
+  },
+  {
+    "name": "NoveKino Przedwiośnie",
+    "url": "https://www.novekino.pl/kina/przedwiosnie/",
+    "lat": 52.54354,
+    "lng": 19.68963
+  },
+  {
+    "name": "Kino KDK",
+    "url": "https://kdk.net.pl",
+    "lat": 52.2357075,
+    "lng": 19.3558847
+  },
+  {
+    "name": "Kino Kalejdoskop",
+    "url": "http://mckplonsk.pl",
+    "lat": 52.62265,
+    "lng": 20.36674
+  },
+  {
+    "name": "Jutrzenka",
+    "url": "http://bok.bierun.pl",
+    "lat": 52.8485790210895,
+    "lng": 19.662159513050838
+  },
+  {
+    "name": "Agrafka",
+    "url": "https://kinoagrafka.pl",
+    "lat": 50.0674018,
+    "lng": 19.9376921
+  },
+  {
+    "name": "Kino Kika",
+    "url": "https://kinokika.pl",
+    "lat": 50.04182,
+    "lng": 19.94063
+  },
+  {
+    "name": "Mikro",
+    "url": "https://kinomikro.pl",
+    "lat": 50.0694749,
+    "lng": 19.9237717
+  },
+  {
+    "name": "Kijów",
+    "url": "https://kijow.pl",
+    "lat": 50.0584454,
+    "lng": 19.92515
+  },
+  {
+    "name": "Kino Pod Baranami",
+    "url": "https://kinopodbaranami.pl",
+    "lat": 50.0616109,
+    "lng": 19.9356864
+  },
+  {
+    "name": "Mikro Bronowice",
+    "url": "https://kinomikro.pl",
+    "lat": 50.09254,
+    "lng": 19.89797
+  },
+  {
+    "name": "Kino Pod Baranami - sala MOS",
+    "url": "https://kinopodbaranami.pl",
+    "lat": 50.064321,
+    "lng": 19.929726
+  },
+  {
+    "name": "Paradox",
+    "url": "https://kinoparadox.pl",
+    "lat": 50.0627338,
+    "lng": 19.9265453
+  },
+  {
+    "name": "Sfinks",
+    "url": "https://okn.edu.pl",
+    "lat": 50.0797081,
+    "lng": 20.0367038
+  },
+  {
+    "name": "Kino Pod Baranami - sala ASP",
+    "url": "https://kinopodbaranami.pl",
+    "lat": 50.06617629272318,
+    "lng": 19.941556798052076
+  },
+  {
+    "name": "Dolnośląskie Centrum Filmowe",
+    "url": "https://dcf.wroclaw.pl",
+    "lat": 51.101708,
+    "lng": 17.0304467
+  },
+  {
+    "name": "Kino Nowe Horyzonty",
+    "url": "https://www.kinonowehoryzonty.pl",
+    "lat": 51.1095191,
+    "lng": 17.026303
+  },
+  {
+    "name": "Kino Polonia",
+    "url": "https://ec1lodz.pl",
+    "lat": 51.312615297336016,
+    "lng": 17.0628522795299
+  },
+  {
+    "name": "Kino Wolność",
+    "url": "https://centrumkultury.eu",
+    "lat": 52.102789,
+    "lng": 20.627389
+  },
+  {
+    "name": "Kino Tatry",
+    "url": "https://kinotatrylodz.pl",
+    "lat": 51.764952,
+    "lng": 19.461967
+  },
+  {
+    "name": "TME Polówka: Fuzja",
+    "url": "https://polowka.com/",
+    "lat": 51.74839344110517,
+    "lng": 19.46746030409412
+  },
+  {
+    "name": "Nowe Kino Warszawa",
+    "url": "https://novekino.pl",
+    "lat": 52.4230315,
+    "lng": 19.4646701
+  },
+  {
+    "name": "Kino Nawojka",
+    "url": "http://mcklipno.pl",
+    "lat": 52.843055,
+    "lng": 19.177917
+  },
+  {
+    "name": "Kino Tur",
+    "url": "http://mdk.turek.pl",
+    "lat": 52.017216,
+    "lng": 18.499197
+  },
+  {
+    "name": "Kino MOK",
+    "url": "http://www.mok.gniezno.pl",
+    "lat": 52.168022170425,
+    "lng": 17.900027632713
+  },
+  {
+    "name": "Koneckie Centrum Kultury",
+    "url": "http://dkkonskie.pl",
+    "lat": 51.2284046,
+    "lng": 20.4781935
+  },
+  {
+    "name": "Kino Kuźnica",
+    "url": "https://www.kuznica-suchedniow.com",
+    "lat": 51.04386,
+    "lng": 20.83595
+  },
+  {
+    "name": "Kino CK",
+    "url": "http://sck-solec.com",
+    "lat": 50.6418058107273,
+    "lng": 20.293435375152402
+  },
+  {
+    "name": "Kino Fenomen",
+    "url": "https://www.wdk-kielce.pl",
+    "lat": 50.8614776,
+    "lng": 20.6268503
+  },
+  {
+    "name": "Kino WDK",
+    "url": "https://www.wdk-kielce.pl",
+    "lat": 50.8614462,
+    "lng": 20.6269942
+  },
+  {
+    "name": "artKino",
+    "url": "http://www.rckp.krosno.pl",
+    "lat": 49.678723,
+    "lng": 21.774748
+  },
+  {
+    "name": "Zamek",
+    "url": "https://zamek.szczecin.pl",
+    "lat": 53.4264,
+    "lng": 14.5595
+  },
+  {
+    "name": "Kozienicki Dom Kultury",
+    "url": "http://www.kinokozienice.pl",
+    "lat": 51.589479,
+    "lng": 21.544679
+  },
+  {
+    "name": "Planetarium Centrum Nauki Kopernik",
+    "url": "https://www.kopernik.org.pl/planetarium",
+    "lat": 52.24182,
+    "lng": 21.02806
+  },
+  {
+    "name": "PROM Kultury Saska Kępa",
+    "url": "https://promkultury.pl",
+    "lat": 52.2250793,
+    "lng": 21.0607615
+  },
+  {
+    "name": "Filmowa Stolica Lata: Dorożkarnia",
+    "url": "https://filmowastolica.pl/",
+    "lat": 52.211972,
+    "lng": 21.072489
+  },
+  {
+    "name": "Filmowa Stolica Lata: Kopa Cwila",
+    "url": "https://filmowastolica.pl/",
+    "lat": 52.164312,
+    "lng": 21.022089
+  },
+  {
+    "name": "Wars",
+    "url": "https://teatrwarsawy.pl",
+    "lat": 52.91474331037706,
+    "lng": 22.51194992654756
+  },
+  {
+    "name": "Kino na Szekspirowskim",
+    "url": "https://teatrszekspirowski.pl",
+    "lat": 54.347786,
+    "lng": 18.648185
+  },
+  {
+    "name": "Metalowiec",
+    "url": "http://kino.krasnik.eu",
+    "lat": 50.9633186,
+    "lng": 22.1563466
+  },
+  {
+    "name": "Kino Opolanka",
+    "url": "http://ockopolelubelskie.pl",
+    "lat": 51.15115,
+    "lng": 21.97159
+  },
+  {
+    "name": "TME Polówka: Park Poniatowskiego",
+    "url": "https://polowka.com/",
+    "lat": 51.75388515225789,
+    "lng": 19.43965082086833
+  },
+  {
+    "name": "TME Polówka: Arturówek - MOSiR Łódź",
+    "url": "https://polowka.com/",
+    "lat": 51.82351534025321,
+    "lng": 19.474311719176256
+  },
+  {
+    "name": "Centrum Kultury Nowy Pafawag",
+    "url": "https://cknp.pl",
+    "lat": 51.115538830289,
+    "lng": 16.958105564117
+  },
+  {
+    "name": "Kino Teatr Apollo",
+    "url": "https://kinoapollo.pl",
+    "lat": 52.4049508,
+    "lng": 16.9247873
+  },
+  {
+    "name": "Teatr Stary",
+    "url": "https://teatrstary.eu",
+    "lat": 51.247371,
+    "lng": 22.569162
+  },
+  {
+    "name": "Kino Cytadela",
+    "url": "https://muzhp.pl",
+    "lat": 52.26442644477681,
+    "lng": 20.999047196024677
+  },
+  {
+    "name": "Filmowa Stolica Lata: Plaża Romantyczna",
+    "url": "https://filmowastolica.pl/",
+    "lat": 52.171416,
+    "lng": 21.1394
+  },
+  {
+    "name": "TME Polówka: Widzewska Górka",
+    "url": "https://polowka.com/",
+    "lat": 51.757807377191796,
+    "lng": 19.52377379182169
+  },
+  {
+    "name": "TME Polówka: Olechów",
+    "url": "https://polowka.com/",
+    "lat": 51.743398616927834,
+    "lng": 19.5641503046406
+  },
+  {
+    "name": "Bułgarska 19",
+    "url": "http://www.kinobulgarska19.pl",
+    "lat": 52.39917,
+    "lng": 16.86215
+  },
+  {
+    "name": "Dobre kino na sadach by Filmweb and Salto Bar",
+    "url": "https://saltobar.pl",
+    "lat": 52.267078332936066,
+    "lng": 20.97296178619363
+  },
+  {
+    "name": "Kino Letnie w Orłowie",
+    "url": "http://www.kinoletnie.info",
+    "lat": 54.475596,
+    "lng": 18.562181
+  },
+  {
+    "name": "TME Polówka: EC1",
+    "url": "https://polowka.com/",
+    "lat": 51.76797146142421,
+    "lng": 19.469246382789645
+  },
+  {
+    "name": "TME Polówka: Centrum Dialogu",
+    "url": "https://polowka.com/",
+    "lat": 51.78643004916394,
+    "lng": 19.47330949314889
+  },
+  {
+    "name": "Służewski Dom Kultury",
+    "url": "https://sdk.waw.pl",
+    "lat": 52.1683381,
+    "lng": 21.024251700000036
+  },
+  {
+    "name": "Browary Warszawskie",
+    "url": "https://browarywarszawskie.com.pl",
+    "lat": 52.23480717763409,
+    "lng": 20.987142393028687
+  },
+  {
+    "name": "TME Polówka: Pałac Biedermanna",
+    "url": "https://polowka.com/",
+    "lat": 51.780156361291134,
+    "lng": 19.46284379082999
+  },
+  {
+    "name": "TME Polówka: Park na Zdrowiu",
+    "url": "https://polowka.com/",
+    "lat": 51.76380842721837,
+    "lng": 19.41558564998894
+  },
+  {
+    "name": "TME Polówka: Park Julianowski",
+    "url": "https://polowka.com/",
+    "lat": 51.808179738245734,
+    "lng": 19.446998222803266
+  },
+  {
+    "name": "Filmowa Stolica Lata: Centrum Myśli JP2",
+    "url": "https://filmowastolica.pl/",
+    "lat": 52.2337207910165,
+    "lng": 21.021760790760837
+  }
+]

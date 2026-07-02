@@ -19,5 +19,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: Create a reference JSON file mapping cinemas to coordinates and schedule URLs.**
+- [x] **Track: Create a reference JSON file mapping cinemas to coordinates and schedule URLs.**
 *Link: [./tracks/cinema_mapping_20260702/](./tracks/cinema_mapping_20260702/)*

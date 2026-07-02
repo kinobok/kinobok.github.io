@@ -11,3 +11,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: UX revamp when user clicks cinema map points and typeaheads for search bar**
 *Link: [./tracks/map_search_ux_20260619/](./tracks/map_search_ux_20260619/)*
+
+---
+
+- [ ] **Track: Implement the kinobok scraper in Golang using Colly with Goroutines/Channels for concurrency, running in parallel with the Python scraper.**
+*Link: [./tracks/golang_scraper_20260702/](./tracks/golang_scraper_20260702/)*

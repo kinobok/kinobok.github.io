@@ -16,3 +16,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Implement the kinobok scraper in Golang using Colly with Goroutines/Channels for concurrency, running in parallel with the Python scraper.**
 *Link: [./tracks/golang_scraper_20260702/](./tracks/golang_scraper_20260702/)*
+
+---
+
+- [ ] **Track: Create a reference JSON file mapping cinemas to coordinates and schedule URLs.**
+*Link: [./tracks/cinema_mapping_20260702/](./tracks/cinema_mapping_20260702/)*

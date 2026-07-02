@@ -11,12 +11,13 @@ kinꚘbok uses a decoupled architecture with a statically hosted frontend that c
 - **Testing:** Vitest
 
 # Backend (Scraper)
-- **Language:** Python 3.11+
-- **HTTP Client:** HTTPX
-- **HTML Parsing:** BeautifulSoup4
-- **Data Validation & Modeling:** Pydantic
-- **String Matching:** RapidFuzz
-- **Testing:** Pytest
+- **Language:** Go 1.25+ & Python 3.11+ (Running in parallel during migration)
+- **Framework (Go):** Colly/v2 (for web scraping)
+- **HTTP Client:** HTTPX (Python) / net/http (Go)
+- **HTML Parsing:** BeautifulSoup4 (Python) / Goquery via Colly (Go)
+- **Data Validation & Modeling:** Pydantic (Python) / Custom Go schemas with validation
+- **String Matching & Normalization:** RapidFuzz (Python) / Custom slug-matching & GenerateSlug (Go)
+- **Testing:** Pytest (Python) / Go testing toolchain (Go)
 
 # CI/CD & Deployment
 - **Automation:** GitHub Actions (daily scraper runs, formatting checks, deployment)

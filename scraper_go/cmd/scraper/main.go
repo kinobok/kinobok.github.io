@@ -62,7 +62,9 @@ func main() {
 		cities = []string{
 			"Warszawa", "Wrocław", "Poznań", "Kraków", "Gdańsk",
 			"Szczecin", "Łódź", "Toruń", "Katowice", "Lublin",
-			"Olsztyn", "Częstochowa",
+			"Olsztyn", "Częstochowa", "Kalisz", "Białystok",
+			"Kielce", "Zielona Góra", "Opole", "Rzeszów", "Radom",
+			"Siedlce", "Skierniewice", "Płock", "Łomża", "Koszalin",
 		}
 	}
 
@@ -359,7 +361,7 @@ func main() {
 					for cinemaName, cinemaInfo := range fwMovie.Cinemas {
 						displayName := cinemaName
 						if !strings.Contains(strings.ToLower(cinemaName), strings.ToLower(city)) {
-							displayName = fmt.Sprintf("%s (%s)", cinemaName, city)
+							displayName = fmt.Sprintf("%s", cinemaName)
 						}
 
 						cinemaMutex.Lock()

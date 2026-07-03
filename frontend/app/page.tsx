@@ -59,7 +59,7 @@ export default function Home() {
   const [uploadError, setUploadError] = useState<string>("");
 
   useEffect(() => {
-    fetch("/data.json")
+    fetch("/data_go.json")
       .then((res) => res.json())
       .then((json) => {
         setData(json);

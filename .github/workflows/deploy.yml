@@ -7,7 +7,7 @@ on:
     paths:
       - 'frontend/**'
   workflow_run:
-    workflows: ["Daily Warsaw Scraper"]
+    workflows: ["Daily Warsaw Scraper", "Daily Go Scraper"]
     types:
       - completed
     branches:

@@ -16,3 +16,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Implement the kinobok scraper in Golang using Colly with Goroutines/Channels for concurrency, running in parallel with the Python scraper.**
 *Link: [./tracks/golang_scraper_20260702/](./tracks/golang_scraper_20260702/)*
+
+---
+
+- [ ] **Track: feat: implement looking for a specific movie with a search bar (add another mode for searching (cinema/movie) perhaps?). As a different feature, center map on a selected movie when clicked on a search bar.**
+*Link: [./tracks/unified_search_map_sync_20260719/](./tracks/unified_search_map_sync_20260719/)*

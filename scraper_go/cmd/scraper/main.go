@@ -96,7 +96,7 @@ func main() {
 
 	today := time.Now().Format("2006-01-02")
 	weekday := time.Now().Weekday()
-	isRefreshDay := weekday == time.Wednesday || weekday == time.Thursday || weekday == time.Friday
+	isRefreshDay := weekday == time.Thursday || weekday == time.Friday
 
 	var daysToScrape []int
 	var finalShowtimes = make(map[string][]export.ShowtimeModel)

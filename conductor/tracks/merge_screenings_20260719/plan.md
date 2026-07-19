@@ -1,10 +1,10 @@
 # Implementation Plan
 
-## Phase 1: Core Deduplication Utilities
+## Phase 1: Core Deduplication Utilities [checkpoint: 9245316]
 - [x] Task: Implement Showtime Deduplication
     - [x] Write failing unit tests for a string slice deduplication function to handle exact time string matches.
     - [x] Implement the deduplication function (Green phase) to pass the tests.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Core Deduplication Utilities' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Core Deduplication Utilities' (Protocol in workflow.md)
 
 ## Phase 2: Scraper Integration
 - [ ] Task: Update Aggregation in `main.go`

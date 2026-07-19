@@ -189,7 +189,12 @@ export function calculateMatchCountsPerDay(
   excludedCinemaIds: string[] = [],
   showAllScreenings: boolean = false,
   selectedCinemaId: string | null = null,
-  mapBounds: { west: number; south: number; east: number; north: number } | null = null,
+  mapBounds: {
+    west: number;
+    south: number;
+    east: number;
+    north: number;
+  } | null = null,
 ): Record<string, number> {
   const counts: Record<string, number> = {};
   if (!data || !data.showtimes) return counts;
@@ -223,7 +228,9 @@ export function calculateMatchCountsPerDay(
       matches = matches
         .map((m) => ({
           ...m,
-          showtimes: m.showtimes.filter((s) => visibleCinemaIds.has(s.cinema_id)),
+          showtimes: m.showtimes.filter((s) =>
+            visibleCinemaIds.has(s.cinema_id),
+          ),
         }))
         .filter((m) => m.showtimes.length > 0);
     }
@@ -244,7 +251,10 @@ export function calculateMatchCountsPerDay(
   return counts;
 }
 
-export function isScreeningPast(timeStr: string, now: Date = new Date()): boolean {
+export function isScreeningPast(
+  timeStr: string,
+  now: Date = new Date(),
+): boolean {
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();
 

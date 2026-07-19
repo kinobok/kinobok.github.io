@@ -21,7 +21,9 @@ interface CinemaMapProps {
   onLocationFound?: (loc: { lat: number; lng: number }) => void;
   onSelectCinema?: (cinemaId: string | null) => void;
   isMinimized?: boolean;
-  onBoundsChange?: (bounds: { west: number; south: number; east: number; north: number } | null) => void;
+  onBoundsChange?: (
+    bounds: { west: number; south: number; east: number; north: number } | null,
+  ) => void;
 }
 
 const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
@@ -85,7 +87,9 @@ function MapEventsController({ onMapClick }: { onMapClick: () => void }) {
 function MapBoundsController({
   onBoundsChange,
 }: {
-  onBoundsChange: (bounds: { west: number; south: number; east: number; north: number } | null) => void;
+  onBoundsChange: (
+    bounds: { west: number; south: number; east: number; north: number } | null,
+  ) => void;
 }) {
   const map = useMap();
 

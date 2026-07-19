@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Match, Cinema } from "../utils/matching_logic";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { Match, Cinema, isScreeningPast } from "../utils/matching_logic";
 import Image from "next/image";
 import DateSelector from "./DateSelector";
 import { ChevronDown, Search, ChevronUp } from "lucide-react";
@@ -42,6 +42,16 @@ export default function MatchSidebar({
   selectedCinema,
 }: MatchSidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
+
+  const todayStr = useMemo(() => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }, []);
+
+  const isTodaySelected = selectedDate === todayStr;
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -592,7 +602,28 @@ export default function MatchSidebar({
                               <span style={{ color: "var(--lb-orange)" }}>
                                 {s.cinema}
                               </span>
-                              : {s.times.join(", ")}
+                              :{" "}
+                              {s.times.map((t, tIdx) => {
+                                const isPast =
+                                  isTodaySelected && isScreeningPast(t);
+                                return (
+                                  <span key={tIdx}>
+                                    <span
+                                      style={{
+                                        color: isPast
+                                          ? "rgba(255, 255, 255, 0.3)"
+                                          : "var(--lb-text-secondary)",
+                                        textDecoration: isPast
+                                          ? "line-through"
+                                          : "none",
+                                      }}
+                                    >
+                                      {t}
+                                    </span>
+                                    {tIdx < s.times.length - 1 && ", "}
+                                  </span>
+                                );
+                              })}
                             </a>
                           </div>
                         ))}

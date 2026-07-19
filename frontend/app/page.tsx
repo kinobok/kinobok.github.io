@@ -7,6 +7,7 @@ import {
   findMatchesWithFilters,
   calculateMatchCountsPerDay,
   CinemaData,
+  isScreeningPast,
 } from "../utils/matching_logic";
 import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
@@ -40,6 +41,12 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
+  const [mapBounds, setMapBounds] = useState<{
+    west: number;
+    south: number;
+    east: number;
+    north: number;
+  } | null>(null);
 
   const selectedCinema = useMemo(() => {
     if (!selectedCinemaId || !data?.cinemas) return null;
@@ -301,6 +308,7 @@ export default function Home() {
       excludedCinemaIds,
       showAllScreenings,
       selectedCinemaId,
+      mapBounds,
     );
   }, [
     watchlistUris,
@@ -310,6 +318,7 @@ export default function Home() {
     excludedCinemaIds,
     showAllScreenings,
     selectedCinemaId,
+    mapBounds,
   ]);
 
   const { matches, filteredCinemas, matchedCinemaIds } = useMemo(() => {
@@ -336,6 +345,35 @@ export default function Home() {
       );
     }
 
+    // Apply Map Bounds filtering (unless selectedCinemaId is set to override)
+    if (mapBounds && !selectedCinemaId && data) {
+      const visibleCinemaIds = new Set(
+        data.cinemas
+          .filter(
+            (c) =>
+              c.coords &&
+              c.coords.lat >= mapBounds.south &&
+              c.coords.lat <= mapBounds.north &&
+              c.coords.lng >= mapBounds.west &&
+              c.coords.lng <= mapBounds.east,
+          )
+          .map((c) => c.id),
+      );
+
+      result.matches = result.matches
+        .map((m) => ({
+          ...m,
+          showtimes: m.showtimes.filter((s) =>
+            visibleCinemaIds.has(s.cinema_id),
+          ),
+        }))
+        .filter((m) => m.showtimes.length > 0);
+
+      result.filteredCinemas = result.filteredCinemas.filter((c) =>
+        visibleCinemaIds.has(c.id),
+      );
+    }
+
     if (selectedCinemaId) {
       result.matches = result.matches
         .map((m) => ({
@@ -345,6 +383,28 @@ export default function Home() {
           ),
         }))
         .filter((m) => m.showtimes.length > 0);
+    }
+
+    // For today's date, push movies with no remaining future screenings to the bottom
+    const todayStr = (() => {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+    })();
+
+    if (selectedDate === todayStr) {
+      const hasFutureScreening = (m: (typeof result.matches)[0]) => {
+        return m.showtimes.some((s) =>
+          s.times.some((t) => !isScreeningPast(t)),
+        );
+      };
+
+      result.matches.sort((a, b) => {
+        const aHasFuture = hasFutureScreening(a);
+        const bHasFuture = hasFutureScreening(b);
+        if (aHasFuture && !bHasFuture) return -1;
+        if (!aHasFuture && bHasFuture) return 1;
+        return 0;
+      });
     }
 
     return result;
@@ -359,9 +419,35 @@ export default function Home() {
     excludedCinemaIds,
     sortBy,
     showAllScreenings,
+    mapBounds,
   ]);
 
-  if (!data) return <div>Loading kinꚘbok Warsaw...</div>;
+  if (!data) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          width: "100vw",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "var(--lb-bg)",
+          gap: "16px",
+        }}
+      >
+        <img
+          src="/kinobok.svg"
+          alt="kinobok"
+          className="loading-logo"
+          style={{ width: "120px", height: "auto" }}
+        />
+        <div style={{ color: "var(--lb-text-secondary)", fontSize: "0.95em" }}>
+          Loading...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <main
@@ -455,6 +541,7 @@ export default function Home() {
           onLocationFound={handleLocationFound}
           onSelectCinema={handleSelectCinema}
           isMinimized={isSidebarMinimized}
+          onBoundsChange={setMapBounds}
         />
       </div>
     </main>

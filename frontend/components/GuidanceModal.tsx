@@ -68,12 +68,13 @@ const GuidanceModal: React.FC<GuidanceModalProps> = ({
         >
           <div
             style={{
-              display: "block",
+              display: "flex",
+              flexDirection: "column",
               justifyContent: "center",
               textAlign: "center",
               alignItems: "center",
               gap: "12px",
-              width: "-moz-available",
+              width: "100%",
             }}
           >
             <svg

@@ -4,6 +4,7 @@ import {
   isVisible,
   findMatchesWithFilters,
   calculateMatchCountsPerDay,
+  isScreeningPast,
   Movie,
   Showtime,
   CinemaData,
@@ -239,5 +240,34 @@ describe("Filtering Logic", () => {
     expect(isVisible("Multikino Złote Tarasy", visibleChains)).toBe(true);
     expect(isVisible("Helios Blue City", visibleChains)).toBe(true);
     expect(isVisible("Cinema City Arkadia", visibleChains)).toBe(false);
+  });
+});
+
+describe("isScreeningPast", () => {
+  it("should identify a screening as past if its hour is strictly less than the current hour", () => {
+    const now = new Date();
+    now.setHours(16);
+    now.setMinutes(0);
+
+    expect(isScreeningPast("15:30", now)).toBe(true);
+    expect(isScreeningPast("14:00", now)).toBe(true);
+  });
+
+  it("should identify a screening as past if its hour is equal to current hour and minute is less than or equal to current minute", () => {
+    const now = new Date();
+    now.setHours(16);
+    now.setMinutes(30);
+
+    expect(isScreeningPast("16:20", now)).toBe(true);
+    expect(isScreeningPast("16:30", now)).toBe(true);
+  });
+
+  it("should not identify a screening as past if its hour is in the future", () => {
+    const now = new Date();
+    now.setHours(16);
+    now.setMinutes(30);
+
+    expect(isScreeningPast("17:00", now)).toBe(false);
+    expect(isScreeningPast("16:40", now)).toBe(false);
   });
 });

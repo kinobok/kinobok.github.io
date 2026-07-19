@@ -97,12 +97,12 @@ export default function ConfigMenu({
         <div className="config-menu-header">
           <div
             style={{
-              display: "block",
+              display: "flex",
               justifyContent: "center",
               textAlign: "center",
               alignItems: "center",
               gap: "12px",
-              width: "-moz-available",
+              width: "100%",
             }}
           >
             <h2

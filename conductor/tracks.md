@@ -19,5 +19,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: fix: merge overlapping screenings (some city regions scraped have overlapping cinemas)**
+- [x] **Track: fix: merge overlapping screenings (some city regions scraped have overlapping cinemas)**
 *Link: [./tracks/merge_screenings_20260719/](./tracks/merge_screenings_20260719/)*

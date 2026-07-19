@@ -21,6 +21,7 @@ interface CinemaMapProps {
   onLocationFound?: (loc: { lat: number; lng: number }) => void;
   onSelectCinema?: (cinemaId: string | null) => void;
   isMinimized?: boolean;
+  onBoundsChange?: (bounds: { west: number; south: number; east: number; north: number } | null) => void;
 }
 
 const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
@@ -81,6 +82,38 @@ function MapEventsController({ onMapClick }: { onMapClick: () => void }) {
   return null;
 }
 
+function MapBoundsController({
+  onBoundsChange,
+}: {
+  onBoundsChange: (bounds: { west: number; south: number; east: number; north: number } | null) => void;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    const b = map.getBounds();
+    onBoundsChange({
+      west: b.getWest(),
+      south: b.getSouth(),
+      east: b.getEast(),
+      north: b.getNorth(),
+    });
+  }, [map, onBoundsChange]);
+
+  useMapEvents({
+    moveend: () => {
+      const b = map.getBounds();
+      onBoundsChange({
+        west: b.getWest(),
+        south: b.getSouth(),
+        east: b.getEast(),
+        north: b.getNorth(),
+      });
+    },
+  });
+
+  return null;
+}
+
 export default function CinemaMap({
   cinemas,
   highlightedCinemaIds = [],
@@ -88,6 +121,7 @@ export default function CinemaMap({
   onLocationFound,
   onSelectCinema,
   isMinimized = false,
+  onBoundsChange,
 }: CinemaMapProps) {
   const [isClient, setIsClient] = useState(false);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
@@ -194,6 +228,9 @@ export default function CinemaMap({
             if (onSelectCinema) onSelectCinema(null);
           }}
         />
+        {onBoundsChange && (
+          <MapBoundsController onBoundsChange={onBoundsChange} />
+        )}
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"

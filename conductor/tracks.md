@@ -19,5 +19,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: frontend: map bounds filtering, time-based sorting, loading screen animation, and logo alignment fixes**
+- [x] **Track: frontend: map bounds filtering, time-based sorting, loading screen animation, and logo alignment fixes**
 *Link: [./tracks/frontend_enhancements_20260719/](./tracks/frontend_enhancements_20260719/)*

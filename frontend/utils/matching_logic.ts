@@ -189,6 +189,7 @@ export function calculateMatchCountsPerDay(
   excludedCinemaIds: string[] = [],
   showAllScreenings: boolean = false,
   selectedCinemaId: string | null = null,
+  mapBounds: { west: number; south: number; east: number; north: number } | null = null,
 ): Record<string, number> {
   const counts: Record<string, number> = {};
   if (!data || !data.showtimes) return counts;
@@ -205,6 +206,28 @@ export function calculateMatchCountsPerDay(
       showAllScreenings,
     );
 
+    if (mapBounds && !selectedCinemaId) {
+      const visibleCinemaIds = new Set(
+        data.cinemas
+          .filter(
+            (c) =>
+              c.coords &&
+              c.coords.lat >= mapBounds.south &&
+              c.coords.lat <= mapBounds.north &&
+              c.coords.lng >= mapBounds.west &&
+              c.coords.lng <= mapBounds.east,
+          )
+          .map((c) => c.id),
+      );
+
+      matches = matches
+        .map((m) => ({
+          ...m,
+          showtimes: m.showtimes.filter((s) => visibleCinemaIds.has(s.cinema_id)),
+        }))
+        .filter((m) => m.showtimes.length > 0);
+    }
+
     if (selectedCinemaId) {
       matches = matches
         .map((m) => ({
@@ -219,4 +242,19 @@ export function calculateMatchCountsPerDay(
     counts[date] = matches.length;
   }
   return counts;
+}
+
+export function isScreeningPast(timeStr: string, now: Date = new Date()): boolean {
+  const currentHour = now.getHours();
+  const currentMinute = now.getMinutes();
+
+  const [hourStr, minuteStr] = timeStr.split(":");
+  const hour = parseInt(hourStr, 10);
+  const minute = parseInt(minuteStr, 10);
+
+  if (isNaN(hour) || isNaN(minute)) return false;
+
+  if (hour < currentHour) return true;
+  if (hour === currentHour && minute <= currentMinute) return true;
+  return false;
 }

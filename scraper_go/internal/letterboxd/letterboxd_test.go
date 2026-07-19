@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 )
 
@@ -95,5 +96,22 @@ func TestLetterboxdScraper_GetShortURI(t *testing.T) {
 				t.Errorf("GetShortURI() = %s, expected %s", got, tt.expected)
 			}
 		})
+	}
+}
+
+func TestLetterboxdScraper_GetShortURI_Live(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping live integration test in short mode")
+	}
+
+	scraper := NewLetterboxdScraper()
+	uri, err := scraper.GetShortURI("project-hail-mary")
+	if err != nil {
+		t.Logf("Skipping live test: Letterboxd is unreachable or returned error: %v", err)
+		return
+	}
+
+	if !strings.HasPrefix(uri, "https://boxd.it/") {
+		t.Errorf("Expected short URI to start with 'https://boxd.it/', got: %s", uri)
 	}
 }

@@ -52,9 +52,9 @@ func TestExportToJSON_ValidData(t *testing.T) {
 
 	outputFile := filepath.Join(tmpDir, "data.json")
 
-	err = ExportToJSON(movies, cinemas, showtimes, metadata, outputFile)
+	err = ToJSON(movies, cinemas, showtimes, metadata, outputFile)
 	if err != nil {
-		t.Fatalf("ExportToJSON failed: %v", err)
+		t.Fatalf("ToJSON failed: %v", err)
 	}
 
 	if _, err := os.Stat(outputFile); os.IsNotExist(err) {
@@ -66,7 +66,7 @@ func TestExportToJSON_ValidData(t *testing.T) {
 		t.Fatalf("Failed to read output file: %v", err)
 	}
 
-	var parsed ExportSchema
+	var parsed Schema
 	if err := json.Unmarshal(data, &parsed); err != nil {
 		t.Fatalf("Failed to unmarshal output: %v", err)
 	}
@@ -105,8 +105,8 @@ func TestExportToJSON_InvalidData(t *testing.T) {
 
 	outputFile := filepath.Join(tmpDir, "data_invalid.json")
 
-	err = ExportToJSON(movies, cinemas, showtimes, metadata, outputFile)
+	err = ToJSON(movies, cinemas, showtimes, metadata, outputFile)
 	if err == nil {
-		t.Fatal("Expected ExportToJSON to fail due to missing boxd_uri, but it succeeded")
+		t.Fatal("Expected ToJSON to fail due to missing boxd_uri, but it succeeded")
 	}
 }

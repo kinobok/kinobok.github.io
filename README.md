@@ -92,4 +92,4 @@ pytest
 This project uses **GitHub Actions** workflows for automated operations:
 *   **Daily Warsaw Scraper (`daily-scraper.yml`):** Runs every day at 4:00 AM UTC to fetch the latest cinema schedules, update `frontend/public/data.json`, and commit the updated data.
 *   **Deploy to GitHub Pages (`deploy.yml`):** Triggered automatically on push to the `main` branch (for frontend files) or after a successful run of the daily scraper. It compiles and publishes the static Next.js export to GitHub Pages.
-*   **Linter Checks (`black.yml` and `prettier.yml`):** Automatically format and check code quality for both the Python codebase and frontend TypeScript.
+*   **Linter Checks (`revive.yml` and `prettier.yml`):** Automatically format and check code quality for both the Golang codebase and frontend TypeScript.

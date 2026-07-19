@@ -1,3 +1,4 @@
+// Package export handles the JSON schema validation and export of scraper data.
 package export
 
 import (
@@ -8,6 +9,7 @@ import (
 	"strings"
 )
 
+// MovieModel represents a scraped movie with its metadata.
 type MovieModel struct {
 	ID      string  `json:"id"`
 	Title   string  `json:"title"`
@@ -15,11 +17,13 @@ type MovieModel struct {
 	BoxdURI string  `json:"boxd_uri"`
 }
 
+// CoordsModel represents coordinates of a cinema.
 type CoordsModel struct {
 	Lat float64 `json:"lat"`
 	Lng float64 `json:"lng"`
 }
 
+// CinemaModel represents a scraped cinema with its address and coordinates.
 type CinemaModel struct {
 	ID      string       `json:"id"`
 	Name    string       `json:"name"`
@@ -27,18 +31,21 @@ type CinemaModel struct {
 	Coords  *CoordsModel `json:"coords"`
 }
 
+// ShowtimeModel represents showtimes of a specific movie in a cinema.
 type ShowtimeModel struct {
 	MovieID  string   `json:"movie_id"`
 	CinemaID string   `json:"cinema_id"`
 	Times    []string `json:"times"`
 }
 
+// FailureModel represents a scraping failure on a specific movie.
 type FailureModel struct {
 	Title   string  `json:"title"`
 	Reason  string  `json:"reason"`
 	Details *string `json:"details"`
 }
 
+// MetadataModel represents metadata of a scrape execution.
 type MetadataModel struct {
 	LastScrape     string         `json:"last_scrape"`
 	TotalMovies    int            `json:"total_movies"`
@@ -46,14 +53,16 @@ type MetadataModel struct {
 	Failures       []FailureModel `json:"failures"`
 }
 
-type ExportSchema struct {
+// Schema represents the complete exported JSON data structure.
+type Schema struct {
 	Movies    []MovieModel               `json:"movies"`
 	Cinemas   []CinemaModel              `json:"cinemas"`
 	Showtimes map[string][]ShowtimeModel `json:"showtimes"`
 	Metadata  MetadataModel              `json:"metadata"`
 }
 
-func (s *ExportSchema) Validate() error {
+// Validate validates the structure of the schema to ensure correctness.
+func (s *Schema) Validate() error {
 	for _, m := range s.Movies {
 		if m.ID == "" {
 			return fmt.Errorf("movie ID cannot be empty")
@@ -101,8 +110,9 @@ func (s *ExportSchema) Validate() error {
 	return nil
 }
 
-func ExportToJSON(movies []MovieModel, cinemas []CinemaModel, showtimes map[string][]ShowtimeModel, metadata MetadataModel, outputFile string) error {
-	schema := ExportSchema{
+// ToJSON exports the movie and showtime data into a JSON file after validation.
+func ToJSON(movies []MovieModel, cinemas []CinemaModel, showtimes map[string][]ShowtimeModel, metadata MetadataModel, outputFile string) error {
+	schema := Schema{
 		Movies:    movies,
 		Cinemas:   cinemas,
 		Showtimes: showtimes,

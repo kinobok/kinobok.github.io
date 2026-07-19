@@ -1,4 +1,4 @@
 /letterboxd/
-
 .env
 .worktrees/
+scraper_go/scraper

@@ -1,3 +1,4 @@
+// Package tmdb provides movie search and metadata integration using The Movie Database (TMDB) API.
 package tmdb
 
 import (
@@ -10,7 +11,8 @@ import (
 	"strings"
 )
 
-type TMDBMovie struct {
+// Movie represents a movie entry retrieved from the TMDB API.
+type Movie struct {
 	ID            int    `json:"id"`
 	Title         string `json:"title"`
 	OriginalTitle string `json:"original_title"`
@@ -18,16 +20,18 @@ type TMDBMovie struct {
 	PosterPath    string `json:"poster_path"`
 }
 
-type TMDBApi struct {
+// API provides methods to communicate with the TMDB API.
+type API struct {
 	apiKey  string
 	baseURL string
 }
 
-func NewTMDBApi(apiKey string) *TMDBApi {
+// NewAPI creates a new API client with the given API key (falls back to TMDB_API_KEY environment variable if empty).
+func NewAPI(apiKey string) *API {
 	if apiKey == "" {
 		apiKey = os.Getenv("TMDB_API_KEY")
 	}
-	return &TMDBApi{
+	return &API{
 		apiKey:  apiKey,
 		baseURL: "https://api.themoviedb.org/3",
 	}
@@ -43,7 +47,8 @@ type tmdbSearchResponse struct {
 	} `json:"results"`
 }
 
-func (s *TMDBApi) SearchMovie(title string, year int) (*TMDBMovie, error) {
+// SearchMovie searches for a movie on TMDB by its title and release year, using sequential retries on adjacent years if no direct match is found.
+func (s *API) SearchMovie(title string, year int) (*Movie, error) {
 	if s.apiKey == "" {
 		s.apiKey = os.Getenv("TMDB_API_KEY")
 		if s.apiKey == "" {
@@ -106,7 +111,7 @@ func (s *TMDBApi) SearchMovie(title string, year int) (*TMDBMovie, error) {
 				}
 			}
 
-			return &TMDBMovie{
+			return &Movie{
 				ID:            movie.ID,
 				Title:         movie.Title,
 				OriginalTitle: movie.OriginalTitle,

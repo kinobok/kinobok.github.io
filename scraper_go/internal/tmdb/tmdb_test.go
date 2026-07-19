@@ -43,7 +43,7 @@ func TestTMDBSearch(t *testing.T) {
 	server := httptest.NewServer(mux)
 	defer server.Close()
 
-	scraper := NewTMDBApi("test_key")
+	scraper := NewAPI("test_key")
 	scraper.baseURL = server.URL
 
 	result, err := scraper.SearchMovie("Projekt Hail Mary", 2026)
@@ -102,7 +102,7 @@ func TestTMDBSearch_RetryYear(t *testing.T) {
 	server := httptest.NewServer(mux)
 	defer server.Close()
 
-	scraper := NewTMDBApi("test_key")
+	scraper := NewAPI("test_key")
 	scraper.baseURL = server.URL
 
 	result, err := scraper.SearchMovie("Old Movie", 2026)
@@ -125,7 +125,7 @@ func TestNewTMDBApi_EnvFallback(t *testing.T) {
 	os.Setenv("TMDB_API_KEY", "env-api-key")
 	defer os.Unsetenv("TMDB_API_KEY")
 
-	api := NewTMDBApi("")
+	api := NewAPI("")
 	if api.apiKey != "env-api-key" {
 		t.Errorf("Expected apiKey 'env-api-key' from env, got '%s'", api.apiKey)
 	}

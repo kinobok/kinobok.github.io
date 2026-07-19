@@ -1,3 +1,4 @@
+// Package letterboxd provides scraping utilities for Letterboxd movie metadata.
 package letterboxd
 
 import (
@@ -7,17 +8,20 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-type LetterboxdScraper struct {
+// Scraper represents a scraper for Letterboxd pages.
+type Scraper struct {
 	BaseURL string
 }
 
-func NewLetterboxdScraper() *LetterboxdScraper {
-	return &LetterboxdScraper{
+// NewScraper creates a new Scraper instance with the default BaseURL.
+func NewScraper() *Scraper {
+	return &Scraper{
 		BaseURL: "https://letterboxd.com/film",
 	}
 }
 
-func (s *LetterboxdScraper) GetShortURI(slug string) (string, error) {
+// GetShortURI retrieves the short boxd.it URI for a movie by its slug.
+func (s *Scraper) GetShortURI(slug string) (string, error) {
 	url := fmt.Sprintf("%s/%s/", s.BaseURL, slug)
 
 	c := colly.NewCollector(

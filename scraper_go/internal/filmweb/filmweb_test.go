@@ -36,7 +36,7 @@ func TestFilmwebScraper_Scrape(t *testing.T) {
 	})
 
 	// 2. Mock individual movie showtimes pages
-	mux.HandleFunc("/film/Projekt+Hail+Mary-2026-10047841/showtimes/Warszawa", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/film/Projekt+Hail+Mary-2026-10047841/showtimes/Warszawa", func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintf(w, `
 			<html>
 			<body>
@@ -53,7 +53,7 @@ func TestFilmwebScraper_Scrape(t *testing.T) {
 		`)
 	})
 
-	mux.HandleFunc("/film/Another-Movie/showtimes/Warszawa", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/film/Another-Movie/showtimes/Warszawa", func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintf(w, `
 			<html>
 			<body>
@@ -67,7 +67,7 @@ func TestFilmwebScraper_Scrape(t *testing.T) {
 		`)
 	})
 
-	mux.HandleFunc("/film/Movie-Day-1/showtimes/Warszawa", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/film/Movie-Day-1/showtimes/Warszawa", func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintf(w, `
 			<html>
 			<body>
@@ -84,7 +84,7 @@ func TestFilmwebScraper_Scrape(t *testing.T) {
 	server := httptest.NewServer(mux)
 	defer server.Close()
 
-	scraper := &FilmwebScraper{
+	scraper := &Scraper{
 		BaseURL: server.URL,
 	}
 
@@ -102,7 +102,7 @@ func TestFilmwebScraper_Scrape(t *testing.T) {
 		t.Fatalf("Expected 2 movies, got %d", len(result.Movies))
 	}
 
-	var m1 *FilmwebMovie
+	var m1 *Movie
 	for _, m := range result.Movies {
 		if m.Title == "Projekt Hail Mary" {
 			m1 = m
@@ -126,7 +126,7 @@ func TestFilmwebScraper_ExtractMovieMetadataFromMock(t *testing.T) {
 	mux := http.NewServeMux()
 
 	// Mocking city showtimes page with list
-	mux.HandleFunc("/showtimes/Warszawa", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/showtimes/Warszawa", func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintf(w, `
 			<html>
 			<body>
@@ -137,7 +137,7 @@ func TestFilmwebScraper_ExtractMovieMetadataFromMock(t *testing.T) {
 	})
 
 	// Mocking the movie page using the exact HTML structure from mock_showtimes.html
-	mux.HandleFunc("/film/Projekt+Hail+Mary-2026-10047841/showtimes/Warszawa", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/film/Projekt+Hail+Mary-2026-10047841/showtimes/Warszawa", func(w http.ResponseWriter, _ *http.Request) {
 		fmt.Fprintf(w, `
 			<div class="preview previewCard previewFilm PreviewFilm" itemprop="hasPart" itemscope itemtype="https://schema.org/Movie" data-film-id="10047841" data-entity-name="film">
 				<div class="preview__card" data-badge-name="Film">
@@ -157,7 +157,7 @@ func TestFilmwebScraper_ExtractMovieMetadataFromMock(t *testing.T) {
 	server := httptest.NewServer(mux)
 	defer server.Close()
 
-	scraper := &FilmwebScraper{
+	scraper := &Scraper{
 		BaseURL: server.URL,
 	}
 
@@ -189,7 +189,7 @@ func TestFilmwebScraper_ScrapeWarsawShowtimes_Live(t *testing.T) {
 		t.Skip("Skipping live Filmweb scraping test in short mode")
 	}
 
-	scraper := NewFilmwebScraper()
+	scraper := NewScraper()
 	result, err := scraper.Scrape("Warszawa", 0, 3)
 	if err != nil {
 		t.Logf("Skipping live test: Filmweb is unreachable or returned error: %v", err)

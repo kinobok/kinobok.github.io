@@ -1,3 +1,4 @@
+// Package filmweb provides scraping utilities for filmweb.pl showtimes and movie metadata.
 package filmweb
 
 import (
@@ -9,41 +10,47 @@ import (
 	"github.com/gocolly/colly/v2"
 )
 
-type FilmwebCinema struct {
+// Cinema represents a scraped cinema details along with its showtimes.
+type Cinema struct {
 	Address string   `json:"address"`
 	Times   []string `json:"times"`
 	Coords  *Coords  `json:"coords"`
 }
 
+// Coords represents geographic coordinates of a cinema.
 type Coords struct {
 	Lat string `json:"lat"`
 	Lng string `json:"lng"`
 }
 
-type FilmwebMovie struct {
-	Title         string                    `json:"title"`
-	OriginalTitle string                    `json:"original_title"`
-	Year          int                       `json:"year"`
-	Cinemas       map[string]*FilmwebCinema `json:"cinemas"`
+// Movie represents a movie entry with its showtimes grouped by cinemas.
+type Movie struct {
+	Title         string             `json:"title"`
+	OriginalTitle string             `json:"original_title"`
+	Year          int                `json:"year"`
+	Cinemas       map[string]*Cinema `json:"cinemas"`
 }
 
-type FilmwebResult struct {
-	Date   string          `json:"date"`
-	Movies []*FilmwebMovie `json:"movies"`
+// Result represents the complete scraping result for a given date.
+type Result struct {
+	Date   string   `json:"date"`
+	Movies []*Movie `json:"movies"`
 }
 
-type FilmwebScraper struct {
+// Scraper represents a scraper for Filmweb pages.
+type Scraper struct {
 	BaseURL string
 }
 
-func NewFilmwebScraper() *FilmwebScraper {
-	return &FilmwebScraper{
+// NewScraper creates a new Scraper instance with default BaseURL.
+func NewScraper() *Scraper {
+	return &Scraper{
 		BaseURL: "https://www.filmweb.pl",
 	}
 }
 
 // Scrape fetches showtimes and cinema details from Filmweb for a given city and day offset.
-func (s *FilmwebScraper) Scrape(city string, dayOffset int, limit int) (*FilmwebResult, error) {
+func (s *Scraper) Scrape(city string, dayOffset int, limit int) (*Result, error) {
 	url := fmt.Sprintf("%s/showtimes/%s", s.BaseURL, city)
 	if dayOffset > 0 {
 		url = fmt.Sprintf("%s?day=%d", url, dayOffset)
@@ -75,9 +82,9 @@ func (s *FilmwebScraper) Scrape(city string, dayOffset int, limit int) (*Filmweb
 
 	if len(movieLinks) == 0 {
 		pageDate := time.Now().AddDate(0, 0, dayOffset).Format("2006-01-02")
-		return &FilmwebResult{
+		return &Result{
 			Date:   pageDate,
-			Movies: []*FilmwebMovie{},
+			Movies: []*Movie{},
 		}, nil
 	}
 
@@ -86,7 +93,7 @@ func (s *FilmwebScraper) Scrape(city string, dayOffset int, limit int) (*Filmweb
 	}
 
 	type movieResult struct {
-		movie *FilmwebMovie
+		movie *Movie
 		err   error
 	}
 
@@ -107,9 +114,9 @@ func (s *FilmwebScraper) Scrape(city string, dayOffset int, limit int) (*Filmweb
 				colly.UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"),
 			)
 
-			movie := &FilmwebMovie{
+			movie := &Movie{
 				Title:   title,
-				Cinemas: make(map[string]*FilmwebCinema),
+				Cinemas: make(map[string]*Cinema),
 			}
 
 			movieCollector.OnHTML(".preview__alternateTitle", func(e *colly.HTMLElement) {
@@ -138,7 +145,7 @@ func (s *FilmwebScraper) Scrape(city string, dayOffset int, limit int) (*Filmweb
 				lng := e.Attr("data-cinema-longitude")
 
 				var times []string
-				e.ForEach(".seanceTile__value", func(i int, item *colly.HTMLElement) {
+				e.ForEach(".seanceTile__value", func(_ int, item *colly.HTMLElement) {
 					timeVal := strings.TrimSpace(item.Text)
 					if timeVal != "" {
 						times = append(times, timeVal)
@@ -153,7 +160,7 @@ func (s *FilmwebScraper) Scrape(city string, dayOffset int, limit int) (*Filmweb
 							Lng: lng,
 						}
 					}
-					movie.Cinemas[cinemaName] = &FilmwebCinema{
+					movie.Cinemas[cinemaName] = &Cinema{
 						Address: address,
 						Times:   times,
 						Coords:  coords,
@@ -171,7 +178,7 @@ func (s *FilmwebScraper) Scrape(city string, dayOffset int, limit int) (*Filmweb
 		}(link.Title, link.URL)
 	}
 
-	movies := make([]*FilmwebMovie, 0, len(movieLinks))
+	movies := make([]*Movie, 0, len(movieLinks))
 	for i := 0; i < len(movieLinks); i++ {
 		res := <-resultsChan
 		if res.err != nil {
@@ -184,7 +191,7 @@ func (s *FilmwebScraper) Scrape(city string, dayOffset int, limit int) (*Filmweb
 	}
 
 	pageDate := time.Now().AddDate(0, 0, dayOffset).Format("2006-01-02")
-	return &FilmwebResult{
+	return &Result{
 		Date:   pageDate,
 		Movies: movies,
 	}, nil

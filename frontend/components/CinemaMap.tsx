@@ -8,7 +8,7 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import L from "leaflet";
 import { Cinema } from "../utils/matching_logic";
 
@@ -24,6 +24,8 @@ interface CinemaMapProps {
   onBoundsChange?: (
     bounds: { west: number; south: number; east: number; north: number } | null,
   ) => void;
+  hasActiveMovieFilter?: boolean;
+  center?: { lat: number; lng: number } | null;
 }
 
 const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
@@ -45,9 +47,13 @@ const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
 function MapController({
   center,
   onZoomChange,
+  cinemas,
+  hasActiveMovieFilter,
 }: {
   center: [number, number] | null;
   onZoomChange: (zoom: number) => void;
+  cinemas: Cinema[];
+  hasActiveMovieFilter: boolean;
 }) {
   const map = useMap();
   const lastCenterRef = useRef<[number, number] | null>(null);
@@ -66,11 +72,23 @@ function MapController({
         lastCenterRef.current[1] !== center[1];
 
       if (hasChanged) {
-        map.setView(center, DEFAULT_ZOOM_VALUE);
+        map.setView(center, 14);
         lastCenterRef.current = center;
       }
     }
   }, [center, map]);
+
+  useEffect(() => {
+    if (hasActiveMovieFilter && cinemas.length > 0) {
+      const validCinemas = cinemas.filter((c) => c.coords);
+      if (validCinemas.length > 0) {
+        const bounds = L.latLngBounds(
+          validCinemas.map((c) => L.latLng(c.coords!.lat, c.coords!.lng)),
+        );
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+      }
+    }
+  }, [hasActiveMovieFilter, cinemas, map]);
 
   return null;
 }
@@ -126,10 +144,19 @@ export default function CinemaMap({
   onSelectCinema,
   isMinimized = false,
   onBoundsChange,
+  hasActiveMovieFilter = false,
+  center,
 }: CinemaMapProps) {
   const [isClient, setIsClient] = useState(false);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
   const [isMobile, setIsMobile] = useState(false);
+
+  const mapCenter = useMemo(() => {
+    if (center) return [center.lat, center.lng] as [number, number];
+    if (userLocation)
+      return [userLocation.lat, userLocation.lng] as [number, number];
+    return null;
+  }, [center, userLocation]);
 
   useEffect(() => {
     setIsClient(true);
@@ -224,8 +251,10 @@ export default function CinemaMap({
         style={{ height: "100%", width: "100%", background: "var(--lb-bg)" }}
       >
         <MapController
-          center={userLocation ? [userLocation.lat, userLocation.lng] : null}
+          center={mapCenter}
           onZoomChange={setZoom}
+          cinemas={cinemas}
+          hasActiveMovieFilter={hasActiveMovieFilter}
         />
         <MapEventsController
           onMapClick={() => {

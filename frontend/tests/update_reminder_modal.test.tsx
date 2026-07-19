@@ -1,6 +1,8 @@
-import { test, expect, describe, vi } from "vitest";
+import { test, expect, describe, vi, beforeEach, afterEach } from "vitest";
 import React from "react";
+
 import UpdateReminderModal from "../components/UpdateReminderModal";
+import { X } from "lucide-react";
 
 describe("UpdateReminderModal", () => {
   test("returns null when isOpen is false", () => {
@@ -21,7 +23,7 @@ describe("UpdateReminderModal", () => {
       lastUploadDate: "June 10, 2026",
       onClose,
       onUpload,
-    });
+    }) as any;
 
     expect(result).not.toBeNull();
     // Root element should be the modal overlay
@@ -47,7 +49,7 @@ describe("UpdateReminderModal", () => {
       lastUploadDate: "June 10, 2026",
       onClose: () => {},
       onUpload: () => {},
-    });
+    }) as any;
 
     const content = result.props.children;
     const mockEvent = {
@@ -65,7 +67,7 @@ describe("UpdateReminderModal", () => {
       lastUploadDate: "June 10, 2026",
       onClose,
       onUpload,
-    });
+    }) as any;
 
     const content = result.props.children;
     const body = content.props.children.find(
@@ -98,7 +100,7 @@ describe("UpdateReminderModal", () => {
       lastUploadDate: "June 10, 2026",
       onClose,
       onUpload,
-    });
+    }) as any;
 
     const content = result.props.children;
     const body = content.props.children.find(

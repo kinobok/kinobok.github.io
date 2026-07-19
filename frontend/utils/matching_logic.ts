@@ -195,6 +195,7 @@ export function calculateMatchCountsPerDay(
     east: number;
     north: number;
   } | null = null,
+  selectedMovieId: string | null = null,
 ): Record<string, number> {
   const counts: Record<string, number> = {};
   if (!data || !data.showtimes) return counts;
@@ -244,6 +245,10 @@ export function calculateMatchCountsPerDay(
           ),
         }))
         .filter((m) => m.showtimes.length > 0);
+    }
+
+    if (selectedMovieId) {
+      matches = matches.filter((m) => m.id === selectedMovieId);
     }
 
     counts[date] = matches.length;

@@ -1,0 +1,8 @@
+{
+  "track_id": "unified_search_map_sync_20260719",
+  "type": "feature",
+  "status": "new",
+  "created_at": "2026-07-19T00:00:00Z",
+  "updated_at": "2026-07-19T00:00:00Z",
+  "description": "feat: implement looking for a specific movie with a search bar (add another mode for searching (cinema/movie) perhaps?). As a different feature, center map on a selected movie when clicked on a search bar."
+}

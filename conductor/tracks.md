@@ -16,3 +16,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Implement the kinobok scraper in Golang using Colly with Goroutines/Channels for concurrency, running in parallel with the Python scraper.**
 *Link: [./tracks/golang_scraper_20260702/](./tracks/golang_scraper_20260702/)*
+
+---
+
+- [ ] **Track: frontend: map bounds filtering, time-based sorting, loading screen animation, and logo alignment fixes**
+*Link: [./tracks/frontend_enhancements_20260719/](./tracks/frontend_enhancements_20260719/)*

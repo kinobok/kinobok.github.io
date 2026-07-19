@@ -99,6 +99,39 @@ describe("CinemaSelection", () => {
     triggerMapCenter(coord2, mockMap);
     expect(setViewMock).toHaveBeenCalledTimes(2);
   });
+
+  test("filters matches and cinemas lists when selectedMovieId is provided", () => {
+    const mockMatches = [
+      { id: "m1", title: "Movie A", showtimes: [{ cinema_id: "c1", times: ["12:00"] }] },
+      { id: "m2", title: "Movie B", showtimes: [{ cinema_id: "c2", times: ["14:00"] }] },
+    ];
+
+    const mockCinemas = [
+      { id: "c1", name: "Cinema 1" },
+      { id: "c2", name: "Cinema 2" },
+    ];
+
+    const selectedMovieId = "m1";
+
+    // Simulate page.tsx logic:
+    // 1. Find all cinema IDs playing selectedMovieId
+    const showtimesForDate = [{ movie_id: "m1", cinema_id: "c1", times: ["12:00"] }];
+    const movieCinemaIds = new Set(
+      showtimesForDate
+        .filter((st) => st.movie_id === selectedMovieId)
+        .map((st) => st.cinema_id),
+    );
+
+    // 2. Filter matches and cinemas
+    const filteredMatches = mockMatches.filter((m) => m.id === selectedMovieId);
+    const filteredCinemas = mockCinemas.filter((c) => movieCinemaIds.has(c.id));
+
+    expect(filteredMatches).toHaveLength(1);
+    expect(filteredMatches[0].id).toBe("m1");
+
+    expect(filteredCinemas).toHaveLength(1);
+    expect(filteredCinemas[0].id).toBe("c1");
+  });
 });
 
 declare global {

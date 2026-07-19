@@ -2,14 +2,22 @@
 
 import { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { Cinema } from "../utils/matching_logic";
+import { Cinema, Movie } from "../utils/matching_logic";
+
+interface SearchSuggestion {
+  id: string;
+  name: string;
+  type: "cinema" | "movie";
+}
 
 interface SearchBarProps {
   onMenuToggle: () => void;
   searchQuery: string;
   onSearchChange: (q: string) => void;
   allCinemas?: Cinema[];
+  allMovies?: Movie[];
   onSelectCinema?: (cinemaId: string | null) => void;
+  onSelectMovie?: (movieId: string | null) => void;
 }
 
 export default function SearchBar({
@@ -17,32 +25,55 @@ export default function SearchBar({
   searchQuery,
   onSearchChange,
   allCinemas,
+  allMovies,
   onSelectCinema,
+  onSelectMovie,
 }: SearchBarProps) {
-  const [suggestions, setSuggestions] = useState<Cinema[]>([]);
+  const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
-    if (searchQuery.length > 1 && allCinemas) {
-      const hasExactMatch = allCinemas.some(
-        (cinema) => cinema.name.toLowerCase() === searchQuery.toLowerCase(),
+    if (searchQuery.length > 1) {
+      const query = searchQuery.toLowerCase();
+
+      // Check if we have an exact match in either cinemas or movies to avoid showing dropdown
+      const hasExactCinema = allCinemas?.some(
+        (c) => c.name.toLowerCase() === query,
+      );
+      const hasExactMovie = allMovies?.some(
+        (m) => m.title.toLowerCase() === query,
       );
 
-      if (hasExactMatch) {
+      if (hasExactCinema || hasExactMovie) {
         setSuggestions([]);
         setShowSuggestions(false);
       } else {
-        const filtered = allCinemas.filter((cinema) =>
-          cinema.name.toLowerCase().includes(searchQuery.toLowerCase()),
-        );
-        setSuggestions(filtered);
+        const list: SearchSuggestion[] = [];
+
+        if (allCinemas) {
+          allCinemas
+            .filter((c) => c.name.toLowerCase().includes(query))
+            .forEach((c) => {
+              list.push({ id: c.id, name: c.name, type: "cinema" });
+            });
+        }
+
+        if (allMovies) {
+          allMovies
+            .filter((m) => m.title.toLowerCase().includes(query))
+            .forEach((m) => {
+              list.push({ id: m.id, name: m.title, type: "movie" });
+            });
+        }
+
+        setSuggestions(list);
         setShowSuggestions(true);
       }
     } else {
       setSuggestions([]);
       setShowSuggestions(false);
     }
-  }, [searchQuery, allCinemas]);
+  }, [searchQuery, allCinemas, allMovies]);
 
   return (
     <div className="search-bar-container">
@@ -66,7 +97,7 @@ export default function SearchBar({
       >
         <input
           type="text"
-          placeholder="Find your cinema..."
+          placeholder="Find cinema or movie..."
           value={searchQuery}
           onChange={(e) => onSearchChange(e.target.value)}
           style={{ paddingRight: searchQuery ? "35px" : "10px", width: "100%" }}
@@ -78,6 +109,7 @@ export default function SearchBar({
               e.stopPropagation();
               onSearchChange("");
               if (onSelectCinema) onSelectCinema(null);
+              if (onSelectMovie) onSelectMovie(null);
             }}
             title="Clear search"
             style={{
@@ -115,14 +147,18 @@ export default function SearchBar({
               pointerEvents: "auto",
             }}
           >
-            {suggestions.map((cinema) => (
+            {suggestions.map((item) => (
               <div
-                key={cinema.id}
+                key={`${item.type}-${item.id}`}
                 className="suggestion-item"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSearchChange(cinema.name);
-                  if (onSelectCinema) onSelectCinema(cinema.id);
+                  onSearchChange(item.name);
+                  if (item.type === "cinema") {
+                    if (onSelectCinema) onSelectCinema(item.id);
+                  } else {
+                    if (onSelectMovie) onSelectMovie(item.id);
+                  }
                   setShowSuggestions(false);
                 }}
                 style={{
@@ -132,6 +168,9 @@ export default function SearchBar({
                   borderBottom: "1px solid rgba(255,255,255,0.05)",
                   textAlign: "left",
                   transition: "background 0.2s",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
                 onMouseEnter={(e) =>
                   (e.currentTarget.style.background = "var(--lb-card, #2c3440)")
@@ -140,7 +179,28 @@ export default function SearchBar({
                   (e.currentTarget.style.background = "transparent")
                 }
               >
-                {cinema.name}
+                <span>{item.name}</span>
+                <span
+                  style={{
+                    fontSize: "0.75em",
+                    padding: "2px 6px",
+                    borderRadius: "3px",
+                    background:
+                      item.type === "cinema"
+                        ? "rgba(255, 128, 0, 0.2)"
+                        : "rgba(0, 224, 84, 0.2)",
+                    color:
+                      item.type === "cinema"
+                        ? "var(--lb-orange)"
+                        : "var(--lb-green)",
+                    border:
+                      item.type === "cinema"
+                        ? "1px solid rgba(255, 128, 0, 0.3)"
+                        : "1px solid rgba(0, 224, 84, 0.3)",
+                  }}
+                >
+                  {item.type === "cinema" ? "Cinema" : "Movie"}
+                </span>
               </div>
             ))}
           </div>

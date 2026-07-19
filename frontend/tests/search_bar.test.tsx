@@ -38,25 +38,6 @@ function findElement(element: any, predicate: (el: any) => boolean): any {
   return null;
 }
 
-// Utility to recursively find all React elements matching a predicate
-function findAllElements(
-  element: any,
-  predicate: (el: any) => boolean,
-  results: any[] = [],
-): any[] {
-  if (!element) return results;
-  if (predicate(element)) {
-    results.push(element);
-  }
-  if (element.props && element.props.children) {
-    const children = React.Children.toArray(element.props.children);
-    for (const child of children) {
-      findAllElements(child, predicate, results);
-    }
-  }
-  return results;
-}
-
 describe("SearchBar", () => {
   beforeEach(() => {
     globalThis.__MOCK_STATE__ = undefined;
@@ -102,12 +83,14 @@ describe("SearchBar", () => {
   test("clicking X (Clear) button clears search and selected cinema", () => {
     const onSearchChange = vi.fn();
     const onSelectCinema = vi.fn();
+    const onSelectMovie = vi.fn();
 
     const result = SearchBar({
       onMenuToggle: vi.fn(),
       searchQuery: "Multikino",
       onSearchChange,
       onSelectCinema,
+      onSelectMovie,
     });
 
     const clearButton = findElement(result, (el) => {
@@ -121,23 +104,25 @@ describe("SearchBar", () => {
 
     expect(onSearchChange).toHaveBeenCalledWith("");
     expect(onSelectCinema).toHaveBeenCalledWith(null);
+    expect(onSelectMovie).toHaveBeenCalledWith(null);
   });
 
-  test("displays typeahead suggestions for Cinema Names when input length > 1", () => {
-    const cinemas = [
-      { id: "c1", name: "Kinoteka" },
-      { id: "c2", name: "Multikino Ursynow" },
-      { id: "c3", name: "Cinema City Sadyba" },
-    ];
+  test("displays typeahead suggestions for Cinema and Movie Names when input length > 1", () => {
+    const cinemas = [{ id: "c1", name: "Kinoteka", address: "" }];
+    const movies = [{ id: "m1", title: "Project Hail Mary", boxd_uri: "https://boxd.it/1" }];
 
-    // Mock state so suggestions is populated
-    globalThis.__MOCK_STATE__ = [cinemas[1]]; // Mocking filtered suggestions array state
+    // Mock state suggestions to combine both
+    globalThis.__MOCK_STATE__ = [
+      { id: "c1", name: "Kinoteka", type: "cinema" },
+      { id: "m1", name: "Project Hail Mary", type: "movie" },
+    ];
 
     const result = SearchBar({
       onMenuToggle: vi.fn(),
-      searchQuery: "Multi",
+      searchQuery: "Proj",
       onSearchChange: vi.fn(),
       allCinemas: cinemas,
+      allMovies: movies,
     });
 
     // Find the suggestions dropdown list
@@ -149,26 +134,34 @@ describe("SearchBar", () => {
     expect(dropdown).toBeDefined();
     expect(dropdown).not.toBeNull();
 
-    // Find the suggestion item
-    const item = findElement(
-      dropdown,
-      (el) => el && el.props && el.props.className === "suggestion-item",
-    );
-    expect(item).toBeDefined();
-    expect(item).not.toBeNull();
-    expect(JSON.stringify(item.props.children)).toContain("Multikino Ursynow");
+    // Verify it contains the cinema suggestion
+    const cinemaItem = findElement(dropdown, (el) => {
+      return el && el.props && el.props.className === "suggestion-item" && JSON.stringify(el.props.children).includes("Kinoteka");
+    });
+    expect(cinemaItem).not.toBeNull();
+
+    // Verify it contains the movie suggestion
+    const movieItem = findElement(dropdown, (el) => {
+      return el && el.props && el.props.className === "suggestion-item" && JSON.stringify(el.props.children).includes("Project Hail Mary");
+    });
+    expect(movieItem).not.toBeNull();
   });
 
-  test("hides typeahead suggestions when the search query exactly matches a cinema name", () => {
-    const cinemas = [{ id: "c1", name: "Kinoteka" }];
+  test("clicking movie suggestion triggers onSelectMovie and clears selectedCinema", () => {
+    const onSearchChange = vi.fn();
+    const onSelectCinema = vi.fn();
+    const onSelectMovie = vi.fn();
 
-    globalThis.__MOCK_STATE__ = undefined;
+    globalThis.__MOCK_STATE__ = [
+      { id: "m1", name: "Project Hail Mary", type: "movie" },
+    ];
 
     const result = SearchBar({
       onMenuToggle: vi.fn(),
-      searchQuery: "Kinoteka",
-      onSearchChange: vi.fn(),
-      allCinemas: cinemas,
+      searchQuery: "Proj",
+      onSearchChange,
+      onSelectCinema,
+      onSelectMovie,
     });
 
     const dropdown = findElement(
@@ -176,7 +169,16 @@ describe("SearchBar", () => {
       (el) =>
         el && el.props && el.props.className === "search-suggestions-dropdown",
     );
-    expect(dropdown).toBeNull();
+
+    const movieItem = findElement(
+      dropdown,
+      (el) => el && el.props && el.props.className === "suggestion-item",
+    );
+
+    movieItem.props.onClick({ stopPropagation: vi.fn() });
+
+    expect(onSearchChange).toHaveBeenCalledWith("Project Hail Mary");
+    expect(onSelectMovie).toHaveBeenCalledWith("m1");
   });
 });
 

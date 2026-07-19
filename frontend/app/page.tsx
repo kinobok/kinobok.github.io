@@ -38,6 +38,7 @@ export default function Home() {
   const [showDashboard, setShowDashboard] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCinemaId, setSelectedCinemaId] = useState<string | null>(null);
+  const [selectedMovieId, setSelectedMovieId] = useState<string | null>(null);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
@@ -232,6 +233,10 @@ export default function Home() {
 
   const handleLocationFound = (loc: { lat: number; lng: number }) => {
     setUserLocation(loc);
+    setSelectedCinemaId(null);
+    setSelectedMovieId(null);
+    setSearchQuery("");
+    setIsSidebarMinimized(false);
   };
 
   // State Updates with Persistence
@@ -279,8 +284,13 @@ export default function Home() {
 
   const handleSelectCinema = (cinemaId: string | null) => {
     setSelectedCinemaId(cinemaId);
+    if (cinemaId !== null) {
+      setSelectedMovieId(null);
+    } else {
+      setSelectedMovieId(null);
+    }
     if (cinemaId === null) {
-      setIsSidebarMinimized(true);
+      setIsSidebarMinimized(false);
       setSearchQuery("");
     } else {
       setIsSidebarMinimized(false);
@@ -289,6 +299,26 @@ export default function Home() {
         const cinema = data.cinemas.find((c) => c.id === cinemaId);
         if (cinema) {
           setSearchQuery(cinema.name);
+        }
+      }
+    }
+  };
+
+  const handleSelectMovie = (movieId: string | null) => {
+    setSelectedMovieId(movieId);
+    if (movieId !== null) {
+      setSelectedCinemaId(null);
+    }
+    if (movieId === null) {
+      setIsSidebarMinimized(false);
+      setSearchQuery("");
+    } else {
+      setIsSidebarMinimized(false);
+      setIsSidebarExpanded(false);
+      if (data?.movies) {
+        const movie = data.movies.find((m) => m.id === movieId);
+        if (movie) {
+          setSearchQuery(movie.title);
         }
       }
     }
@@ -309,6 +339,7 @@ export default function Home() {
       showAllScreenings,
       selectedCinemaId,
       mapBounds,
+      selectedMovieId,
     );
   }, [
     watchlistUris,
@@ -319,6 +350,7 @@ export default function Home() {
     showAllScreenings,
     selectedCinemaId,
     mapBounds,
+    selectedMovieId,
   ]);
 
   const { matches, filteredCinemas, matchedCinemaIds } = useMemo(() => {
@@ -374,6 +406,46 @@ export default function Home() {
       );
     }
 
+    // Apply Selected Movie filtering
+    if (selectedMovieId && data) {
+      const showtimesForDate = data.showtimes[selectedDate] || [];
+      const movieCinemaIds = new Set(
+        showtimesForDate
+          .filter((st) => st.movie_id === selectedMovieId)
+          .map((st) => st.cinema_id),
+      );
+
+      const selectedMovie = data.movies.find((m) => m.id === selectedMovieId);
+      if (selectedMovie) {
+        const movieShowtimes = showtimesForDate
+          .filter((st) => st.movie_id === selectedMovieId)
+          .map((st) => {
+            const cinema = data.cinemas.find((c) => c.id === st.cinema_id);
+            return {
+              cinema: cinema?.name,
+              cinema_id: st.cinema_id,
+              times: st.times,
+            };
+          });
+
+        result.matches = [
+          {
+            id: selectedMovie.id,
+            title: selectedMovie.title,
+            boxd_uri: selectedMovie.boxd_uri,
+            poster: selectedMovie.poster,
+            showtimes: movieShowtimes,
+          },
+        ];
+      } else {
+        result.matches = [];
+      }
+
+      result.filteredCinemas = data.cinemas.filter((c) =>
+        movieCinemaIds.has(c.id),
+      );
+    }
+
     if (selectedCinemaId) {
       result.matches = result.matches
         .map((m) => ({
@@ -420,7 +492,19 @@ export default function Home() {
     sortBy,
     showAllScreenings,
     mapBounds,
+    selectedMovieId,
   ]);
+
+  const visibleMovies = useMemo(() => {
+    if (!data) return [];
+    const dailyShowtimes = data.showtimes[selectedDate] || [];
+    const activeMovieIds = new Set(
+      dailyShowtimes.map((st) => st.movie_id),
+    );
+    return data.movies.filter(
+      (m) => activeMovieIds.has(m.id) && !excludedMovieIds.includes(m.id),
+    );
+  }, [data, selectedDate, excludedMovieIds]);
 
   if (!data) {
     return (
@@ -484,8 +568,10 @@ export default function Home() {
         onMenuToggle={() => setIsMenuOpen(true)}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
-        allCinemas={data?.cinemas}
+        allCinemas={filteredCinemas}
+        allMovies={visibleMovies}
         onSelectCinema={handleSelectCinema}
+        onSelectMovie={handleSelectMovie}
       />
 
       <ConfigMenu
@@ -542,6 +628,8 @@ export default function Home() {
           onSelectCinema={handleSelectCinema}
           isMinimized={isSidebarMinimized}
           onBoundsChange={setMapBounds}
+          hasActiveMovieFilter={!!selectedMovieId}
+          center={selectedCinema ? selectedCinema.coords : null}
         />
       </div>
     </main>

@@ -19,5 +19,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: feat: implement looking for a specific movie with a search bar (add another mode for searching (cinema/movie) perhaps?). As a different feature, center map on a selected movie when clicked on a search bar.**
+- [x] **Track: feat: implement looking for a specific movie with a search bar (add another mode for searching (cinema/movie) perhaps?). As a different feature, center map on a selected movie when clicked on a search bar.**
 *Link: [./tracks/unified_search_map_sync_20260719/](./tracks/unified_search_map_sync_20260719/)*

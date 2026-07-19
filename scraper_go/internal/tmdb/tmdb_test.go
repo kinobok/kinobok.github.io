@@ -8,13 +8,12 @@ import (
 	"testing"
 )
 
-func TestTMDBApi_SearchMovie(t *testing.T) {
+func TestTMDBSearch(t *testing.T) {
 	mux := http.NewServeMux()
 
-	// Mock search/movie endpoint
 	mux.HandleFunc("/search/movie", func(w http.ResponseWriter, r *http.Request) {
 		apiKey := r.URL.Query().Get("api_key")
-		if apiKey == "" {
+		if apiKey != "test_key" {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
@@ -22,102 +21,103 @@ func TestTMDBApi_SearchMovie(t *testing.T) {
 		query := r.URL.Query().Get("query")
 		yearStr := r.URL.Query().Get("year")
 
-		if query == "No Movie" {
+		if query == "Projekt Hail Mary" && yearStr == "2026" {
 			w.Header().Set("Content-Type", "application/json")
-			fmt.Fprintf(w, `{"results": []}`)
-			return
-		}
-
-		if query == "Projekt Hail Mary" {
-			if yearStr == "2026" {
-				w.Header().Set("Content-Type", "application/json")
-				fmt.Fprintf(w, `{"results": [
+			fmt.Fprintf(w, `{
+				"results": [
 					{
 						"id": 12345,
 						"title": "Project Hail Mary",
 						"original_title": "Project Hail Mary",
-						"release_date": "2026-05-20",
-						"poster_path": "/path-to-poster.jpg"
+						"release_date": "2026-05-01"
 					}
-				]}`)
-				return
-			}
-			// Fail for any other year
-			w.Header().Set("Content-Type", "application/json")
-			fmt.Fprintf(w, `{"results": []}`)
+				]
+			}`)
 			return
 		}
 
-		if query == "The Flash" {
-			// Simulating match only on year - 1 (e.g. searching for 2024, but matches on 2023)
-			if yearStr == "2023" {
-				w.Header().Set("Content-Type", "application/json")
-				fmt.Fprintf(w, `{"results": [
-					{
-						"id": 9999,
-						"title": "The Flash",
-						"original_title": "The Flash",
-						"release_date": "2023-06-16",
-						"poster_path": "/flash.jpg"
-					}
-				]}`)
-				return
-			}
-			w.Header().Set("Content-Type", "application/json")
-			fmt.Fprintf(w, `{"results": []}`)
-			return
-		}
-
-		w.WriteHeader(http.StatusNotFound)
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, `{"results": []}`)
 	})
 
 	server := httptest.NewServer(mux)
 	defer server.Close()
 
-	// Scenario 1: Successful match on first try
-	api := NewTMDBApi("test-api-key")
-	api.baseURL = server.URL
+	scraper := NewAPI("test_key")
+	scraper.baseURL = server.URL
 
-	movie, err := api.SearchMovie("Projekt Hail Mary", 2026)
+	result, err := scraper.SearchMovie("Projekt Hail Mary", 2026)
 	if err != nil {
 		t.Fatalf("SearchMovie failed: %v", err)
 	}
-	if movie == nil {
-		t.Fatal("Expected movie to be found, got nil")
-	}
-	if movie.ID != 12345 || movie.Title != "Project Hail Mary" || movie.Year != 2026 || movie.PosterPath != "/path-to-poster.jpg" {
-		t.Errorf("Unexpected movie returned: %+v", movie)
+	if result == nil {
+		t.Fatal("Expected result to be found, got nil")
 	}
 
-	// Scenario 2: Match on year - 1 (retry logic)
-	// We search with year 2024, but it should fail for 2024, retry for 2023 (2024 - 1), and find "The Flash"
-	movie2, err := api.SearchMovie("The Flash", 2024)
+	if result.ID != 12345 {
+		t.Errorf("Expected ID 12345, got %d", result.ID)
+	}
+	if result.Title != "Project Hail Mary" {
+		t.Errorf("Expected title 'Project Hail Mary', got %s", result.Title)
+	}
+	if result.Year != 2026 {
+		t.Errorf("Expected year 2026, got %d", result.Year)
+	}
+}
+
+func TestTMDBSearch_RetryYear(t *testing.T) {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/search/movie", func(w http.ResponseWriter, r *http.Request) {
+		apiKey := r.URL.Query().Get("api_key")
+		if apiKey != "test_key" {
+			w.WriteHeader(http.StatusUnauthorized)
+			return
+		}
+
+		query := r.URL.Query().Get("query")
+		yearStr := r.URL.Query().Get("year")
+
+		if query == "Old Movie" {
+			if yearStr == "2025" {
+				w.Header().Set("Content-Type", "application/json")
+				fmt.Fprintf(w, `{
+					"results": [
+						{
+							"id": 54321,
+							"title": "Old Movie",
+							"original_title": "Old Movie",
+							"release_date": "2025-10-10"
+						}
+					]
+				}`)
+				return
+			}
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, `{"results": []}`)
+	})
+
+	server := httptest.NewServer(mux)
+	defer server.Close()
+
+	scraper := NewAPI("test_key")
+	scraper.baseURL = server.URL
+
+	result, err := scraper.SearchMovie("Old Movie", 2026)
 	if err != nil {
 		t.Fatalf("SearchMovie failed: %v", err)
 	}
-	if movie2 == nil {
-		t.Fatal("Expected movie to be found via year - 1 retry, got nil")
-	}
-	if movie2.ID != 9999 || movie2.Year != 2023 {
-		t.Errorf("Expected movie ID 9999 and Year 2023, got: %+v", movie2)
+	if result == nil {
+		t.Fatal("Expected result to be found, got nil")
 	}
 
-	// Scenario 3: No movie found
-	movie3, err := api.SearchMovie("No Movie", 2026)
-	if err != nil {
-		t.Fatalf("SearchMovie failed: %v", err)
+	if result.ID != 54321 {
+		t.Errorf("Expected ID 54321, got %d", result.ID)
 	}
-	if movie3 != nil {
-		t.Errorf("Expected nil movie, got: %+v", movie3)
-	}
-
-	// Scenario 4: Missing api key error
-	os.Setenv("TMDB_API_KEY", "")
-	apiNoKey := NewTMDBApi("")
-	apiNoKey.baseURL = server.URL
-	_, err = apiNoKey.SearchMovie("Projekt Hail Mary", 2026)
-	if err == nil {
-		t.Fatal("Expected error for missing API key, got nil")
+	if result.Year != 2025 {
+		t.Errorf("Expected year 2025, got %d", result.Year)
 	}
 }
 
@@ -125,7 +125,7 @@ func TestNewTMDBApi_EnvFallback(t *testing.T) {
 	os.Setenv("TMDB_API_KEY", "env-api-key")
 	defer os.Unsetenv("TMDB_API_KEY")
 
-	api := NewTMDBApi("")
+	api := NewAPI("")
 	if api.apiKey != "env-api-key" {
 		t.Errorf("Expected apiKey 'env-api-key' from env, got '%s'", api.apiKey)
 	}

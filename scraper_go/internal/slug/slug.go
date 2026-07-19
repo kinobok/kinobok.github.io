@@ -1,3 +1,4 @@
+// Package slug provides utilities for generating movie slugs.
 package slug
 
 import (

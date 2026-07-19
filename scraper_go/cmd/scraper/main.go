@@ -1,3 +1,4 @@
+// Execution entrypoint for kinobok scraper
 package main
 
 import (
@@ -75,14 +76,14 @@ func main() {
 		log.Fatal("❌ Error: TMDB_API_KEY environment variable is not set.")
 	}
 
-	filmwebScraper := filmweb.NewFilmwebScraper()
-	letterboxdScraper := letterboxd.NewLetterboxdScraper()
-	tmdbApi := tmdb.NewTMDBApi(tmdbAPIKey)
+	filmwebScraper := filmweb.NewScraper()
+	letterboxdScraper := letterboxd.NewScraper()
+	tmdbAPI := tmdb.NewAPI(tmdbAPIKey)
 
 	outputPath := filepath.Join("..", "frontend", "public", "data_go.json")
 
 	// Load existing data to support sliding window and ID consistency
-	existingData := export.ExportSchema{
+	existingData := export.Schema{
 		Showtimes: make(map[string][]export.ShowtimeModel),
 	}
 	if _, err := os.Stat(outputPath); err == nil {
@@ -96,7 +97,7 @@ func main() {
 
 	today := time.Now().Format("2006-01-02")
 	weekday := time.Now().Weekday()
-	isRefreshDay := weekday == time.Wednesday || weekday == time.Thursday || weekday == time.Friday
+	isRefreshDay := weekday == time.Thursday || weekday == time.Friday
 
 	var daysToScrape []int
 	var finalShowtimes = make(map[string][]export.ShowtimeModel)
@@ -179,7 +180,7 @@ func main() {
 		// 1. Scrape all cities concurrently for this day offset
 		type cityResult struct {
 			city   string
-			result *filmweb.FilmwebResult
+			result *filmweb.Result
 			err    error
 		}
 		cityChan := make(chan cityResult, len(cities))
@@ -199,7 +200,7 @@ func main() {
 
 		// Collect results from city scraping
 		var pageDate string
-		var rawMoviesByCity = make(map[string][]*filmweb.FilmwebMovie)
+		var rawMoviesByCity = make(map[string][]*filmweb.Movie)
 		for res := range cityChan {
 			if res.err != nil {
 				log.Printf("❌ Error scraping city %s for offset %d: %v\n", res.city, dayOffset, res.err)
@@ -222,7 +223,7 @@ func main() {
 		// 2. Resolve TMDB and Letterboxd concurrently for all movie showtimes in this day
 		type resolveJob struct {
 			city    string
-			fwMovie *filmweb.FilmwebMovie
+			fwMovie *filmweb.Movie
 		}
 
 		jobs := make(chan resolveJob, 200)
@@ -255,7 +256,7 @@ func main() {
 						// Fetch metadata
 						log.Printf("🎬 Fetching metadata for: %s (Year: %d)...", title, fwMovie.Year)
 
-						var tmdbMovie *tmdb.TMDBMovie
+						var tmdbMovie *tmdb.Movie
 						var err error
 
 						// Try original title first
@@ -264,11 +265,11 @@ func main() {
 							searchTitle = title
 						}
 
-						tmdbMovie, err = tmdbApi.SearchMovie(searchTitle, fwMovie.Year)
+						tmdbMovie, err = tmdbAPI.SearchMovie(searchTitle, fwMovie.Year)
 						if err != nil || tmdbMovie == nil {
 							// Try with polish title if different
 							if fwMovie.OriginalTitle != "" && fwMovie.OriginalTitle != title {
-								tmdbMovie, err = tmdbApi.SearchMovie(title, fwMovie.Year)
+								tmdbMovie, err = tmdbAPI.SearchMovie(title, fwMovie.Year)
 							}
 						}
 
@@ -470,7 +471,7 @@ func main() {
 	}
 
 	log.Printf("💾 Exporting data to %s...\n", outputPath)
-	if err := export.ExportToJSON(moviesList, cinemasList, finalShowtimes, metadata, outputPath); err != nil {
+	if err := export.ToJSON(moviesList, cinemasList, finalShowtimes, metadata, outputPath); err != nil {
 		log.Fatalf("❌ Export failed: %v\n", err)
 	}
 

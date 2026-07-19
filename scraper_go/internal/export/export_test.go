@@ -110,3 +110,19 @@ func TestExportToJSON_InvalidData(t *testing.T) {
 		t.Fatal("Expected ToJSON to fail due to missing boxd_uri, but it succeeded")
 	}
 }
+
+func TestUniqueStrings(t *testing.T) {
+	input := []string{"18:00", "21:00", "18:00", "22:00", "21:00"}
+	expected := []string{"18:00", "21:00", "22:00"}
+
+	result := UniqueStrings(input)
+	if len(result) != len(expected) {
+		t.Fatalf("Expected length %d, got %d", len(expected), len(result))
+	}
+
+	for i, v := range result {
+		if v != expected[i] {
+			t.Errorf("At index %d: expected %q, got %q", i, expected[i], v)
+		}
+	}
+}

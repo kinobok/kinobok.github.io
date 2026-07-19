@@ -139,3 +139,16 @@ func ToJSON(movies []MovieModel, cinemas []CinemaModel, showtimes map[string][]S
 	encoder.SetIndent("", "  ")
 	return encoder.Encode(schema)
 }
+
+// UniqueStrings removes duplicate strings from a slice, preserving order.
+func UniqueStrings(slice []string) []string {
+	keys := make(map[string]bool)
+	var list []string
+	for _, entry := range slice {
+		if _, value := keys[entry]; !value {
+			keys[entry] = true
+			list = append(list, entry)
+		}
+	}
+	return list
+}

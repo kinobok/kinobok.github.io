@@ -130,7 +130,7 @@ func main() {
 
 	cinemasMap := make(map[string]export.CinemaModel)
 	for _, c := range existingData.Cinemas {
-		cinemasMap[c.Name] = c
+		cinemasMap[strings.ToLower(c.Name)] = c
 	}
 
 	// Helper to find starting ID counters
@@ -366,7 +366,7 @@ func main() {
 						}
 
 						cinemaMutex.Lock()
-						cinemaModel, exists := cinemasMap[displayName]
+						cinemaModel, exists := cinemasMap[strings.ToLower(displayName)]
 						if !exists {
 							cid := fmt.Sprintf("c%d", cinemaIDCounter)
 							cinemaIDCounter++
@@ -392,7 +392,7 @@ func main() {
 								Address: cinemaInfo.Address,
 								Coords:  coordsModel,
 							}
-							cinemasMap[displayName] = cinemaModel
+							cinemasMap[strings.ToLower(displayName)] = cinemaModel
 						}
 						cinemaMutex.Unlock()
 
@@ -419,8 +419,34 @@ func main() {
 		workerWg.Wait()
 
 		if len(dayShowtimes) > 0 {
-			finalShowtimes[pageDate] = dayShowtimes
-			log.Printf("✅ Day offset %d completed with %d showtimes.\n", dayOffset, len(dayShowtimes))
+			mergedShowtimesMap := make(map[string]export.ShowtimeModel)
+			for _, st := range dayShowtimes {
+				key := fmt.Sprintf("%s_%s", st.MovieID, st.CinemaID)
+				if existing, found := mergedShowtimesMap[key]; found {
+					combinedTimes := append(existing.Times, st.Times...)
+					existing.Times = export.UniqueStrings(combinedTimes)
+					mergedShowtimesMap[key] = existing
+				} else {
+					st.Times = export.UniqueStrings(st.Times)
+					mergedShowtimesMap[key] = st
+				}
+			}
+
+			var deduplicatedDayShowtimes []export.ShowtimeModel
+			for _, st := range mergedShowtimesMap {
+				deduplicatedDayShowtimes = append(deduplicatedDayShowtimes, st)
+			}
+
+			// Sort by MovieID and CinemaID to keep output deterministic and clean
+			sort.Slice(deduplicatedDayShowtimes, func(i, j int) bool {
+				if deduplicatedDayShowtimes[i].MovieID != deduplicatedDayShowtimes[j].MovieID {
+					return deduplicatedDayShowtimes[i].MovieID < deduplicatedDayShowtimes[j].MovieID
+				}
+				return deduplicatedDayShowtimes[i].CinemaID < deduplicatedDayShowtimes[j].CinemaID
+			})
+
+			finalShowtimes[pageDate] = deduplicatedDayShowtimes
+			log.Printf("✅ Day offset %d completed with %d showtimes.\n", dayOffset, len(deduplicatedDayShowtimes))
 		}
 	}
 

@@ -1,0 +1,8 @@
+{
+  "track_id": "merge_screenings_20260719",
+  "type": "bug",
+  "status": "new",
+  "created_at": "2026-07-19T00:00:00Z",
+  "updated_at": "2026-07-19T00:00:00Z",
+  "description": "fix: merge overlapping screenings (some city regions scraped have overlapping cinemas)"
+}

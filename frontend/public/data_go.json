@@ -79202,38 +79202,186 @@
     ],
     "2026-07-25": [
       {
-        "movie_id": "m590",
-        "cinema_id": "c18",
-        "times": [
-          "17:30"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c19",
+        "movie_id": "m108",
+        "cinema_id": "c8",
         "times": [
           "17:00"
         ]
       },
       {
+        "movie_id": "m63",
+        "cinema_id": "c167",
+        "times": [
+          "17:45"
+        ]
+      },
+      {
+        "movie_id": "m63",
+        "cinema_id": "c167",
+        "times": [
+          "17:45"
+        ]
+      },
+      {
+        "movie_id": "m41",
+        "cinema_id": "c167",
+        "times": [
+          "15:30"
+        ]
+      },
+      {
+        "movie_id": "m29",
+        "cinema_id": "c163",
+        "times": [
+          "19:00"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c8",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m6",
+        "cinema_id": "c163",
+        "times": [
+          "13:00",
+          "15:00",
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m6",
+        "cinema_id": "c163",
+        "times": [
+          "13:00",
+          "15:00",
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c8",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c8",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c103",
+        "times": [
+          "18:00"
+        ]
+      },
+      {
         "movie_id": "m590",
-        "cinema_id": "c22",
+        "cinema_id": "c103",
+        "times": [
+          "14:20",
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c8",
         "times": [
           "17:00"
         ]
       },
       {
         "movie_id": "m29",
-        "cinema_id": "c89",
+        "cinema_id": "c46",
         "times": [
-          "19:00"
+          "10:30",
+          "14:15",
+          "18:00",
+          "21:45"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c8",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c8",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c8",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c8",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c57",
+        "times": [
+          "22:00"
         ]
       },
       {
         "movie_id": "m29",
-        "cinema_id": "c88",
+        "cinema_id": "c57",
         "times": [
-          "19:00"
+          "15:45"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c8",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m63",
+        "cinema_id": "c57",
+        "times": [
+          "19:15"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c8",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m29",
+        "cinema_id": "c162",
+        "times": [
+          "18:00"
+        ]
+      },
+      {
+        "movie_id": "m29",
+        "cinema_id": "c162",
+        "times": [
+          "18:00"
         ]
       },
       {
@@ -79248,7 +79396,155 @@
       },
       {
         "movie_id": "m108",
-        "cinema_id": "c18",
+        "cinema_id": "c182",
+        "times": [
+          "16:15"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c44",
+        "times": [
+          "18:00"
+        ]
+      },
+      {
+        "movie_id": "m63",
+        "cinema_id": "c182",
+        "times": [
+          "20:15"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c42",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m132",
+        "cinema_id": "c57",
+        "times": [
+          "13:00"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c42",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m46",
+        "cinema_id": "c182",
+        "times": [
+          "18:15"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c45",
+        "times": [
+          "15:20",
+          "18:00"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c44",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m29",
+        "cinema_id": "c46",
+        "times": [
+          "10:30",
+          "14:15",
+          "18:00",
+          "21:45"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c149",
+        "times": [
+          "18:00"
+        ]
+      },
+      {
+        "movie_id": "m29",
+        "cinema_id": "c46",
+        "times": [
+          "10:30",
+          "14:15",
+          "18:00",
+          "21:45"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c154",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c149",
+        "times": [
+          "15:50",
+          "18:30"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c152",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c152",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m35",
+        "cinema_id": "c126",
+        "times": [
+          "18:00"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c8",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c8",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m9",
+        "cinema_id": "c126",
+        "times": [
+          "20:00"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c123",
         "times": [
           "18:00"
         ]
@@ -79261,10 +79557,193 @@
         ]
       },
       {
-        "movie_id": "m11",
-        "cinema_id": "c88",
+        "movie_id": "m108",
+        "cinema_id": "c8",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m29",
+        "cinema_id": "c46",
+        "times": [
+          "10:30",
+          "14:15",
+          "18:00",
+          "21:45"
+        ]
+      },
+      {
+        "movie_id": "m159",
+        "cinema_id": "c126",
+        "times": [
+          "12:30"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c8",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c135",
+        "times": [
+          "15:50",
+          "18:30"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c142",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c136",
         "times": [
           "17:30"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c142",
+        "times": [
+          "18:30"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c135",
+        "times": [
+          "18:00"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c22",
+        "times": [
+          "18:00"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c128",
+        "times": [
+          "18:00"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c128",
+        "times": [
+          "15:50",
+          "18:30"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c129",
+        "times": [
+          "14:20",
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c22",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m29",
+        "cinema_id": "c46",
+        "times": [
+          "10:30",
+          "14:15",
+          "18:00",
+          "21:45"
+        ]
+      },
+      {
+        "movie_id": "m29",
+        "cinema_id": "c46",
+        "times": [
+          "10:30",
+          "14:15",
+          "18:00",
+          "21:45"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c8",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c8",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m14",
+        "cinema_id": "c3",
+        "times": [
+          "18:00"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c22",
+        "times": [
+          "17:30"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c61",
+        "times": [
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c22",
+        "times": [
+          "18:00"
+        ]
+      },
+      {
+        "movie_id": "m29",
+        "cinema_id": "c46",
+        "times": [
+          "10:30",
+          "14:15",
+          "18:00",
+          "21:45"
+        ]
+      },
+      {
+        "movie_id": "m29",
+        "cinema_id": "c89",
+        "times": [
+          "19:00"
+        ]
+      },
+      {
+        "movie_id": "m29",
+        "cinema_id": "c88",
+        "times": [
+          "19:00"
         ]
       },
       {
@@ -79275,38 +79754,10 @@
         ]
       },
       {
-        "movie_id": "m38",
-        "cinema_id": "c72",
+        "movie_id": "m11",
+        "cinema_id": "c88",
         "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c82",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c84",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c69",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c77",
-        "times": [
-          "15:00"
+          "17:30"
         ]
       },
       {
@@ -79338,26 +79789,10 @@
         ]
       },
       {
-        "movie_id": "m590",
-        "cinema_id": "c78",
+        "movie_id": "m562",
+        "cinema_id": "c184",
         "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c76",
-        "times": [
-          "14:20",
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c86",
-        "times": [
-          "15:20",
-          "18:00"
+          "13:00"
         ]
       },
       {
@@ -79390,19 +79825,40 @@
         ]
       },
       {
-        "movie_id": "m59",
-        "cinema_id": "c89",
+        "movie_id": "m590",
+        "cinema_id": "c78",
         "times": [
-          "11:00",
-          "13:00"
+          "17:00"
         ]
       },
       {
-        "movie_id": "m59",
-        "cinema_id": "c88",
+        "movie_id": "m590",
+        "cinema_id": "c76",
         "times": [
-          "11:00",
-          "13:00"
+          "14:20",
+          "17:00"
+        ]
+      },
+      {
+        "movie_id": "m590",
+        "cinema_id": "c86",
+        "times": [
+          "15:20",
+          "18:00"
+        ]
+      },
+      {
+        "movie_id": "m597",
+        "cinema_id": "c94",
+        "times": [
+          "13:30"
+        ]
+      },
+      {
+        "movie_id": "m108",
+        "cinema_id": "c77",
+        "times": [
+          "17:00"
         ]
       },
       {
@@ -79420,24 +79876,54 @@
         ]
       },
       {
-        "movie_id": "m108",
+        "movie_id": "m59",
+        "cinema_id": "c89",
+        "times": [
+          "11:00",
+          "13:00"
+        ]
+      },
+      {
+        "movie_id": "m59",
+        "cinema_id": "c88",
+        "times": [
+          "11:00",
+          "13:00"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c82",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c84",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m38",
+        "cinema_id": "c69",
+        "times": [
+          "15:00"
+        ]
+      },
+      {
+        "movie_id": "m38",
         "cinema_id": "c77",
         "times": [
-          "17:00"
+          "15:00"
         ]
       },
       {
-        "movie_id": "m597",
-        "cinema_id": "c94",
+        "movie_id": "m38",
+        "cinema_id": "c72",
         "times": [
-          "13:30"
-        ]
-      },
-      {
-        "movie_id": "m562",
-        "cinema_id": "c184",
-        "times": [
-          "13:00"
+          "15:00"
         ]
       },
       {
@@ -79449,384 +79935,6 @@
         ]
       },
       {
-        "movie_id": "m108",
-        "cinema_id": "c103",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c8",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c46",
-        "times": [
-          "10:30",
-          "14:15",
-          "18:00",
-          "21:45"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c52",
-        "times": [
-          "19:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c52",
-        "times": [
-          "19:00"
-        ]
-      },
-      {
-        "movie_id": "m59",
-        "cinema_id": "c52",
-        "times": [
-          "12:00"
-        ]
-      },
-      {
-        "movie_id": "m30",
-        "cinema_id": "c52",
-        "times": [
-          "14:00",
-          "16:30"
-        ]
-      },
-      {
-        "movie_id": "m30",
-        "cinema_id": "c52",
-        "times": [
-          "14:00",
-          "16:30"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c46",
-        "times": [
-          "10:30",
-          "14:15",
-          "18:00",
-          "21:45"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c46",
-        "times": [
-          "10:30",
-          "14:15",
-          "18:00",
-          "21:45"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c128",
-        "times": [
-          "15:50",
-          "18:30"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c129",
-        "times": [
-          "14:20",
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c22",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c8",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c128",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c22",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m4",
-        "cinema_id": "c160",
-        "times": [
-          "19:00"
-        ]
-      },
-      {
-        "movie_id": "m6",
-        "cinema_id": "c160",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m6",
-        "cinema_id": "c160",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m4",
-        "cinema_id": "c160",
-        "times": [
-          "19:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c46",
-        "times": [
-          "10:30",
-          "14:15",
-          "18:00",
-          "21:45"
-        ]
-      },
-      {
-        "movie_id": "m46",
-        "cinema_id": "c182",
-        "times": [
-          "18:15"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c42",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c42",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c45",
-        "times": [
-          "15:20",
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c44",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m63",
-        "cinema_id": "c182",
-        "times": [
-          "20:15"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c44",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c182",
-        "times": [
-          "16:15"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c149",
-        "times": [
-          "15:50",
-          "18:30"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c154",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c152",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c46",
-        "times": [
-          "10:30",
-          "14:15",
-          "18:00",
-          "21:45"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c46",
-        "times": [
-          "10:30",
-          "14:15",
-          "18:00",
-          "21:45"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c152",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c149",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c46",
-        "times": [
-          "10:30",
-          "14:15",
-          "18:00",
-          "21:45"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c8",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c135",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c142",
-        "times": [
-          "18:30"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c135",
-        "times": [
-          "15:50",
-          "18:30"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c142",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c136",
-        "times": [
-          "17:30"
-        ]
-      },
-      {
         "movie_id": "m9",
         "cinema_id": "c111",
         "times": [
@@ -79842,313 +79950,6 @@
       },
       {
         "movie_id": "m108",
-        "cinema_id": "c103",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c103",
-        "times": [
-          "14:20",
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m7",
-        "cinema_id": "c111",
-        "times": [
-          "14:00",
-          "16:00"
-        ]
-      },
-      {
-        "movie_id": "m7",
-        "cinema_id": "c111",
-        "times": [
-          "14:00",
-          "16:00"
-        ]
-      },
-      {
-        "movie_id": "m30",
-        "cinema_id": "c108",
-        "times": [
-          "19:30"
-        ]
-      },
-      {
-        "movie_id": "m30",
-        "cinema_id": "c108",
-        "times": [
-          "19:30"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c111",
-        "times": [
-          "20:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c46",
-        "times": [
-          "10:30",
-          "14:15",
-          "18:00",
-          "21:45"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c108",
-        "times": [
-          "19:30"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c111",
-        "times": [
-          "20:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c46",
-        "times": [
-          "10:30",
-          "14:15",
-          "18:00",
-          "21:45"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c108",
-        "times": [
-          "19:30"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c8",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c57",
-        "times": [
-          "15:45"
-        ]
-      },
-      {
-        "movie_id": "m63",
-        "cinema_id": "c57",
-        "times": [
-          "19:15"
-        ]
-      },
-      {
-        "movie_id": "m132",
-        "cinema_id": "c57",
-        "times": [
-          "13:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c8",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c57",
-        "times": [
-          "22:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c8",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m59",
-        "cinema_id": "c161",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m59",
-        "cinema_id": "c162",
-        "times": [
-          "16:00"
-        ]
-      },
-      {
-        "movie_id": "m59",
-        "cinema_id": "c162",
-        "times": [
-          "16:00"
-        ]
-      },
-      {
-        "movie_id": "m59",
-        "cinema_id": "c161",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c162",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c162",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m14",
-        "cinema_id": "c3",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m6",
-        "cinema_id": "c3",
-        "times": [
-          "16:00"
-        ]
-      },
-      {
-        "movie_id": "m6",
-        "cinema_id": "c3",
-        "times": [
-          "16:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c163",
-        "times": [
-          "19:00"
-        ]
-      },
-      {
-        "movie_id": "m29",
-        "cinema_id": "c163",
-        "times": [
-          "19:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c8",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m63",
-        "cinema_id": "c167",
-        "times": [
-          "17:45"
-        ]
-      },
-      {
-        "movie_id": "m63",
-        "cinema_id": "c167",
-        "times": [
-          "17:45"
-        ]
-      },
-      {
-        "movie_id": "m41",
-        "cinema_id": "c167",
-        "times": [
-          "15:30"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m6",
-        "cinema_id": "c163",
-        "times": [
-          "13:00",
-          "15:00",
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m6",
-        "cinema_id": "c163",
-        "times": [
-          "13:00",
-          "15:00",
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
         "cinema_id": "c8",
         "times": [
           "17:00"
@@ -80165,141 +79966,13 @@
         "movie_id": "m590",
         "cinema_id": "c22",
         "times": [
-          "17:30"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c61",
-        "times": [
           "17:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m7",
-        "cinema_id": "c126",
-        "times": [
-          "16:00"
-        ]
-      },
-      {
-        "movie_id": "m7",
-        "cinema_id": "c126",
-        "times": [
-          "16:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c8",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c44",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c22",
-        "times": [
-          "14:50",
-          "17:30"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c123",
-        "times": [
-          "15:50",
-          "18:30"
-        ]
-      },
-      {
-        "movie_id": "m35",
-        "cinema_id": "c126",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m9",
-        "cinema_id": "c126",
-        "times": [
-          "20:00"
-        ]
-      },
-      {
-        "movie_id": "m9",
-        "cinema_id": "c126",
-        "times": [
-          "20:00"
-        ]
-      },
-      {
-        "movie_id": "m59",
-        "cinema_id": "c126",
-        "times": [
-          "14:00"
-        ]
-      },
-      {
-        "movie_id": "m38",
-        "cinema_id": "c8",
-        "times": [
-          "15:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c123",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c22",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m590",
-        "cinema_id": "c22",
-        "times": [
-          "17:00"
-        ]
-      },
-      {
-        "movie_id": "m108",
-        "cinema_id": "c22",
-        "times": [
-          "18:00"
-        ]
-      },
-      {
-        "movie_id": "m159",
-        "cinema_id": "c126",
-        "times": [
-          "12:30"
         ]
       }
     ]
   },
   "metadata": {
-    "last_scrape": "2026-07-19T07:06:22Z",
+    "last_scrape": "2026-07-19T19:31:03Z",
     "total_movies": 604,
     "available_dates": [
       "2026-07-19",
@@ -80317,6 +79990,21 @@
         "details": "No matches found for 'Terminator to Koi Shichattara' (year: 2026)"
       },
       {
+        "title": "Brudny Henryk",
+        "reason": "TMDB search failed",
+        "details": "No matches found for 'Brudny Henryk' (year: 0)"
+      },
+      {
+        "title": "Prawdziwa historia Tamary Łempickiej",
+        "reason": "Letterboxd URI resolution failed",
+        "details": "Slug: the-true-story-of-tamara-de-lempicka-and-the-art-of-survival, Error: failed to visit Letterboxd page: Not Found"
+      },
+      {
+        "title": "Niesamowite przygody skarpetek 2. Skarpetki górą!",
+        "reason": "Letterboxd URI resolution failed",
+        "details": "Slug: niesamowite-przygody-skarpetek-2-skarpetki-gora, Error: failed to visit Letterboxd page: Not Found"
+      },
+      {
         "title": "Halo Ziemia",
         "reason": "TMDB search failed",
         "details": "No matches found for 'Halo Ziemia' (year: 2017)"
@@ -80325,21 +80013,6 @@
         "title": "Tramwajada",
         "reason": "TMDB search failed",
         "details": "No matches found for 'Tramwajada' (year: 1988)"
-      },
-      {
-        "title": "Niesamowite przygody skarpetek 2. Skarpetki górą!",
-        "reason": "Letterboxd URI resolution failed",
-        "details": "Slug: niesamowite-przygody-skarpetek-2-skarpetki-gora, Error: failed to visit Letterboxd page: Not Found"
-      },
-      {
-        "title": "Prawdziwa historia Tamary Łempickiej",
-        "reason": "Letterboxd URI resolution failed",
-        "details": "Slug: the-true-story-of-tamara-de-lempicka-and-the-art-of-survival, Error: failed to visit Letterboxd page: Not Found"
-      },
-      {
-        "title": "Brudny Henryk",
-        "reason": "TMDB search failed",
-        "details": "No matches found for 'Brudny Henryk' (year: 0)"
       }
     ]
   }

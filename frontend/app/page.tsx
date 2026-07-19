@@ -498,9 +498,7 @@ export default function Home() {
   const visibleMovies = useMemo(() => {
     if (!data) return [];
     const dailyShowtimes = data.showtimes[selectedDate] || [];
-    const activeMovieIds = new Set(
-      dailyShowtimes.map((st) => st.movie_id),
-    );
+    const activeMovieIds = new Set(dailyShowtimes.map((st) => st.movie_id));
     return data.movies.filter(
       (m) => activeMovieIds.has(m.id) && !excludedMovieIds.includes(m.id),
     );

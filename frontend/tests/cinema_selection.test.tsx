@@ -102,8 +102,16 @@ describe("CinemaSelection", () => {
 
   test("filters matches and cinemas lists when selectedMovieId is provided", () => {
     const mockMatches = [
-      { id: "m1", title: "Movie A", showtimes: [{ cinema_id: "c1", times: ["12:00"] }] },
-      { id: "m2", title: "Movie B", showtimes: [{ cinema_id: "c2", times: ["14:00"] }] },
+      {
+        id: "m1",
+        title: "Movie A",
+        showtimes: [{ cinema_id: "c1", times: ["12:00"] }],
+      },
+      {
+        id: "m2",
+        title: "Movie B",
+        showtimes: [{ cinema_id: "c2", times: ["14:00"] }],
+      },
     ];
 
     const mockCinemas = [
@@ -115,7 +123,9 @@ describe("CinemaSelection", () => {
 
     // Simulate page.tsx logic:
     // 1. Find all cinema IDs playing selectedMovieId
-    const showtimesForDate = [{ movie_id: "m1", cinema_id: "c1", times: ["12:00"] }];
+    const showtimesForDate = [
+      { movie_id: "m1", cinema_id: "c1", times: ["12:00"] },
+    ];
     const movieCinemaIds = new Set(
       showtimesForDate
         .filter((st) => st.movie_id === selectedMovieId)

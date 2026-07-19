@@ -109,7 +109,9 @@ describe("SearchBar", () => {
 
   test("displays typeahead suggestions for Cinema and Movie Names when input length > 1", () => {
     const cinemas = [{ id: "c1", name: "Kinoteka", address: "" }];
-    const movies = [{ id: "m1", title: "Project Hail Mary", boxd_uri: "https://boxd.it/1" }];
+    const movies = [
+      { id: "m1", title: "Project Hail Mary", boxd_uri: "https://boxd.it/1" },
+    ];
 
     // Mock state suggestions to combine both
     globalThis.__MOCK_STATE__ = [
@@ -136,13 +138,23 @@ describe("SearchBar", () => {
 
     // Verify it contains the cinema suggestion
     const cinemaItem = findElement(dropdown, (el) => {
-      return el && el.props && el.props.className === "suggestion-item" && JSON.stringify(el.props.children).includes("Kinoteka");
+      return (
+        el &&
+        el.props &&
+        el.props.className === "suggestion-item" &&
+        JSON.stringify(el.props.children).includes("Kinoteka")
+      );
     });
     expect(cinemaItem).not.toBeNull();
 
     // Verify it contains the movie suggestion
     const movieItem = findElement(dropdown, (el) => {
-      return el && el.props && el.props.className === "suggestion-item" && JSON.stringify(el.props.children).includes("Project Hail Mary");
+      return (
+        el &&
+        el.props &&
+        el.props.className === "suggestion-item" &&
+        JSON.stringify(el.props.children).includes("Project Hail Mary")
+      );
     });
     expect(movieItem).not.toBeNull();
   });

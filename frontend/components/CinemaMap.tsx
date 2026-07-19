@@ -21,7 +21,9 @@ interface CinemaMapProps {
   onLocationFound?: (loc: { lat: number; lng: number }) => void;
   onSelectCinema?: (cinemaId: string | null) => void;
   isMinimized?: boolean;
-  onBoundsChange?: (bounds: { west: number; south: number; east: number; north: number } | null) => void;
+  onBoundsChange?: (
+    bounds: { west: number; south: number; east: number; north: number } | null,
+  ) => void;
   hasActiveMovieFilter?: boolean;
   center?: { lat: number; lng: number } | null;
 }
@@ -151,7 +153,8 @@ export default function CinemaMap({
 
   const mapCenter = useMemo(() => {
     if (center) return [center.lat, center.lng] as [number, number];
-    if (userLocation) return [userLocation.lat, userLocation.lng] as [number, number];
+    if (userLocation)
+      return [userLocation.lat, userLocation.lng] as [number, number];
     return null;
   }, [center, userLocation]);
 

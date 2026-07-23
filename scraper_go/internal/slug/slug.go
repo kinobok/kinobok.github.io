@@ -12,9 +12,14 @@ import (
 	"golang.org/x/text/unicode/norm"
 )
 
-// GenerateSlug generates a Letterboxd-style slug from a movie title and year.
+// GenerateSlug - see: GenerateSlugWithYear
+func GenerateSlug(title string) string {
+	return GenerateSlugWithYear(title, -1)
+}
+
+// GenerateSlugWithYear generates a Letterboxd-style slug from a movie title and year.
 // Normalizes accented characters to their base form.
-func GenerateSlug(title string, year int) string {
+func GenerateSlugWithYear(title string, year int) string {
 	// Manual mapping for characters that NFKD doesn't decompose (like Polish 'ł')
 	replacements := map[string]string{
 		"ł": "l",
@@ -50,12 +55,8 @@ func GenerateSlug(title string, year int) string {
 	// Strip hyphens from ends
 	slug = strings.Trim(slug, "-")
 
-	// Letterboxd specific: Some titles require year to be unique
-	ambiguous := map[string]bool{
-		"The Flash": true,
-	}
 
-	if ambiguous[title] {
+	if year != -1 {
 		return fmt.Sprintf("%s-%d", slug, year)
 	}
 

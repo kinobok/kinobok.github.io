@@ -292,24 +292,28 @@ func main() {
 						}
 
 						// Generate Letterboxd slug
-						boxdSlug := slug.GenerateSlug(tmdbMovie.Title, tmdbMovie.Year)
+						boxdSlug := slug.GenerateSlugWithYear(tmdbMovie.Title, tmdbMovie.Year)
 						boxdURI, err := letterboxdScraper.GetShortURI(boxdSlug)
 						if err != nil {
-							failuresMutex.Lock()
-							failures = append(failures, export.FailureModel{
-								Title:  title,
-								Reason: "Letterboxd URI resolution failed",
-								Details: func() *string {
-									s := fmt.Sprintf("Slug: %s, Error: %v", boxdSlug, err)
-									return &s
-								}(),
-							})
-							failuresMutex.Unlock()
+							boxdSlug := slug.GenerateSlug(tmdbMovie.Title)
+							boxdURI, err = letterboxdScraper.GetShortURI(boxdSlug)
+							if err != nil {
+								failuresMutex.Lock()
+								failures = append(failures, export.FailureModel{
+									Title:  title,
+									Reason: "Letterboxd URI resolution failed",
+									Details: func() *string {
+										s := fmt.Sprintf("Slug: %s, Year: %d, Error: %v", boxdSlug, tmdbMovie.Year, err)
+										return &s
+									}(),
+								})
+								failuresMutex.Unlock()
 
-							cacheMutex.Lock()
-							resolvedCache[cacheKey] = &movieResolution{err: fmt.Errorf("Letterboxd short link failed: %w", err)}
-							cacheMutex.Unlock()
-							continue
+								cacheMutex.Lock()
+								resolvedCache[cacheKey] = &movieResolution{err: fmt.Errorf("Letterboxd short link failed: %w", err)}
+								cacheMutex.Unlock()
+								continue
+							}
 						}
 
 						movieMutex.Lock()

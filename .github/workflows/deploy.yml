@@ -64,6 +64,8 @@ jobs:
       - name: Build with Next.js
         run: npm run build
         working-directory: frontend
+        env:
+          NEXT_PUBLIC_CARTO_API_KEY: ${{ vars.CARTO_API_KEY }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

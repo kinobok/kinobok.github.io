@@ -703,6 +703,92 @@ describe("MatchSidebar", () => {
     expect(onExcludeMovie).toHaveBeenCalledWith("m1");
     expect(mockEvent.stopPropagation).toHaveBeenCalled();
   });
+
+  test("renders screening date chips and calls onDateChange when tapped", () => {
+    const onDateChange = vi.fn();
+    const mockMatches = [
+      {
+        id: "m1",
+        title: "Dune",
+        boxd_uri: "https://boxd.it/test",
+        showtimes: [{ cinema: "Kinoteka", cinema_id: "c1", times: ["19:00"] }],
+      },
+    ];
+
+    const result = MatchSidebar({
+      matches: mockMatches,
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+      selectedDate: "2026-10-14",
+      onDateChange,
+      movieScreeningDates: ["2026-10-14", "2026-10-15", "2026-10-16"],
+    });
+
+    // Find the chip for 2026-10-15
+    const chipNextDay = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "button" &&
+        el.props &&
+        el.props.className &&
+        el.props.className.includes("screening-date-chip") &&
+        el.props.title === "View screenings for 2026-10-15",
+    );
+
+    expect(chipNextDay).not.toBeNull();
+    expect(chipNextDay.props.className).not.toContain("active");
+
+    // Click chip
+    const mockEvent = { stopPropagation: vi.fn() };
+    chipNextDay.props.onClick(mockEvent);
+    expect(onDateChange).toHaveBeenCalledWith("2026-10-15");
+    expect(mockEvent.stopPropagation).toHaveBeenCalled();
+
+    // Check active chip for 2026-10-14
+    const activeChip = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "button" &&
+        el.props &&
+        el.props.className &&
+        el.props.className.includes("screening-date-chip") &&
+        el.props.title === "View screenings for 2026-10-14",
+    );
+    expect(activeChip).not.toBeNull();
+    expect(activeChip.props.className).toContain("active");
+  });
+
+  test("renders empty showtimes message when a match has 0 showtimes", () => {
+    const mockMatches = [
+      {
+        id: "m1",
+        title: "Dune",
+        boxd_uri: "https://boxd.it/test",
+        showtimes: [],
+      },
+    ];
+
+    const result = MatchSidebar({
+      matches: mockMatches,
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+      selectedDate: "2026-10-14",
+      movieScreeningDates: ["2026-10-15"],
+    });
+
+    const emptyMsg = findElement(
+      result,
+      (el) =>
+        el &&
+        typeof el.props?.children === "string" &&
+        el.props.children.includes(
+          "No screenings in this map area on this date",
+        ),
+    );
+    expect(emptyMsg).not.toBeNull();
+  });
 });
 
 // Declare global variable type for TypeScript safety

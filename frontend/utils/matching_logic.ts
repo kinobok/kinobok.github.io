@@ -531,3 +531,24 @@ export function getNearestCity(
   }
   return nearestCity;
 }
+
+export function getMovieScreeningDates(
+  movieId: string,
+  showtimes: Record<string, Showtime[]>,
+): string[] {
+  if (!showtimes) return [];
+  return Object.keys(showtimes)
+    .sort()
+    .filter((date) => showtimes[date]?.some((st) => st.movie_id === movieId));
+}
+
+export function formatChipDate(dateStr: string): string {
+  const parts = dateStr.split("-").map(Number);
+  if (parts.length !== 3 || parts.some(isNaN)) return dateStr;
+  const [year, month, day] = parts;
+  const date = new Date(year, month - 1, day);
+  const weekday = date.toLocaleDateString("en-GB", { weekday: "short" });
+  const dayNum = date.getDate();
+  const monthStr = date.toLocaleDateString("en-GB", { month: "short" });
+  return `${weekday}, ${dayNum} ${monthStr}`;
+}

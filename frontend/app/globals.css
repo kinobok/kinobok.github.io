@@ -65,6 +65,31 @@ body,
   color: var(--lb-text-secondary) !important;
 }
 
+/* Leaflet Tooltip Styling Overrides */
+.leaflet-tooltip {
+  background-color: var(--lb-sidebar) !important;
+  color: var(--lb-text-primary) !important;
+  border: 1px solid var(--lb-card) !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+  padding: 4px 8px !important;
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: var(--lb-sidebar) !important;
+}
+.leaflet-tooltip-bottom:before {
+  border-bottom-color: var(--lb-sidebar) !important;
+}
+.leaflet-tooltip-left:before {
+  border-left-color: var(--lb-sidebar) !important;
+}
+.leaflet-tooltip-right:before {
+  border-right-color: var(--lb-sidebar) !important;
+}
+
 /* Custom DivIcon Styling */
 .custom-marker {
   display: flex;
@@ -482,4 +507,48 @@ body,
     transform: scale(0.95);
     opacity: 0.6;
   }
+}
+
+/* Outside Screenings Banner (Subissue #64) */
+.outside-screenings-banner {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1100;
+  background: var(--lb-sidebar, #14181c);
+  color: var(--lb-text-primary, #ffffff);
+  border: 1px solid var(--lb-orange, #ff8000);
+  border-radius: 24px;
+  padding: 6px 14px;
+  font-size: 0.85em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+  pointer-events: auto;
+  max-width: 90%;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .outside-screenings-banner {
+    top: 65px;
+  }
+}
+
+.outside-zoom-btn {
+  background: var(--lb-orange, #ff8000);
+  color: #000;
+  border: none;
+  border-radius: 14px;
+  padding: 3px 10px;
+  font-size: 0.85em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.outside-zoom-btn:hover {
+  opacity: 0.9;
 }

@@ -33,6 +33,7 @@ interface MatchSidebarProps {
   onToggleMinimize?: (minimized: boolean) => void;
   selectedCinema?: Cinema | null;
   isDatePast?: (date: string) => boolean;
+  searchQuery?: string;
 }
 
 function TmdbLogo({
@@ -122,6 +123,7 @@ export default function MatchSidebar({
   onToggleMinimize,
   selectedCinema,
   isDatePast,
+  searchQuery,
 }: MatchSidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -595,6 +597,32 @@ export default function MatchSidebar({
                   >
                     <ChevronDown></ChevronDown>
                   </button>
+                  {searchQuery && searchQuery.trim().length > 0 && (
+                    <div
+                      className="mobile-search-query-info"
+                      onClick={handleSearchFocus}
+                      style={{
+                        flex: 1,
+                        margin: "0 10px",
+                        fontSize: "0.85em",
+                        fontWeight: 600,
+                        color: "var(--lb-text-primary)",
+                        textAlign: "center",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        cursor: "pointer",
+                        background: "rgba(255, 255, 255, 0.05)",
+                        padding: "4px 10px",
+                        borderRadius: "16px",
+                        border:
+                          "1px solid var(--lb-card, rgba(255, 255, 255, 0.1))",
+                      }}
+                      title={`Search: ${searchQuery}`}
+                    >
+                      {searchQuery}
+                    </div>
+                  )}
                   <button
                     className="icon-button"
                     onClick={handleSearchFocus}

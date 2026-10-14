@@ -22,6 +22,11 @@ interface ConfigMenuProps {
   sortBy?: string;
   onSortChange?: (newSortBy: string) => void;
   onDashboardToggle?: () => void;
+  availableCities?: string[];
+  defaultCity?: string;
+  onSelectDefaultCity?: (city: string) => void;
+  onLocateMe?: () => void;
+  isLocationActive?: boolean;
 }
 
 export default function ConfigMenu({
@@ -42,6 +47,11 @@ export default function ConfigMenu({
   sortBy,
   onSortChange,
   onDashboardToggle,
+  availableCities = [],
+  defaultCity = "Warszawa",
+  onSelectDefaultCity,
+  onLocateMe,
+  isLocationActive = false,
 }: ConfigMenuProps) {
   const [activeTab, setActiveTab] = useState<string>("Upload");
   const [cinemaSearchQuery, setCinemaSearchQuery] = useState<string>("");
@@ -253,6 +263,91 @@ export default function ConfigMenu({
 
         {activeTab === "Cinemas" && (
           <>
+            <div className="config-section">
+              <h3>Starting City & Location</h3>
+              <p
+                style={{
+                  fontSize: "0.9em",
+                  color: "var(--lb-text-secondary)",
+                  marginBottom: "8px",
+                }}
+              >
+                Set the default map view on load:
+              </p>
+              <div
+                style={{
+                  display: "flex",
+                  gap: "8px",
+                  alignItems: "center",
+                  marginBottom: "6px",
+                }}
+              >
+                <select
+                  id="config-default-city-select"
+                  aria-label="Starting city"
+                  value={defaultCity}
+                  onChange={(e) =>
+                    onSelectDefaultCity && onSelectDefaultCity(e.target.value)
+                  }
+                  style={{
+                    flex: 1,
+                    background: "var(--lb-sidebar, #14181c)",
+                    color: "var(--lb-text-primary, #fff)",
+                    border: "1px solid var(--lb-card, #2c3440)",
+                    borderRadius: "6px",
+                    padding: "8px 12px",
+                    fontSize: "0.9em",
+                    cursor: "pointer",
+                  }}
+                >
+                  {availableCities.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
+                </select>
+
+                {onLocateMe && (
+                  <button
+                    type="button"
+                    onClick={onLocateMe}
+                    style={{
+                      padding: "8px 12px",
+                      background: isLocationActive
+                        ? "var(--lb-blue)"
+                        : "var(--lb-card)",
+                      color: isLocationActive
+                        ? "#000"
+                        : "var(--lb-text-primary)",
+                      border: "none",
+                      borderRadius: "6px",
+                      fontSize: "0.85em",
+                      fontWeight: "bold",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px",
+                      whiteSpace: "nowrap",
+                    }}
+                    title="Use my current location"
+                  >
+                    📍 Locate me
+                  </button>
+                )}
+              </div>
+              {isLocationActive && (
+                <p
+                  style={{
+                    fontSize: "0.8em",
+                    color: "var(--lb-green)",
+                    margin: 0,
+                  }}
+                >
+                  📍 Currently using your geolocation
+                </p>
+              )}
+            </div>
+
             <div className="config-section">
               <h3>Chain Visibility</h3>
               <p

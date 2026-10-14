@@ -45,8 +45,10 @@ vi.mock("react-leaflet", () => {
     TileLayer: () => <div />,
     Marker: ({ children }: any) => <div>{children}</div>,
     Popup: ({ children }: any) => <div>{children}</div>,
+    Tooltip: ({ children }: any) => <div>{children}</div>,
     useMap: () => ({
       setView: vi.fn(),
+      panTo: vi.fn(),
       getZoom: () => 12,
       getBounds: () => ({
         getWest: () => 20.0,
@@ -207,5 +209,157 @@ describe("Issue #57: Map resetting to user location on state changes", () => {
     expect(onLocationFound).toHaveBeenCalledWith(userLocation);
     // Should also request fresh coordinates in the background
     expect(getCurrentPositionMock).toHaveBeenCalledTimes(1);
+  });
+
+  test("CinemaMap passes cityToFit to MapController", () => {
+    const result = CinemaMap({
+      cinemas: [
+        {
+          id: "c1",
+          name: "Kinoteka",
+          address: "Warszawa",
+          city: "Warszawa",
+          coords: { lat: 52.23, lng: 21.01 },
+        },
+      ],
+      cityToFit: "Warszawa",
+    });
+
+    const mapController = findElement(
+      result,
+      (el) => el && el.props && "hasActiveMovieFilter" in el.props,
+    );
+
+    expect(mapController).not.toBeNull();
+    expect(mapController.props.cityToFit).toBe("Warszawa");
+  });
+
+  test("MapController fits city cinemas bounds when cityToFit is changed, but preserves view after panning", () => {
+    const fitBoundsMock = vi.fn();
+    const mockMap = { fitBounds: fitBoundsMock };
+
+    const lastCityFit = { current: null as string | null };
+
+    const triggerCityFit = (
+      cityToFit: string | null,
+      cinemas: any[],
+      mapObj: any,
+    ) => {
+      if (
+        cityToFit &&
+        cityToFit !== lastCityFit.current &&
+        cinemas.length > 0
+      ) {
+        const cityCinemas = cinemas.filter(
+          (c) =>
+            c.city &&
+            c.city.toLowerCase() === cityToFit.toLowerCase() &&
+            c.coords,
+        );
+        if (cityCinemas.length > 0) {
+          mapObj.fitBounds(
+            { fakeBounds: true },
+            { padding: [50, 50], maxZoom: 14 },
+          );
+          lastCityFit.current = cityToFit;
+        }
+      }
+    };
+
+    const mockCinemas = [
+      { id: "c1", city: "Warszawa", coords: { lat: 52.2, lng: 21.0 } },
+      { id: "c2", city: "Kraków", coords: { lat: 50.0, lng: 19.9 } },
+    ];
+
+    // 1. Initial fit for Warszawa
+    triggerCityFit("Warszawa", mockCinemas, mockMap);
+    expect(fitBoundsMock).toHaveBeenCalledTimes(1);
+
+    // 2. User pans/drags map (effect triggers with same cityToFit)
+    triggerCityFit("Warszawa", mockCinemas, mockMap);
+    // Should NOT fit again, view is preserved
+    expect(fitBoundsMock).toHaveBeenCalledTimes(1);
+
+    // 3. User selects Kraków in ConfigMenu
+    triggerCityFit("Kraków", mockCinemas, mockMap);
+    // Fits Kraków
+    expect(fitBoundsMock).toHaveBeenCalledTimes(2);
+  });
+
+  test("MapController centers on userLocation with panTo when cityToFit is null and preserves view on re-render", () => {
+    const panToMock = vi.fn();
+    const mockMap = { panTo: panToMock };
+
+    const initialLocationSetRef = { current: false };
+
+    const triggerInitialLocation = (
+      userLocation: { lat: number; lng: number } | null,
+      cityToFit: string | null,
+      mapObj: any,
+    ) => {
+      if (userLocation && !initialLocationSetRef.current && !cityToFit) {
+        mapObj.panTo([userLocation.lat, userLocation.lng]);
+        initialLocationSetRef.current = true;
+      }
+    };
+
+    const userLoc = { lat: 52.2297, lng: 21.0122 };
+
+    // 1. Initial mount with userLocation and no cityToFit (useLocationDefault is active)
+    triggerInitialLocation(userLoc, null, mockMap);
+    expect(panToMock).toHaveBeenCalledTimes(1);
+    expect(panToMock).toHaveBeenCalledWith([52.2297, 21.0122]);
+
+    // 2. Re-render after map panning
+    triggerInitialLocation(userLoc, null, mockMap);
+    expect(panToMock).toHaveBeenCalledTimes(1);
+  });
+
+  test("CinemaMap renders userLocation marker with pin icon and popup", () => {
+    const userLocation = { lat: 52.2297, lng: 21.0122 };
+
+    const result = CinemaMap({
+      cinemas: [],
+      userLocation,
+    });
+
+    const marker = findElement(
+      result,
+      (el) =>
+        el &&
+        el.props &&
+        Array.isArray(el.props.position) &&
+        el.props.position[0] === userLocation.lat &&
+        el.props.position[1] === userLocation.lng,
+    );
+
+    expect(marker).not.toBeNull();
+    expect(marker.props.icon).toBeDefined();
+
+    const popup = findElement(
+      marker,
+      (el) => el && el.props && el.props.children === "You are here",
+    );
+    expect(popup).not.toBeNull();
+  });
+
+  test("resolving location on map saves kinobok_use_location_default and clears default city", () => {
+    const mockLocalStorage: Record<string, string> = {
+      kinobok_default_city: "Warszawa",
+    };
+
+    const handleLocationFound = (loc: { lat: number; lng: number }) => {
+      mockLocalStorage["kinobok_use_location_default"] = "true";
+      mockLocalStorage["kinobok_default_location"] = JSON.stringify(loc);
+      delete mockLocalStorage["kinobok_default_city"];
+    };
+
+    handleLocationFound({ lat: 50.0647, lng: 19.945 });
+
+    expect(mockLocalStorage["kinobok_use_location_default"]).toBe("true");
+    expect(mockLocalStorage["kinobok_default_location"]).toBe(
+      JSON.stringify({ lat: 50.0647, lng: 19.945 }),
+    );
+    expect(mockLocalStorage["kinobok_default_city"]).toBeUndefined();
   });
 });

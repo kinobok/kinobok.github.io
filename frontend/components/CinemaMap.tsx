@@ -8,7 +8,7 @@ import {
   useMap,
   useMapEvents,
 } from "react-leaflet";
-import { useEffect, useState, useRef, useMemo } from "react";
+import { useEffect, useState, useRef, useMemo, useCallback } from "react";
 import L from "leaflet";
 import { Cinema } from "../utils/matching_logic";
 
@@ -26,6 +26,8 @@ interface CinemaMapProps {
   ) => void;
   hasActiveMovieFilter?: boolean;
   center?: { lat: number; lng: number } | null;
+  cityToFit?: string | null;
+  fitBoundsCinemas?: Cinema[] | null;
 }
 
 const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
@@ -44,21 +46,49 @@ const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
   });
 };
 
+const createUserLocationIcon = () => {
+  if (typeof L === "undefined") return null;
+  return L.divIcon({
+    className: "user-location-marker",
+    html: `
+      <div style="font-size: 24px; line-height: 1; text-align: center; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); user-select: none;">
+        📍
+      </div>
+    `,
+    iconSize: [24, 24],
+    iconAnchor: [12, 22],
+    popupAnchor: [0, -20],
+  });
+};
+
 function MapController({
   center,
   onZoomChange,
   cinemas,
   hasActiveMovieFilter,
+  cityToFit,
+  userLocation,
+  fitBoundsCinemas,
+  onBoundsChange,
   mapRef,
 }: {
   center: [number, number] | null;
   onZoomChange: (zoom: number) => void;
   cinemas: Cinema[];
   hasActiveMovieFilter: boolean;
+  cityToFit?: string | null;
+  userLocation?: { lat: number; lng: number } | null;
+  fitBoundsCinemas?: Cinema[] | null;
+  onBoundsChange?: (
+    bounds: { west: number; south: number; east: number; north: number } | null,
+  ) => void;
   mapRef?: React.MutableRefObject<L.Map | null>;
 }) {
   const map = useMap();
   const lastCenterRef = useRef<[number, number] | null>(null);
+  const lastCityFitRef = useRef<string | null>(null);
+  const initialLocationSetRef = useRef(false);
+  const lastFitBoundsRef = useRef<Cinema[] | null>(null);
 
   useEffect(() => {
     if (mapRef) {
@@ -89,16 +119,82 @@ function MapController({
   }, [center, map]);
 
   useEffect(() => {
-    if (hasActiveMovieFilter && cinemas.length > 0) {
-      const validCinemas = cinemas.filter((c) => c.coords);
+    if (
+      userLocation &&
+      !initialLocationSetRef.current &&
+      !cityToFit &&
+      !hasActiveMovieFilter
+    ) {
+      map.panTo([userLocation.lat, userLocation.lng]);
+      initialLocationSetRef.current = true;
+    }
+  }, [userLocation, cityToFit, hasActiveMovieFilter, map]);
+
+  useEffect(() => {
+    if (
+      cityToFit &&
+      cityToFit !== lastCityFitRef.current &&
+      cinemas.length > 0 &&
+      !hasActiveMovieFilter
+    ) {
+      const cityCinemas = cinemas.filter(
+        (c) =>
+          c.city &&
+          c.city.toLowerCase() === cityToFit.toLowerCase() &&
+          c.coords,
+      );
+      if (cityCinemas.length > 0) {
+        const bounds = L.latLngBounds(
+          cityCinemas.map((c) => L.latLng(c.coords!.lat, c.coords!.lng)),
+        );
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+        lastCityFitRef.current = cityToFit;
+      }
+    }
+  }, [cityToFit, cinemas, hasActiveMovieFilter, map]);
+
+  useEffect(() => {
+    if (
+      fitBoundsCinemas &&
+      fitBoundsCinemas.length > 0 &&
+      fitBoundsCinemas !== lastFitBoundsRef.current
+    ) {
+      lastFitBoundsRef.current = fitBoundsCinemas;
+      const validCinemas = fitBoundsCinemas.filter((c) => c.coords);
       if (validCinemas.length > 0) {
         const bounds = L.latLngBounds(
           validCinemas.map((c) => L.latLng(c.coords!.lat, c.coords!.lng)),
         );
         map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+
+        const notifyBounds = () => {
+          if (onBoundsChange) {
+            const b = map.getBounds();
+            onBoundsChange({
+              west: b.getWest(),
+              south: b.getSouth(),
+              east: b.getEast(),
+              north: b.getNorth(),
+            });
+          }
+        };
+
+        map.once("moveend", notifyBounds);
+        map.once("zoomend", notifyBounds);
+        const t1 = setTimeout(notifyBounds, 50);
+        const t2 = setTimeout(notifyBounds, 250);
+        const t3 = setTimeout(notifyBounds, 500);
+
+        return () => {
+          clearTimeout(t1);
+          clearTimeout(t2);
+          clearTimeout(t3);
+          map.off("moveend", notifyBounds);
+          map.off("zoomend", notifyBounds);
+        };
       }
     }
-  }, [hasActiveMovieFilter, cinemas, map]);
+  }, [fitBoundsCinemas, map, onBoundsChange]);
 
   return null;
 }
@@ -121,7 +217,7 @@ function MapBoundsController({
 }) {
   const map = useMap();
 
-  useEffect(() => {
+  const updateBounds = useCallback(() => {
     const b = map.getBounds();
     onBoundsChange({
       west: b.getWest(),
@@ -131,16 +227,15 @@ function MapBoundsController({
     });
   }, [map, onBoundsChange]);
 
+  useEffect(() => {
+    updateBounds();
+  }, [updateBounds]);
+
   useMapEvents({
-    moveend: () => {
-      const b = map.getBounds();
-      onBoundsChange({
-        west: b.getWest(),
-        south: b.getSouth(),
-        east: b.getEast(),
-        north: b.getNorth(),
-      });
-    },
+    moveend: updateBounds,
+    zoomend: updateBounds,
+    viewreset: updateBounds,
+    resize: updateBounds,
   });
 
   return null;
@@ -156,6 +251,8 @@ export default function CinemaMap({
   onBoundsChange,
   hasActiveMovieFilter = false,
   center,
+  cityToFit,
+  fitBoundsCinemas,
 }: CinemaMapProps) {
   const [isClient, setIsClient] = useState(false);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
@@ -194,9 +291,24 @@ export default function CinemaMap({
   const warsawCenter: [number, number] = [52.2297, 21.0122];
 
   const handleLocateMe = () => {
+    const notifyBounds = () => {
+      if (mapRef.current && onBoundsChange) {
+        const b = mapRef.current.getBounds();
+        onBoundsChange({
+          west: b.getWest(),
+          south: b.getSouth(),
+          east: b.getEast(),
+          north: b.getNorth(),
+        });
+      }
+    };
+
     if (userLocation) {
       if (mapRef.current) {
-        mapRef.current.setView([userLocation.lat, userLocation.lng], 14);
+        mapRef.current.panTo([userLocation.lat, userLocation.lng]);
+        mapRef.current.once("moveend", notifyBounds);
+        setTimeout(notifyBounds, 50);
+        setTimeout(notifyBounds, 250);
       }
       if (onLocationFound) {
         onLocationFound(userLocation);
@@ -211,7 +323,10 @@ export default function CinemaMap({
             lng: pos.coords.longitude,
           };
           if (mapRef.current) {
-            mapRef.current.setView([loc.lat, loc.lng], 14);
+            mapRef.current.panTo([loc.lat, loc.lng]);
+            mapRef.current.once("moveend", notifyBounds);
+            setTimeout(notifyBounds, 50);
+            setTimeout(notifyBounds, 250);
           }
           if (onLocationFound) {
             onLocationFound(loc);
@@ -285,6 +400,10 @@ export default function CinemaMap({
           onZoomChange={setZoom}
           cinemas={cinemas}
           hasActiveMovieFilter={hasActiveMovieFilter}
+          cityToFit={cityToFit}
+          userLocation={userLocation}
+          fitBoundsCinemas={fitBoundsCinemas}
+          onBoundsChange={onBoundsChange}
           mapRef={mapRef}
         />
         <MapEventsController
@@ -303,7 +422,7 @@ export default function CinemaMap({
         {userLocation && (
           <Marker
             position={[userLocation.lat, userLocation.lng]}
-            icon={createMarkerIcon("#40bcf4", "You", false)!}
+            icon={createUserLocationIcon()!}
           >
             <Popup>You are here</Popup>
           </Marker>

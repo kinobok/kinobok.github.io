@@ -499,3 +499,35 @@ export function groupMatchesByCity(
   groups.sort((a, b) => a.city.localeCompare(b.city, "pl"));
   return groups;
 }
+
+export function getAvailableCities(cinemas: Cinema[]): string[] {
+  const citySet = new Set<string>();
+  for (const c of cinemas) {
+    if (c.city && c.city.trim()) {
+      citySet.add(c.city.trim());
+    }
+  }
+  return Array.from(citySet).sort((a, b) => a.localeCompare(b, "pl"));
+}
+
+export function getNearestCity(
+  location: { lat: number; lng: number },
+  cinemas: Cinema[],
+): string | null {
+  let nearestCity: string | null = null;
+  let minDistance = Infinity;
+
+  for (const cinema of cinemas) {
+    if (cinema.city && cinema.coords) {
+      const dist = Math.hypot(
+        cinema.coords.lat - location.lat,
+        cinema.coords.lng - location.lng,
+      );
+      if (dist < minDistance) {
+        minDistance = dist;
+        nearestCity = cinema.city;
+      }
+    }
+  }
+  return nearestCity;
+}

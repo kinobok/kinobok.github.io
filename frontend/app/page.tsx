@@ -7,9 +7,12 @@ import {
   findMatchesWithFilters,
   calculateMatchCountsPerDay,
   CinemaData,
+  Cinema,
   isScreeningPast,
   getDefaultSelectedDate,
   isDateInPast,
+  getAvailableCities,
+  getNearestCity,
 } from "../utils/matching_logic";
 import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
@@ -36,6 +39,9 @@ export default function Home() {
     lat: number;
     lng: number;
   } | null>(null);
+  const [defaultCity, setDefaultCity] = useState<string>("Warszawa");
+  const [cityToFit, setCityToFit] = useState<string | null>(null);
+  const [isLocationActive, setIsLocationActive] = useState<boolean>(false);
   const [showGuidance, setShowGuidance] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -50,6 +56,7 @@ export default function Home() {
     east: number;
     north: number;
   } | null>(null);
+  const [cinemasToFit, setCinemasToFit] = useState<Cinema[] | null>(null);
 
   const selectedCinema = useMemo(() => {
     if (!selectedCinemaId || !data?.cinemas) return null;
@@ -126,6 +133,60 @@ export default function Home() {
       }
     }
 
+    const useLocationDefault =
+      localStorage.getItem("kinobok_use_location_default") === "true";
+    const savedCity = localStorage.getItem("kinobok_default_city");
+    const savedLoc = localStorage.getItem("kinobok_default_location");
+
+    if (useLocationDefault || (!savedCity && savedLoc)) {
+      setIsLocationActive(true);
+      setCityToFit(null);
+      if (savedLoc) {
+        try {
+          const parsedLoc = JSON.parse(savedLoc);
+          if (
+            parsedLoc &&
+            typeof parsedLoc.lat === "number" &&
+            typeof parsedLoc.lng === "number"
+          ) {
+            setUserLocation(parsedLoc);
+          }
+        } catch (e) {
+          console.error("Failed to parse saved location", e);
+        }
+      }
+
+      if (typeof navigator !== "undefined" && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const freshLoc = {
+              lat: pos.coords.latitude,
+              lng: pos.coords.longitude,
+            };
+            setUserLocation(freshLoc);
+            setIsLocationActive(true);
+            setCityToFit(null);
+            localStorage.setItem(
+              "kinobok_default_location",
+              JSON.stringify(freshLoc),
+            );
+            localStorage.setItem("kinobok_use_location_default", "true");
+          },
+          (err) => {
+            console.warn("Auto-geolocation on load error:", err);
+          },
+        );
+      }
+    } else if (savedCity) {
+      setDefaultCity(savedCity);
+      setCityToFit(savedCity);
+      setIsLocationActive(false);
+    } else {
+      setDefaultCity("Warszawa");
+      setCityToFit("Warszawa");
+      setIsLocationActive(false);
+    }
+
     // Check guidance and reminder visibility
     const hasSeenGuidance = localStorage.getItem("kinobok_guidance_seen");
     if (!hasSeenGuidance && !savedUris) {
@@ -150,6 +211,23 @@ export default function Home() {
       }
     }
   }, []);
+
+  // On load, if location is used as default, adjust initial zoom to the nearest city's cinemas
+  useEffect(() => {
+    if (
+      isLocationActive &&
+      userLocation &&
+      data?.cinemas &&
+      data.cinemas.length > 0 &&
+      !cityToFit
+    ) {
+      const nearest = getNearestCity(userLocation, data.cinemas);
+      if (nearest) {
+        setCityToFit(nearest);
+        setDefaultCity(nearest);
+      }
+    }
+  }, [isLocationActive, userLocation, data?.cinemas, cityToFit]);
 
   const processUploadedFile = async (file: File) => {
     setIsProcessing(true);
@@ -233,13 +311,60 @@ export default function Home() {
     );
   };
 
-  const handleLocationFound = (loc: { lat: number; lng: number }) => {
-    setUserLocation(loc);
+  const handleLocationFound = useCallback(
+    (loc: { lat: number; lng: number }) => {
+      setUserLocation(loc);
+      setIsLocationActive(true);
+      setCityToFit(null);
+      localStorage.setItem("kinobok_use_location_default", "true");
+      localStorage.setItem("kinobok_default_location", JSON.stringify(loc));
+      localStorage.removeItem("kinobok_default_city");
+      setSelectedCinemaId(null);
+      setSelectedMovieId(null);
+      setSearchQuery("");
+      setIsSidebarMinimized(false);
+    },
+    [],
+  );
+
+  const handleSelectCity = useCallback((city: string) => {
+    setDefaultCity(city);
+    setCityToFit(city);
+    setIsLocationActive(false);
+    setUserLocation(null);
     setSelectedCinemaId(null);
     setSelectedMovieId(null);
     setSearchQuery("");
-    setIsSidebarMinimized(false);
-  };
+    localStorage.setItem("kinobok_default_city", city);
+    localStorage.removeItem("kinobok_default_location");
+    localStorage.setItem("kinobok_use_location_default", "false");
+  }, []);
+
+  const handleLocateMe = useCallback(() => {
+    if (typeof navigator !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const loc = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          };
+          handleLocationFound(loc);
+        },
+        (err) => {
+          console.error("Geolocation error:", err);
+          alert(
+            "Could not get your location. Please check your browser permissions.",
+          );
+        },
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  }, [handleLocationFound]);
+
+  const availableCities = useMemo(() => {
+    return getAvailableCities(data?.cinemas || []);
+  }, [data?.cinemas]);
 
   // State Updates with Persistence
   const handleSortChange = (newSortBy: string) => {
@@ -433,10 +558,33 @@ export default function Home() {
           .map((st) => st.cinema_id),
       );
 
+      const allMovieCinemas = data.cinemas.filter((c) =>
+        movieCinemaIds.has(c.id),
+      );
+
+      const visibleMovieCinemas = mapBounds
+        ? allMovieCinemas.filter(
+            (c) =>
+              c.coords &&
+              c.coords.lat >= mapBounds.south &&
+              c.coords.lat <= mapBounds.north &&
+              c.coords.lng >= mapBounds.west &&
+              c.coords.lng <= mapBounds.east,
+          )
+        : allMovieCinemas;
+
+      const visibleMovieCinemaIds = new Set(
+        visibleMovieCinemas.map((c) => c.id),
+      );
+
       const selectedMovie = data.movies.find((m) => m.id === selectedMovieId);
       if (selectedMovie) {
         const movieShowtimes = showtimesForDate
-          .filter((st) => st.movie_id === selectedMovieId)
+          .filter(
+            (st) =>
+              st.movie_id === selectedMovieId &&
+              visibleMovieCinemaIds.has(st.cinema_id),
+          )
           .map((st) => {
             const cinema = data.cinemas.find((c) => c.id === st.cinema_id);
             return {
@@ -465,9 +613,8 @@ export default function Home() {
         result.matches = [];
       }
 
-      result.filteredCinemas = data.cinemas.filter((c) =>
-        movieCinemaIds.has(c.id),
-      );
+      result.filteredCinemas = visibleMovieCinemas;
+      result.matchedCinemaIds = Array.from(visibleMovieCinemaIds);
     }
 
     if (selectedCinemaId) {
@@ -528,6 +675,59 @@ export default function Home() {
     );
   }, [data, selectedDate, excludedMovieIds]);
 
+  const { outsideMovieCinemas, allMovieCinemasForSelected } = useMemo(() => {
+    if (!selectedMovieId || !data) {
+      return { outsideMovieCinemas: [], allMovieCinemasForSelected: [] };
+    }
+    const showtimesForDate = data.showtimes[selectedDate] || [];
+    const movieCinemaIds = new Set(
+      showtimesForDate
+        .filter((st) => st.movie_id === selectedMovieId)
+        .map((st) => st.cinema_id),
+    );
+    const allCinemas = data.cinemas.filter(
+      (c) => movieCinemaIds.has(c.id) && c.coords,
+    );
+    if (!mapBounds) {
+      return {
+        outsideMovieCinemas: [],
+        allMovieCinemasForSelected: allCinemas,
+      };
+    }
+    const outside = allCinemas.filter(
+      (c) =>
+        !c.coords ||
+        c.coords.lat < mapBounds.south ||
+        c.coords.lat > mapBounds.north ||
+        c.coords.lng < mapBounds.west ||
+        c.coords.lng > mapBounds.east,
+    );
+    return {
+      outsideMovieCinemas: outside,
+      allMovieCinemasForSelected: allCinemas,
+    };
+  }, [selectedMovieId, data, selectedDate, mapBounds]);
+
+  const handleZoomOutToAll = useCallback(() => {
+    if (allMovieCinemasForSelected.length > 0) {
+      setCinemasToFit([...allMovieCinemasForSelected]);
+    }
+  }, [allMovieCinemasForSelected]);
+
+  const handleBoundsChange = useCallback(
+    (
+      bounds: {
+        west: number;
+        south: number;
+        east: number;
+        north: number;
+      } | null,
+    ) => {
+      setMapBounds(bounds);
+    },
+    [],
+  );
+
   const isDatePast = useCallback(
     (dateStr: string) => {
       return isDateInPast(dateStr, new Date(), data?.showtimes?.[dateStr]);
@@ -578,6 +778,11 @@ export default function Home() {
         onBrowseWithoutWatchlist={handleBrowseWithoutWatchlist}
         error={uploadError}
         isProcessing={isProcessing}
+        availableCities={availableCities}
+        selectedCity={defaultCity}
+        onSelectCity={handleSelectCity}
+        onLocateMe={handleLocateMe}
+        isLocationActive={isLocationActive}
       />
 
       <UpdateReminderModal
@@ -620,6 +825,11 @@ export default function Home() {
         onToggleShowAllScreenings={handleToggleShowAllScreenings}
         sortBy={sortBy}
         onSortChange={handleSortChange}
+        availableCities={availableCities}
+        defaultCity={defaultCity}
+        onSelectDefaultCity={handleSelectCity}
+        onLocateMe={handleLocateMe}
+        isLocationActive={isLocationActive}
         onDashboardToggle={() => {
           setShowDashboard(true);
           setIsMenuOpen(false);
@@ -649,9 +859,26 @@ export default function Home() {
         onToggleMinimize={setIsSidebarMinimized}
         selectedCinema={selectedCinema}
         isDatePast={isDatePast}
+        searchQuery={searchQuery}
       />
 
       <div style={{ flex: 1, position: "relative" }}>
+        {selectedMovieId && outsideMovieCinemas.length > 0 && (
+          <div className="outside-screenings-banner">
+            <span>
+              {outsideMovieCinemas.length}{" "}
+              {outsideMovieCinemas.length === 1 ? "cinema" : "cinemas"} with
+              this movie outside this area
+            </span>
+            <button
+              type="button"
+              onClick={handleZoomOutToAll}
+              className="outside-zoom-btn"
+            >
+              Zoom out
+            </button>
+          </div>
+        )}
         <CinemaMap
           cinemas={filteredCinemas}
           highlightedCinemaIds={matchedCinemaIds}
@@ -659,9 +886,11 @@ export default function Home() {
           onLocationFound={handleLocationFound}
           onSelectCinema={handleSelectCinema}
           isMinimized={isSidebarMinimized}
-          onBoundsChange={setMapBounds}
+          onBoundsChange={handleBoundsChange}
           hasActiveMovieFilter={!!selectedMovieId}
           center={selectedCinema ? selectedCinema.coords : null}
+          cityToFit={cityToFit}
+          fitBoundsCinemas={cinemasToFit}
         />
       </div>
     </main>

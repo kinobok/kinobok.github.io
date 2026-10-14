@@ -10,6 +10,8 @@ import {
   isDateInPast,
   getDefaultSelectedDate,
   groupMatchesByCity,
+  getAvailableCities,
+  getNearestCity,
   formatRating,
   formatVoteCount,
   formatRuntime,
@@ -580,6 +582,68 @@ describe("groupMatchesByCity", () => {
 
   it("returns empty array for empty matches", () => {
     expect(groupMatchesByCity([], cinemas)).toEqual([]);
+  });
+});
+
+describe("getAvailableCities", () => {
+  it("extracts unique cities and sorts them alphabetically (Polish locale)", () => {
+    const testCinemas: Cinema[] = [
+      { id: "c1", name: "Kinoteka", address: "Warszawa", city: "Warszawa" },
+      { id: "c2", name: "Muranów", address: "Warszawa", city: "Warszawa" },
+      { id: "c3", name: "Barany", address: "Kraków", city: "Kraków" },
+      { id: "c4", name: "Nowe Horyzonty", address: "Wrocław", city: "Wrocław" },
+      { id: "c5", name: "Charlie", address: "Łódź", city: "Łódź" },
+      { id: "c6", name: "No City Cinema", address: "Somewhere" },
+    ];
+
+    const cities = getAvailableCities(testCinemas);
+    expect(cities).toEqual(["Kraków", "Łódź", "Warszawa", "Wrocław"]);
+  });
+
+  it("handles empty cinemas array gracefully", () => {
+    expect(getAvailableCities([])).toEqual([]);
+  });
+});
+
+describe("getNearestCity", () => {
+  const cinemas: Cinema[] = [
+    {
+      id: "c1",
+      name: "Kinoteka",
+      address: "Warszawa",
+      city: "Warszawa",
+      coords: { lat: 52.23, lng: 21.01 },
+    },
+    {
+      id: "c2",
+      name: "Kino Pod Baranami",
+      address: "Kraków",
+      city: "Kraków",
+      coords: { lat: 50.06, lng: 19.94 },
+    },
+    {
+      id: "c3",
+      name: "Nowe Horyzonty",
+      address: "Wrocław",
+      city: "Wrocław",
+      coords: { lat: 51.11, lng: 17.03 },
+    },
+  ];
+
+  it("identifies Kraków when coordinates are closest to Kraków", () => {
+    // Near Kraków
+    const loc = { lat: 50.05, lng: 19.95 };
+    expect(getNearestCity(loc, cinemas)).toBe("Kraków");
+  });
+
+  it("identifies Warszawa when coordinates are closest to Warszawa", () => {
+    // Near Warszawa
+    const loc = { lat: 52.22, lng: 21.0 };
+    expect(getNearestCity(loc, cinemas)).toBe("Warszawa");
+  });
+
+  it("returns null if cinemas array is empty", () => {
+    expect(getNearestCity({ lat: 52.0, lng: 21.0 }, [])).toBeNull();
   });
 });
 

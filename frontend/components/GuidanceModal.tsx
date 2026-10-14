@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Upload, Eye } from "lucide-react";
+import { Upload, Eye, MapPin } from "lucide-react";
 
 interface GuidanceModalProps {
   isOpen: boolean;
@@ -8,6 +8,11 @@ interface GuidanceModalProps {
   onBrowseWithoutWatchlist: () => void;
   error?: string;
   isProcessing?: boolean;
+  availableCities?: string[];
+  selectedCity?: string;
+  onSelectCity?: (city: string) => void;
+  onLocateMe?: () => void;
+  isLocationActive?: boolean;
 }
 
 const GuidanceModal: React.FC<GuidanceModalProps> = ({
@@ -16,6 +21,11 @@ const GuidanceModal: React.FC<GuidanceModalProps> = ({
   onBrowseWithoutWatchlist,
   error,
   isProcessing = false,
+  availableCities = [],
+  selectedCity = "Warszawa",
+  onSelectCity,
+  onLocateMe,
+  isLocationActive = false,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -242,6 +252,106 @@ const GuidanceModal: React.FC<GuidanceModalProps> = ({
               <p style={{ margin: 0, lineHeight: 1.4 }}>{error}</p>
             </div>
           )}
+
+          {/* Starting Location Section */}
+          <div
+            className="starting-location-section"
+            style={{
+              background: "var(--lb-card)",
+              borderRadius: "8px",
+              padding: "14px 16px",
+              marginBottom: "16px",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                marginBottom: "8px",
+              }}
+            >
+              <label
+                htmlFor="starting-city-select"
+                style={{
+                  fontSize: "13px",
+                  fontWeight: 600,
+                  color: "var(--lb-text-primary)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <MapPin size={15} style={{ color: "var(--lb-orange)" }} />
+                Starting city or location:
+              </label>
+              {isLocationActive && (
+                <span
+                  style={{
+                    fontSize: "11px",
+                    color: "var(--lb-green)",
+                    fontWeight: 500,
+                  }}
+                >
+                  📍 Using your location
+                </span>
+              )}
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "8px",
+                alignItems: "center",
+              }}
+            >
+              <select
+                id="starting-city-select"
+                value={selectedCity}
+                onChange={(e) => onSelectCity && onSelectCity(e.target.value)}
+                style={{
+                  flex: 1,
+                  background: "var(--lb-sidebar, #14181c)",
+                  color: "var(--lb-text-primary, #fff)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  borderRadius: "6px",
+                  padding: "8px 12px",
+                  fontSize: "13px",
+                  cursor: "pointer",
+                }}
+              >
+                {availableCities.map((city) => (
+                  <option key={city} value={city}>
+                    {city}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                type="button"
+                onClick={onLocateMe}
+                style={{
+                  padding: "8px 14px",
+                  background: isLocationActive
+                    ? "var(--lb-blue)"
+                    : "rgba(255, 255, 255, 0.08)",
+                  color: isLocationActive ? "#000" : "var(--lb-text-primary)",
+                  border: "1px solid rgba(255, 255, 255, 0.15)",
+                  borderRadius: "6px",
+                  fontSize: "13px",
+                  fontWeight: 500,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                  whiteSpace: "nowrap",
+                }}
+                title="Locate Me"
+              >
+                📍 Locate me
+              </button>
+            </div>
+          </div>
 
           <div
             className="onboarding-actions"

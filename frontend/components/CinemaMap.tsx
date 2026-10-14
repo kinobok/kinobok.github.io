@@ -49,14 +49,22 @@ function MapController({
   onZoomChange,
   cinemas,
   hasActiveMovieFilter,
+  mapRef,
 }: {
   center: [number, number] | null;
   onZoomChange: (zoom: number) => void;
   cinemas: Cinema[];
   hasActiveMovieFilter: boolean;
+  mapRef?: React.MutableRefObject<L.Map | null>;
 }) {
   const map = useMap();
   const lastCenterRef = useRef<[number, number] | null>(null);
+
+  useEffect(() => {
+    if (mapRef) {
+      mapRef.current = map;
+    }
+  }, [map, mapRef]);
 
   useMapEvents({
     zoomend: () => {
@@ -75,6 +83,8 @@ function MapController({
         map.setView(center, 14);
         lastCenterRef.current = center;
       }
+    } else {
+      lastCenterRef.current = null;
     }
   }, [center, map]);
 
@@ -150,20 +160,25 @@ export default function CinemaMap({
   const [isClient, setIsClient] = useState(false);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
   const [isMobile, setIsMobile] = useState(false);
+  const mapRef = useRef<L.Map | null>(null);
 
   const mapCenter = useMemo(() => {
     if (center) return [center.lat, center.lng] as [number, number];
-    if (userLocation)
-      return [userLocation.lat, userLocation.lng] as [number, number];
     return null;
-  }, [center, userLocation]);
+  }, [center]);
 
   useEffect(() => {
     setIsClient(true);
-    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    const checkMobile = () => {
+      if (typeof window !== "undefined") {
+        setIsMobile(window.innerWidth < 768);
+      }
+    };
     checkMobile();
-    window.addEventListener("resize", checkMobile);
-    return () => window.removeEventListener("resize", checkMobile);
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", checkMobile);
+      return () => window.removeEventListener("resize", checkMobile);
+    }
   }, []);
 
   if (!isClient) {
@@ -179,21 +194,36 @@ export default function CinemaMap({
   const warsawCenter: [number, number] = [52.2297, 21.0122];
 
   const handleLocateMe = () => {
+    if (userLocation) {
+      if (mapRef.current) {
+        mapRef.current.setView([userLocation.lat, userLocation.lng], 14);
+      }
+      if (onLocationFound) {
+        onLocationFound(userLocation);
+      }
+    }
+
     if (typeof navigator !== "undefined" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
+          const loc = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          };
+          if (mapRef.current) {
+            mapRef.current.setView([loc.lat, loc.lng], 14);
+          }
           if (onLocationFound) {
-            onLocationFound({
-              lat: pos.coords.latitude,
-              lng: pos.coords.longitude,
-            });
+            onLocationFound(loc);
           }
         },
         (err) => {
           console.error("Geolocation error:", err);
-          alert(
-            "Could not get your location. Please check your browser permissions.",
-          );
+          if (!userLocation) {
+            alert(
+              "Could not get your location. Please check your browser permissions.",
+            );
+          }
         },
       );
     }
@@ -255,6 +285,7 @@ export default function CinemaMap({
           onZoomChange={setZoom}
           cinemas={cinemas}
           hasActiveMovieFilter={hasActiveMovieFilter}
+          mapRef={mapRef}
         />
         <MapEventsController
           onMapClick={() => {

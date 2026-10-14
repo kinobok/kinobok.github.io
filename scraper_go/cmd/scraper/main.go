@@ -327,7 +327,80 @@ func main() {
 								posterURL := fmt.Sprintf("https://image.tmdb.org/t/p/w500%s", tmdbMovie.PosterPath)
 								movieModel.Poster = &posterURL
 							}
+							if tmdbMovie.VoteAverage > 0 {
+								rating := tmdbMovie.VoteAverage
+								movieModel.Rating = &rating
+							}
+							if tmdbMovie.VoteCount > 0 {
+								vc := tmdbMovie.VoteCount
+								movieModel.VoteCount = &vc
+							}
+							if tmdbMovie.Runtime > 0 {
+								rt := tmdbMovie.Runtime
+								movieModel.Runtime = &rt
+							}
+							if tmdbMovie.ID > 0 {
+								tid := tmdbMovie.ID
+								movieModel.TMDBID = &tid
+								turl := tmdbMovie.URL
+								if turl == "" {
+									turl = fmt.Sprintf("https://www.themoviedb.org/movie/%d", tmdbMovie.ID)
+								}
+								movieModel.TMDBURL = &turl
+							}
+							movieYear := tmdbMovie.Year
+							if movieYear == 0 {
+								movieYear = fwMovie.Year
+							}
+							if movieYear > 0 {
+								my := movieYear
+								movieModel.Year = &my
+							}
 							moviesMap[boxdURI] = movieModel
+						} else {
+							updated := false
+							if movieModel.Rating == nil && tmdbMovie.VoteAverage > 0 {
+								rating := tmdbMovie.VoteAverage
+								movieModel.Rating = &rating
+								updated = true
+							}
+							if movieModel.VoteCount == nil && tmdbMovie.VoteCount > 0 {
+								vc := tmdbMovie.VoteCount
+								movieModel.VoteCount = &vc
+								updated = true
+							}
+							if movieModel.Runtime == nil && tmdbMovie.Runtime > 0 {
+								rt := tmdbMovie.Runtime
+								movieModel.Runtime = &rt
+								updated = true
+							}
+							if movieModel.TMDBID == nil && tmdbMovie.ID > 0 {
+								tid := tmdbMovie.ID
+								movieModel.TMDBID = &tid
+								updated = true
+							}
+							if movieModel.TMDBURL == nil && tmdbMovie.ID > 0 {
+								turl := tmdbMovie.URL
+								if turl == "" {
+									turl = fmt.Sprintf("https://www.themoviedb.org/movie/%d", tmdbMovie.ID)
+								}
+								movieModel.TMDBURL = &turl
+								updated = true
+							}
+							if movieModel.Year == nil && (tmdbMovie.Year > 0 || fwMovie.Year > 0) {
+								movieYear := tmdbMovie.Year
+								if movieYear == 0 {
+									movieYear = fwMovie.Year
+								}
+								if movieYear > 0 {
+									my := movieYear
+									movieModel.Year = &my
+									updated = true
+								}
+							}
+							if updated {
+								moviesMap[boxdURI] = movieModel
+							}
 						}
 						movieMutex.Unlock()
 

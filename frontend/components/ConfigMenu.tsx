@@ -706,6 +706,12 @@ export default function ConfigMenu({
                     <option value="most-screenings">
                       Most Screenings First
                     </option>
+                    <option value="popularity-desc">
+                      Popularity (Most Ratings)
+                    </option>
+                    <option value="rating-desc">Rating (Highest Rated)</option>
+                    <option value="year-desc">Year (Newest First)</option>
+                    <option value="year-asc">Year (Oldest First)</option>
                     <option value="alpha-asc">Title (A-Z)</option>
                     <option value="alpha-desc">Title (Z-A)</option>
                   </select>

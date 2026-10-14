@@ -10,6 +10,10 @@ import {
   isDateInPast,
   getDefaultSelectedDate,
   groupMatchesByCity,
+  formatRating,
+  formatVoteCount,
+  formatRuntime,
+  getTmdbUrl,
   Cinema,
   Movie,
   Showtime,
@@ -119,6 +123,133 @@ describe("findMatchesWithFilters", () => {
     expect(result.matches[0].title).toBe("Movie A");
     expect(result.matches[1].title).toBe("Movie B");
     expect(result.matches[2].title).toBe("Movie C");
+  });
+
+  it("should sort by popularity (vote_count descending)", () => {
+    const dataWithSortFields: CinemaData = {
+      ...mockData,
+      movies: [
+        {
+          id: "m1",
+          title: "Movie B",
+          boxd_uri: "https://boxd.it/uri1",
+          vote_count: 50,
+        },
+        {
+          id: "m2",
+          title: "Movie A",
+          boxd_uri: "https://boxd.it/uri2",
+          vote_count: 500,
+        },
+        {
+          id: "m3",
+          title: "Movie C",
+          boxd_uri: "https://boxd.it/uri3",
+          vote_count: 200,
+        },
+      ],
+    };
+    const result = findMatchesWithFilters(
+      allUris,
+      dataWithSortFields,
+      [],
+      "2026-05-07",
+      [],
+      [],
+      "popularity-desc",
+    );
+    expect(result.matches[0].id).toBe("m2"); // 500
+    expect(result.matches[1].id).toBe("m3"); // 200
+    expect(result.matches[2].id).toBe("m1"); // 50
+  });
+
+  it("should sort by rating (highest rated first)", () => {
+    const dataWithSortFields: CinemaData = {
+      ...mockData,
+      movies: [
+        {
+          id: "m1",
+          title: "Movie B",
+          boxd_uri: "https://boxd.it/uri1",
+          rating: 6.8,
+        },
+        {
+          id: "m2",
+          title: "Movie A",
+          boxd_uri: "https://boxd.it/uri2",
+          rating: 8.9,
+        },
+        {
+          id: "m3",
+          title: "Movie C",
+          boxd_uri: "https://boxd.it/uri3",
+          rating: 7.4,
+        },
+      ],
+    };
+    const result = findMatchesWithFilters(
+      allUris,
+      dataWithSortFields,
+      [],
+      "2026-05-07",
+      [],
+      [],
+      "rating-desc",
+    );
+    expect(result.matches[0].id).toBe("m2"); // 8.9
+    expect(result.matches[1].id).toBe("m3"); // 7.4
+    expect(result.matches[2].id).toBe("m1"); // 6.8
+  });
+
+  it("should sort by year of production (newest and oldest first)", () => {
+    const dataWithSortFields: CinemaData = {
+      ...mockData,
+      movies: [
+        {
+          id: "m1",
+          title: "Movie B",
+          boxd_uri: "https://boxd.it/uri1",
+          year: 1999,
+        },
+        {
+          id: "m2",
+          title: "Movie A",
+          boxd_uri: "https://boxd.it/uri2",
+          year: 2024,
+        },
+        {
+          id: "m3",
+          title: "Movie C",
+          boxd_uri: "https://boxd.it/uri3",
+          year: 2010,
+        },
+      ],
+    };
+    const resultNewest = findMatchesWithFilters(
+      allUris,
+      dataWithSortFields,
+      [],
+      "2026-05-07",
+      [],
+      [],
+      "year-desc",
+    );
+    expect(resultNewest.matches[0].id).toBe("m2"); // 2024
+    expect(resultNewest.matches[1].id).toBe("m3"); // 2010
+    expect(resultNewest.matches[2].id).toBe("m1"); // 1999
+
+    const resultOldest = findMatchesWithFilters(
+      allUris,
+      dataWithSortFields,
+      [],
+      "2026-05-07",
+      [],
+      [],
+      "year-asc",
+    );
+    expect(resultOldest.matches[0].id).toBe("m1"); // 1999
+    expect(resultOldest.matches[1].id).toBe("m3"); // 2010
+    expect(resultOldest.matches[2].id).toBe("m2"); // 2024
   });
 
   it("should return all movies when showAllScreenings is true even if watchlist is empty", () => {
@@ -449,5 +580,90 @@ describe("groupMatchesByCity", () => {
 
   it("returns empty array for empty matches", () => {
     expect(groupMatchesByCity([], cinemas)).toEqual([]);
+  });
+});
+
+describe("Movie Metadata Formatting & Preservation", () => {
+  it("formats ratings correctly", () => {
+    expect(formatRating(8.45)).toBe("8.5");
+    expect(formatRating(7)).toBe("7.0");
+    expect(formatRating(undefined)).toBeNull();
+    expect(formatRating(0)).toBeNull();
+  });
+
+  it("formats vote counts correctly", () => {
+    expect(formatVoteCount(450)).toBe("450");
+    expect(formatVoteCount(1420)).toBe("1.4k");
+    expect(formatVoteCount(15200)).toBe("15k");
+    expect(formatVoteCount(1250000)).toBe("1.3M");
+    expect(formatVoteCount(undefined)).toBeNull();
+    expect(formatVoteCount(0)).toBeNull();
+  });
+
+  it("formats runtime correctly", () => {
+    expect(formatRuntime(115)).toBe("115 min");
+    expect(formatRuntime(90)).toBe("90 min");
+    expect(formatRuntime(undefined)).toBeNull();
+    expect(formatRuntime(0)).toBeNull();
+  });
+
+  it("generates TMDB URL correctly", () => {
+    expect(
+      getTmdbUrl(
+        "https://www.themoviedb.org/movie/693134",
+        123,
+        "Dune: Part Two",
+      ),
+    ).toBe("https://www.themoviedb.org/movie/693134");
+    expect(getTmdbUrl(undefined, 693134, "Dune: Part Two")).toBe(
+      "https://www.themoviedb.org/movie/693134",
+    );
+    expect(getTmdbUrl(undefined, undefined, "Dune: Part Two")).toBe(
+      "https://www.themoviedb.org/search/movie?query=Dune%3A%20Part%20Two",
+    );
+    expect(getTmdbUrl(undefined, undefined, "")).toBe(
+      "https://www.themoviedb.org",
+    );
+  });
+
+  it("preserves rating, vote_count, runtime, and tmdb_url in findMatchesWithFilters", () => {
+    const dataWithMetadata: CinemaData = {
+      movies: [
+        {
+          id: "m1",
+          title: "Dune: Part Two",
+          boxd_uri: "https://boxd.it/hZkK",
+          rating: 8.5,
+          vote_count: 1550,
+          runtime: 166,
+          tmdb_url: "https://www.themoviedb.org/movie/693134",
+        },
+      ],
+      cinemas: [{ id: "c1", name: "Cinema 1", address: "Address 1" }],
+      showtimes: {
+        "2026-05-07": [{ movie_id: "m1", cinema_id: "c1", times: ["19:00"] }],
+      },
+      metadata: {
+        last_scrape: "",
+        total_movies: 1,
+        available_dates: ["2026-05-07"],
+        failures: [],
+      },
+    };
+
+    const result = findMatchesWithFilters(
+      ["https://boxd.it/hZkK"],
+      dataWithMetadata,
+      [],
+      "2026-05-07",
+    );
+
+    expect(result.matches).toHaveLength(1);
+    expect(result.matches[0].rating).toBe(8.5);
+    expect(result.matches[0].vote_count).toBe(1550);
+    expect(result.matches[0].runtime).toBe(166);
+    expect(result.matches[0].tmdb_url).toBe(
+      "https://www.themoviedb.org/movie/693134",
+    );
   });
 });

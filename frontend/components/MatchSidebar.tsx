@@ -6,6 +6,10 @@ import {
   Cinema,
   isScreeningPast,
   groupMatchesByCity,
+  formatRating,
+  formatVoteCount,
+  formatRuntime,
+  getTmdbUrl,
 } from "../utils/matching_logic";
 import Image from "next/image";
 import DateSelector from "./DateSelector";
@@ -29,6 +33,75 @@ interface MatchSidebarProps {
   onToggleMinimize?: (minimized: boolean) => void;
   selectedCinema?: Cinema | null;
   isDatePast?: (date: string) => boolean;
+}
+
+function TmdbLogo({
+  width = 28,
+  height = 14,
+}: {
+  width?: number;
+  height?: number;
+}) {
+  return (
+    <svg
+      role="img"
+      viewBox="0 0 32 16"
+      width={width}
+      height={height}
+      style={{ display: "block", flexShrink: 0 }}
+    >
+      <title>TMDB</title>
+      <defs>
+        <linearGradient id="tmdb-badge-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stopColor="#90cea1" />
+          <stop offset="100%" stopColor="#01b4e4" />
+        </linearGradient>
+      </defs>
+      <rect width="32" height="16" rx="3.5" fill="url(#tmdb-badge-grad)" />
+      <text
+        x="16"
+        y="11.5"
+        fontSize="8.5"
+        fontWeight="800"
+        fontFamily="Inter, -apple-system, sans-serif"
+        fill="#0d253f"
+        textAnchor="middle"
+        letterSpacing="0.4"
+      >
+        TMDB
+      </text>
+    </svg>
+  );
+}
+
+function LetterboxdLogo({ size = 16 }: { size?: number }) {
+  return (
+    <svg
+      role="img"
+      viewBox="0 0 512 512"
+      width={size}
+      height={size}
+      style={{ display: "block", flexShrink: 0 }}
+    >
+      <title>Letterboxd</title>
+      <rect width="512" height="512" rx="110" fill="#14181c" />
+      <path
+        fill="#ff8000"
+        fillRule="evenodd"
+        d="M184.2 256c0-13.9 4-26.9 10.9-37.9c-12.7-20.3-35.2-33.7-60.9-33.7c-39.6 0-71.8 32.1-71.8 71.7s32.1 71.7 71.8 71.7c25.7 0 48.2-13.5 60.9-33.7c-6.9-11.2-10.9-24.2-10.9-38.1"
+      />
+      <path
+        fill="#00e054"
+        fillRule="evenodd"
+        d="M316.9 218.1c-12.7-20.3-35.2-33.7-60.9-33.7s-48.2 13.5-60.9 33.7C202 229 206 242 206 256c0 13.9-4 26.9-10.9 37.9c12.7 20.3 35.2 33.7 60.9 33.7s48.2-13.5 60.9-33.7c-6.9-11-10.9-24-10.9-37.9c0-14 4-27 10.9-37.9"
+      />
+      <path
+        fill="#40bcf4"
+        fillRule="evenodd"
+        d="M377.8 184.3c-25.7 0-48.2 13.5-60.9 33.7c6.9 11 10.9 24 10.9 37.9s-4 26.9-10.9 37.9c12.7 20.3 35.2 33.7 60.9 33.7c39.6 0 71.8-32.1 71.8-71.7c-.1-39.4-32.2-71.5-71.8-71.5"
+      />
+    </svg>
+  );
 }
 
 export default function MatchSidebar({
@@ -202,30 +275,39 @@ export default function MatchSidebar({
             e.stopPropagation();
             onExcludeMovie(match.id);
           }}
+          className="hide-movie-button"
           title="Hide this movie"
           style={{
             position: "absolute",
-            top: "4px",
-            right: "4px",
+            bottom: "6px",
+            right: "6px",
             background: "var(--lb-bg)",
             color: "var(--lb-text-secondary)",
             border: "none",
             borderRadius: "50%",
-            width: "26px",
-            height: "26px",
+            width: "24px",
+            height: "24px",
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
+            zIndex: 10,
+            transition: "color 0.15s ease",
           }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.color = "var(--lb-orange)")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.color = "var(--lb-text-secondary)")
+          }
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
+            width="13"
+            height="13"
             viewBox="0 0 24 24"
             fill="none"
-            stroke="var(--lb-text-secondary)"
+            stroke="currentColor"
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -264,14 +346,22 @@ export default function MatchSidebar({
         />
       </a>
 
-      <div style={{ overflow: "hidden", paddingRight: "20px" }}>
+      <div
+        style={{
+          overflow: "hidden",
+          flex: 1,
+          minWidth: 0,
+          paddingRight: "4px",
+        }}
+      >
         <div
           style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
             fontWeight: "bold",
             fontSize: "0.95em",
-            whiteSpace: "nowrap",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
+            minWidth: 0,
           }}
         >
           <a
@@ -281,16 +371,119 @@ export default function MatchSidebar({
             style={{
               color: "var(--lb-text-primary)",
               textDecoration: "none",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              minWidth: 0,
             }}
           >
             {match.title}
           </a>
+          {match.year !== undefined && match.year > 0 && (
+            <span
+              style={{
+                color: "var(--lb-text-secondary)",
+                fontWeight: "normal",
+                fontSize: "0.85em",
+                flexShrink: 0,
+              }}
+            >
+              {match.year}
+            </span>
+          )}
+          <a
+            href={match.boxd_uri}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="View on Letterboxd"
+            className="letterboxd-link"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              flexShrink: 0,
+              transition: "transform 0.15s ease",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.transform = "scale(1.15)")
+            }
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          >
+            <LetterboxdLogo size={16} />
+          </a>
+        </div>
+        <div
+          className="movie-metadata-row"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            fontSize: "0.8em",
+            color: "var(--lb-text-secondary)",
+            marginTop: "2px",
+            marginBottom: "3px",
+            flexWrap: "wrap",
+          }}
+        >
+          <a
+            href={getTmdbUrl(match.tmdb_url, match.tmdb_id, match.title)}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="View on TMDB"
+            className="tmdb-link"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              flexShrink: 0,
+              transition: "transform 0.15s ease",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.transform = "scale(1.1)")
+            }
+            onMouseLeave={(e) => (e.currentTarget.style.transform = "scale(1)")}
+          >
+            <TmdbLogo width={28} height={14} />
+          </a>
+          {match.rating !== undefined && match.rating > 0 && (
+            <span
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "3px",
+                color: "var(--lb-green)",
+                fontWeight: 600,
+              }}
+            >
+              <span>★</span>
+              <span>{formatRating(match.rating)}</span>
+              {match.vote_count !== undefined && match.vote_count > 0 && (
+                <span
+                  style={{
+                    color: "var(--lb-text-secondary)",
+                    fontWeight: "normal",
+                    fontSize: "0.9em",
+                  }}
+                >
+                  ({formatVoteCount(match.vote_count)})
+                </span>
+              )}
+            </span>
+          )}
+          {match.rating !== undefined &&
+            match.rating > 0 &&
+            match.runtime !== undefined &&
+            match.runtime > 0 && <span style={{ opacity: 0.4 }}>•</span>}
+          {match.runtime !== undefined && match.runtime > 0 && (
+            <span>{formatRuntime(match.runtime)}</span>
+          )}
         </div>
         <div
           style={{
             fontSize: "0.85em",
             color: "var(--lb-text-secondary)",
             marginTop: "4px",
+            paddingRight: "26px",
           }}
         >
           {match.showtimes.map((s, idx) => (

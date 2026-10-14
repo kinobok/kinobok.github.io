@@ -518,6 +518,152 @@ describe("MatchSidebar", () => {
     expect(foldAllBtn).not.toBeNull();
     expect(foldAllBtn.props.children).toBe("Fold all");
   });
+
+  test("renders ratings, vote counts, and runtime in movie cards", () => {
+    const matches = [
+      {
+        id: "m1",
+        title: "Dune: Part Two",
+        boxd_uri: "https://boxd.it/hZkK",
+        rating: 8.5,
+        vote_count: 1550,
+        runtime: 166,
+        tmdb_url: "https://www.themoviedb.org/movie/693134",
+        showtimes: [{ cinema: "Kinoteka", cinema_id: "c1", times: ["18:00"] }],
+      },
+    ];
+
+    const result = MatchSidebar({
+      matches,
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+    });
+
+    const metadataNode = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "div" &&
+        el.props &&
+        el.props.className === "movie-metadata-row",
+    );
+
+    expect(metadataNode).not.toBeNull();
+
+    // Verify rating, vote count, and runtime are present in the metadata row
+    const allText = JSON.stringify(metadataNode.props.children);
+    expect(allText).toContain("8.5");
+    expect(allText).toContain("1.6k");
+    expect(allText).toContain("166 min");
+
+    const tmdbLink = findElement(
+      metadataNode,
+      (el) =>
+        el && el.type === "a" && el.props && el.props.className === "tmdb-link",
+    );
+    expect(tmdbLink).not.toBeNull();
+    expect(tmdbLink.props.href).toBe("https://www.themoviedb.org/movie/693134");
+
+    const letterboxdLink = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "a" &&
+        el.props &&
+        el.props.className === "letterboxd-link",
+    );
+    expect(letterboxdLink).not.toBeNull();
+    expect(letterboxdLink.props.href).toBe("https://boxd.it/hZkK");
+  });
+
+  test("renders TMDB and Letterboxd logo links when rating and runtime are missing", () => {
+    const matches = [
+      {
+        id: "m2",
+        title: "Movie Without Metadata",
+        boxd_uri: "https://boxd.it/test",
+        showtimes: [{ cinema: "Kinoteka", cinema_id: "c1", times: ["18:00"] }],
+      },
+    ];
+
+    const result = MatchSidebar({
+      matches,
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+    });
+
+    const metadataNode = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "div" &&
+        el.props &&
+        el.props.className === "movie-metadata-row",
+    );
+
+    expect(metadataNode).not.toBeNull();
+    const allText = JSON.stringify(metadataNode.props.children);
+    expect(allText).not.toContain("★");
+
+    const tmdbLink = findElement(
+      metadataNode,
+      (el) =>
+        el && el.type === "a" && el.props && el.props.className === "tmdb-link",
+    );
+    expect(tmdbLink).not.toBeNull();
+    expect(tmdbLink.props.href).toBe(
+      "https://www.themoviedb.org/search/movie?query=Movie%20Without%20Metadata",
+    );
+
+    const letterboxdLink = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "a" &&
+        el.props &&
+        el.props.className === "letterboxd-link",
+    );
+    expect(letterboxdLink).not.toBeNull();
+  });
+
+  test("renders 'Hide this movie' button in the bottom-right corner", () => {
+    const onExcludeMovie = vi.fn();
+    const matches = [
+      {
+        id: "m1",
+        title: "A Very Long Movie Title That Might Collide With Actions",
+        boxd_uri: "https://boxd.it/test",
+        year: 2024,
+        showtimes: [{ cinema: "Kinoteka", cinema_id: "c1", times: ["18:00"] }],
+      },
+    ];
+
+    const result = MatchSidebar({
+      matches,
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+      onExcludeMovie,
+    });
+
+    const hideButton = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "button" &&
+        el.props &&
+        el.props.className === "hide-movie-button",
+    );
+
+    expect(hideButton).not.toBeNull();
+    expect(hideButton.props.style.bottom).toBe("6px");
+    expect(hideButton.props.style.right).toBe("6px");
+
+    // Click triggers onExcludeMovie callback
+    const mockEvent = { stopPropagation: vi.fn() };
+    hideButton.props.onClick(mockEvent);
+    expect(onExcludeMovie).toHaveBeenCalledWith("m1");
+    expect(mockEvent.stopPropagation).toHaveBeenCalled();
+  });
 });
 
 // Declare global variable type for TypeScript safety

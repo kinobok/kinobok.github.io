@@ -43,7 +43,38 @@ const DashboardModal: React.FC<DashboardModalProps> = ({
                 </span>
               </div>
 
-              <h3>Failed Scrapings ({metadata.failures.length})</h3>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginTop: "20px",
+                  marginBottom: "8px",
+                  flexWrap: "wrap",
+                  gap: "8px",
+                }}
+              >
+                <h3 style={{ margin: 0 }}>
+                  Failed Scrapings ({metadata.failures.length})
+                </h3>
+                <a
+                  href="https://github.com/kinobok/kinobok.github.io/issues"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="report-issue-link"
+                  style={{
+                    color: "var(--lb-orange, #ff8000)",
+                    fontSize: "0.85em",
+                    textDecoration: "none",
+                    fontWeight: 600,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                  }}
+                >
+                  Report Issue on GitHub ↗
+                </a>
+              </div>
               {metadata.failures.length > 0 ? (
                 <ul className="failure-list">
                   {metadata.failures.map((failure, index) => (
@@ -61,6 +92,40 @@ const DashboardModal: React.FC<DashboardModalProps> = ({
                   No failures reported. All movies were successfully matched!
                 </p>
               )}
+
+              <div
+                className="dashboard-modal-footer"
+                style={{
+                  marginTop: "24px",
+                  paddingTop: "14px",
+                  borderTop: "1px solid var(--lb-card, #2c3440)",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  fontSize: "0.85em",
+                  color: "var(--lb-text-secondary)",
+                  flexWrap: "wrap",
+                  gap: "10px",
+                }}
+              >
+                <span>Scraper data is refreshed automatically daily.</span>
+                <a
+                  href="https://github.com/kinobok/kinobok.github.io"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="github-repo-link"
+                  style={{
+                    color: "var(--lb-blue, #40bcf4)",
+                    textDecoration: "none",
+                    fontWeight: 600,
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "4px",
+                  }}
+                >
+                  GitHub Repository ↗
+                </a>
+              </div>
             </div>
           ) : (
             <p>Loading metadata...</p>

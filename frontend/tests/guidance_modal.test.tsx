@@ -108,4 +108,23 @@ describe("GuidanceModal", () => {
     );
     expect(badge).not.toBeNull();
   });
+
+  test("renders GitHub report link when error is present", () => {
+    const result = GuidanceModal({
+      isOpen: true,
+      onUpload: vi.fn(),
+      onBrowseWithoutWatchlist: vi.fn(),
+      error: "Failed to parse CSV file",
+    });
+
+    const reportLink = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "a" &&
+        el.props.href === "https://github.com/kinobok/kinobok.github.io/issues",
+    );
+    expect(reportLink).not.toBeNull();
+    expect(reportLink.props.children).toContain("Report an issue on GitHub");
+  });
 });

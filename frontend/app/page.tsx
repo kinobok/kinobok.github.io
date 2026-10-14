@@ -13,6 +13,7 @@ import {
   isDateInPast,
   getAvailableCities,
   getNearestCity,
+  getMovieScreeningDates,
 } from "../utils/matching_logic";
 import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
@@ -74,10 +75,18 @@ export default function Home() {
   // Onboarding & Error Handling States
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string>("");
+  const [dataError, setDataError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/data_go.json")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error(
+            `Failed to load data (${res.status} ${res.statusText})`,
+          );
+        }
+        return res.json();
+      })
       .then((json) => {
         setData(json);
         if (json.showtimes) {
@@ -86,6 +95,10 @@ export default function Home() {
             setSelectedDate(getDefaultSelectedDate(dates, json.showtimes));
           }
         }
+      })
+      .catch((err) => {
+        console.error("Data load error:", err);
+        setDataError(err.message || "Failed to load screening data.");
       });
 
     // Hydrate states from localStorage
@@ -464,6 +477,20 @@ export default function Home() {
           setSearchQuery(movie.title);
         }
       }
+      if (data?.showtimes) {
+        const hasScreeningOnSelectedDate = data.showtimes[selectedDate]?.some(
+          (st) => st.movie_id === movieId,
+        );
+        if (!hasScreeningOnSelectedDate) {
+          const availableDates = getMovieScreeningDates(
+            movieId,
+            data.showtimes,
+          );
+          if (availableDates.length > 0) {
+            setSelectedDate(availableDates[0]);
+          }
+        }
+      }
     }
   };
 
@@ -666,14 +693,23 @@ export default function Home() {
     selectedMovieId,
   ]);
 
-  const visibleMovies = useMemo(() => {
+  const allScreeningMovies = useMemo(() => {
     if (!data) return [];
-    const dailyShowtimes = data.showtimes[selectedDate] || [];
-    const activeMovieIds = new Set(dailyShowtimes.map((st) => st.movie_id));
+    const activeMovieIds = new Set<string>();
+    for (const date in data.showtimes) {
+      for (const st of data.showtimes[date]) {
+        activeMovieIds.add(st.movie_id);
+      }
+    }
     return data.movies.filter(
       (m) => activeMovieIds.has(m.id) && !excludedMovieIds.includes(m.id),
     );
-  }, [data, selectedDate, excludedMovieIds]);
+  }, [data, excludedMovieIds]);
+
+  const movieScreeningDates = useMemo(() => {
+    if (!selectedMovieId || !data?.showtimes) return [];
+    return getMovieScreeningDates(selectedMovieId, data.showtimes);
+  }, [selectedMovieId, data]);
 
   const { outsideMovieCinemas, allMovieCinemasForSelected } = useMemo(() => {
     if (!selectedMovieId || !data) {
@@ -736,6 +772,89 @@ export default function Home() {
   );
 
   if (!data) {
+    if (dataError) {
+      return (
+        <div
+          className="data-error-container"
+          style={{
+            height: "100vh",
+            width: "100vw",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            background: "var(--lb-bg)",
+            padding: "20px",
+            textAlign: "center",
+            gap: "16px",
+          }}
+        >
+          <img
+            src="/kinobok.svg"
+            alt="kinobok"
+            style={{ width: "120px", height: "auto", opacity: 0.8 }}
+          />
+          <div style={{ color: "#ef4444", fontSize: "1.1em", fontWeight: 600 }}>
+            Unable to load screening data
+          </div>
+          <div
+            style={{
+              color: "var(--lb-text-secondary)",
+              fontSize: "0.9em",
+              maxWidth: "400px",
+            }}
+          >
+            {dataError}. Please check your connection or refresh the page.
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: "12px",
+              marginTop: "8px",
+              flexWrap: "wrap",
+              justifyContent: "center",
+            }}
+          >
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                background: "var(--lb-green)",
+                color: "#000",
+                border: "none",
+                borderRadius: "4px",
+                padding: "8px 16px",
+                fontWeight: "bold",
+                cursor: "pointer",
+              }}
+            >
+              Refresh Page
+            </button>
+            <a
+              href="https://github.com/kinobok/kinobok.github.io/issues"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="github-report-link"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                background: "var(--lb-card)",
+                color: "var(--lb-text-primary)",
+                border: "1px solid rgba(255, 255, 255, 0.15)",
+                borderRadius: "4px",
+                padding: "8px 16px",
+                textDecoration: "none",
+                fontWeight: "bold",
+                fontSize: "0.9em",
+              }}
+            >
+              Report Issue on GitHub ↗
+            </a>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div
         style={{
@@ -803,7 +922,7 @@ export default function Home() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         allCinemas={filteredCinemas}
-        allMovies={visibleMovies}
+        allMovies={allScreeningMovies}
         onSelectCinema={handleSelectCinema}
         onSelectMovie={handleSelectMovie}
       />
@@ -860,6 +979,7 @@ export default function Home() {
         selectedCinema={selectedCinema}
         isDatePast={isDatePast}
         searchQuery={searchQuery}
+        movieScreeningDates={movieScreeningDates}
       />
 
       <div style={{ flex: 1, position: "relative" }}>

@@ -12,6 +12,8 @@ import {
   groupMatchesByCity,
   getAvailableCities,
   getNearestCity,
+  getMovieScreeningDates,
+  formatChipDate,
   formatRating,
   formatVoteCount,
   formatRuntime,
@@ -729,5 +731,48 @@ describe("Movie Metadata Formatting & Preservation", () => {
     expect(result.matches[0].tmdb_url).toBe(
       "https://www.themoviedb.org/movie/693134",
     );
+  });
+});
+
+describe("getMovieScreeningDates", () => {
+  const showtimes: Record<string, Showtime[]> = {
+    "2026-10-14": [
+      { movie_id: "m1", cinema_id: "c1", times: ["19:00"] },
+      { movie_id: "m2", cinema_id: "c1", times: ["21:00"] },
+    ],
+    "2026-10-15": [{ movie_id: "m2", cinema_id: "c2", times: ["18:00"] }],
+    "2026-10-16": [
+      { movie_id: "m1", cinema_id: "c1", times: ["15:00"] },
+      { movie_id: "m2", cinema_id: "c3", times: ["20:00"] },
+    ],
+  };
+
+  it("returns sorted dates where the movie is screening", () => {
+    expect(getMovieScreeningDates("m1", showtimes)).toEqual([
+      "2026-10-14",
+      "2026-10-16",
+    ]);
+    expect(getMovieScreeningDates("m2", showtimes)).toEqual([
+      "2026-10-14",
+      "2026-10-15",
+      "2026-10-16",
+    ]);
+  });
+
+  it("returns empty array when movie has no showtimes", () => {
+    expect(getMovieScreeningDates("m999", showtimes)).toEqual([]);
+  });
+});
+
+describe("formatChipDate", () => {
+  it("formats date string to 'Weekday, Day Month'", () => {
+    // 2026-10-14 is Wednesday
+    expect(formatChipDate("2026-10-14")).toBe("Wed, 14 Oct");
+    // 2026-10-15 is Thursday
+    expect(formatChipDate("2026-10-15")).toBe("Thu, 15 Oct");
+  });
+
+  it("handles malformed string gracefully", () => {
+    expect(formatChipDate("invalid-date")).toBe("invalid-date");
   });
 });

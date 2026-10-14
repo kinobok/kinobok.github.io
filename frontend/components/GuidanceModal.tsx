@@ -244,12 +244,36 @@ const GuidanceModal: React.FC<GuidanceModalProps> = ({
                 color: "#f87171",
                 marginBottom: "20px",
                 display: "flex",
-                alignItems: "flex-start",
-                gap: "8px",
+                flexDirection: "column",
+                gap: "6px",
               }}
             >
-              <span style={{ fontWeight: "bold" }}>⚠️</span>
-              <p style={{ margin: 0, lineHeight: 1.4 }}>{error}</p>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "8px",
+                }}
+              >
+                <span style={{ fontWeight: "bold" }}>⚠️</span>
+                <p style={{ margin: 0, lineHeight: 1.4 }}>{error}</p>
+              </div>
+              <div style={{ marginLeft: "24px", fontSize: "12px" }}>
+                <span>Something went wrong? </span>
+                <a
+                  href="https://github.com/kinobok/kinobok.github.io/issues"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="github-report-link"
+                  style={{
+                    color: "var(--lb-orange, #ff8000)",
+                    textDecoration: "underline",
+                    fontWeight: 600,
+                  }}
+                >
+                  Report an issue on GitHub ↗
+                </a>
+              </div>
             </div>
           )}
 

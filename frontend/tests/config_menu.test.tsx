@@ -361,6 +361,38 @@ describe("ConfigMenu Tabs", () => {
     locateBtn.props.onClick();
     expect(onLocateMe).toHaveBeenCalledTimes(1);
   });
+
+  test("renders GitHub repository and Report an Issue links in Other tab", () => {
+    globalThis.__MOCK_ACTIVE_TAB__ = "Other";
+
+    const result = ConfigMenu({
+      isOpen: true,
+      onClose: vi.fn(),
+      visibleChains: [],
+      onToggleChain: vi.fn(),
+      handleFileUpload: vi.fn(),
+    });
+
+    const repoLink = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "a" &&
+        el.props.href === "https://github.com/kinobok/kinobok.github.io",
+    );
+    expect(repoLink).not.toBeNull();
+    expect(repoLink.props.children).toContain("GitHub Repository");
+
+    const issuesLink = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "a" &&
+        el.props.href === "https://github.com/kinobok/kinobok.github.io/issues",
+    );
+    expect(issuesLink).not.toBeNull();
+    expect(issuesLink.props.children).toContain("Report an Issue");
+  });
 });
 
 declare global {

@@ -292,7 +292,7 @@ func main() {
 							continue
 						}
 
-						// Generate Letterboxd slug (try with year first, fallback to without year)
+						// Generate Letterboxd slug (try with year first, fallback to without year, then truncated candidates for long slugs)
 						targetYear := tmdbMovie.Year
 						if targetYear <= 0 && fwMovie.Year > 0 {
 							targetYear = fwMovie.Year
@@ -300,14 +300,13 @@ func main() {
 
 						var boxdSlug string
 						var boxdURI string
-						if targetYear > 0 {
-							boxdSlug = slug.GenerateSlugWithYear(tmdbMovie.Title, targetYear)
+						candidateSlugs := slug.GenerateCandidateSlugs(tmdbMovie.Title, targetYear)
+						for _, cand := range candidateSlugs {
+							boxdSlug = cand
 							boxdURI, err = letterboxdScraper.GetShortURI(boxdSlug)
-						}
-
-						if targetYear <= 0 || err != nil {
-							boxdSlug = slug.GenerateSlug(tmdbMovie.Title)
-							boxdURI, err = letterboxdScraper.GetShortURI(boxdSlug)
+							if err == nil && boxdURI != "" {
+								break
+							}
 						}
 
 						if err != nil {

@@ -68,3 +68,64 @@ func GenerateSlugWithYear(title string, year int) string {
 
 	return slug
 }
+
+// GenerateTruncatedSlugCandidates generates truncated candidate slugs for a movie slug
+// when the slug is too long (> 45 characters) and may have been truncated by Letterboxd.
+// Returns candidate slugs in descending order of length, preferring longer whole-word prefixes.
+func GenerateTruncatedSlugCandidates(baseSlug string) []string {
+	const maxLen = 45
+	const minLen = 20
+	const maxCandidates = 3
+
+	if len(baseSlug) <= maxLen || !strings.Contains(baseSlug, "-") {
+		return nil
+	}
+
+	words := strings.Split(baseSlug, "-")
+	if len(words) <= 1 {
+		return nil
+	}
+
+	var candidates []string
+	for i := len(words) - 1; i >= 1; i-- {
+		cand := strings.Join(words[:i], "-")
+		if len(cand) <= maxLen {
+			if len(cand) >= minLen || len(candidates) == 0 {
+				candidates = append(candidates, cand)
+			}
+			if len(candidates) >= maxCandidates {
+				break
+			}
+		}
+	}
+
+	return candidates
+}
+
+// GenerateCandidateSlugs returns an ordered list of candidate Letterboxd slugs to attempt.
+// Tries more specific candidates first:
+// 1. Full slug with year (if year > 0)
+// 2. Full slug without year
+// 3. Truncated slug candidates with and without year (for slugs > 45 characters)
+func GenerateCandidateSlugs(title string, year int) []string {
+	var candidates []string
+	baseSlug := GenerateSlug(title)
+
+	// 1. Full slug with year (if year > 0)
+	if year > 0 {
+		candidates = append(candidates, GenerateSlugWithYear(title, year))
+	}
+
+	// 2. Full slug without year
+	candidates = append(candidates, baseSlug)
+
+	// 3. Truncated candidates for long slugs
+	for _, truncated := range GenerateTruncatedSlugCandidates(baseSlug) {
+		if year > 0 {
+			candidates = append(candidates, fmt.Sprintf("%s-%d", truncated, year))
+		}
+		candidates = append(candidates, truncated)
+	}
+
+	return candidates
+}

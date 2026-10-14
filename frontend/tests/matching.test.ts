@@ -9,6 +9,8 @@ import {
   hasFutureScreeningsForDate,
   isDateInPast,
   getDefaultSelectedDate,
+  groupMatchesByCity,
+  Cinema,
   Movie,
   Showtime,
   CinemaData,
@@ -382,5 +384,70 @@ describe("getDefaultSelectedDate", () => {
 
   it("returns empty string for empty dates list", () => {
     expect(getDefaultSelectedDate([])).toBe("");
+  });
+});
+
+describe("groupMatchesByCity", () => {
+  const cinemas: Cinema[] = [
+    {
+      id: "c1",
+      name: "Kinoteka",
+      address: "Warszawa, Poland",
+      city: "Warszawa",
+    },
+    {
+      id: "c2",
+      name: "Muranów",
+      address: "Warszawa, Poland",
+      city: "Warszawa",
+    },
+    {
+      id: "c3",
+      name: "Kino Pod Baranami",
+      address: "Kraków, Poland",
+      city: "Kraków",
+    },
+  ];
+
+  it("groups matches by city properly", () => {
+    const matches = [
+      {
+        id: "m1",
+        title: "Dune",
+        boxd_uri: "https://boxd.it/dune",
+        showtimes: [
+          { cinema: "Kinoteka", cinema_id: "c1", times: ["18:00"] },
+          { cinema: "Kino Pod Baranami", cinema_id: "c3", times: ["20:00"] },
+        ],
+      },
+      {
+        id: "m2",
+        title: "Challengers",
+        boxd_uri: "https://boxd.it/challengers",
+        showtimes: [{ cinema: "Muranów", cinema_id: "c2", times: ["19:00"] }],
+      },
+    ];
+
+    const grouped = groupMatchesByCity(matches, cinemas);
+    expect(grouped.length).toBe(2);
+
+    // Kraków should be first alphabetically
+    expect(grouped[0].city).toBe("Kraków");
+    expect(grouped[0].matches.length).toBe(1);
+    expect(grouped[0].matches[0].title).toBe("Dune");
+    expect(grouped[0].matches[0].showtimes.length).toBe(1);
+    expect(grouped[0].matches[0].showtimes[0].cinema).toBe("Kino Pod Baranami");
+
+    // Warszawa should be second
+    expect(grouped[1].city).toBe("Warszawa");
+    expect(grouped[1].matches.length).toBe(2);
+    expect(grouped[1].matches[0].title).toBe("Dune");
+    expect(grouped[1].matches[0].showtimes[0].cinema).toBe("Kinoteka");
+    expect(grouped[1].matches[1].title).toBe("Challengers");
+    expect(grouped[1].matches[1].showtimes[0].cinema).toBe("Muranów");
+  });
+
+  it("returns empty array for empty matches", () => {
+    expect(groupMatchesByCity([], cinemas)).toEqual([]);
   });
 });

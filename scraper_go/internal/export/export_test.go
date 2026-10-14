@@ -27,6 +27,7 @@ func TestExportToJSON_ValidData(t *testing.T) {
 		{
 			ID:      "c1",
 			Name:    "Kino Muranów",
+			City:    "Warszawa",
 			Address: "ul. Gen. Andersa 5, 00-147 Warszawa",
 			Coords: &CoordsModel{
 				Lat: 52.249,
@@ -75,7 +76,7 @@ func TestExportToJSON_ValidData(t *testing.T) {
 		t.Errorf("Unexpected movie in exported JSON: %+v", parsed.Movies)
 	}
 
-	if len(parsed.Cinemas) != 1 || parsed.Cinemas[0].Name != "Kino Muranów" || parsed.Cinemas[0].Address != "ul. Gen. Andersa 5, 00-147 Warszawa" {
+	if len(parsed.Cinemas) != 1 || parsed.Cinemas[0].Name != "Kino Muranów" || parsed.Cinemas[0].Address != "ul. Gen. Andersa 5, 00-147 Warszawa" || parsed.Cinemas[0].City != "Warszawa" {
 		t.Errorf("Unexpected cinema in exported JSON: %+v", parsed.Cinemas)
 	}
 
@@ -108,6 +109,27 @@ func TestExportToJSON_InvalidData(t *testing.T) {
 	err = ToJSON(movies, cinemas, showtimes, metadata, outputFile)
 	if err == nil {
 		t.Fatal("Expected ToJSON to fail due to missing boxd_uri, but it succeeded")
+	}
+
+	// Missing cinema City
+	validMovies := []MovieModel{
+		{
+			ID:      "m1",
+			Title:   "Valid Movie",
+			BoxdURI: "https://boxd.it/test",
+		},
+	}
+	invalidCinemas := []CinemaModel{
+		{
+			ID:      "c1",
+			Name:    "Cinema",
+			Address: "Address",
+			// City is empty
+		},
+	}
+	err = ToJSON(validMovies, invalidCinemas, showtimes, metadata, outputFile)
+	if err == nil {
+		t.Fatal("Expected ToJSON to fail due to missing cinema city, but it succeeded")
 	}
 }
 

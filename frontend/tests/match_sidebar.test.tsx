@@ -300,6 +300,74 @@ describe("MatchSidebar", () => {
     expect(cinemaInfoNode).toBeDefined();
     expect(cinemaInfoNode).not.toBeNull();
   });
+
+  test("greys out screening times with line-through on a past date", () => {
+    const match = {
+      id: "m1",
+      title: "Dead Poets Society",
+      boxd_uri: "https://boxd.it/123",
+      poster: null,
+      showtimes: [
+        {
+          cinema: "Kinoteka",
+          cinema_id: "c1",
+          times: ["18:30"],
+        },
+      ],
+    };
+
+    const result = MatchSidebar({
+      matches: [match],
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+      selectedDate: "2020-01-01", // definitely past date
+    });
+
+    const timeSpan = findElement(result, (el) => {
+      return (
+        el && el.type === "span" && el.props && el.props.children === "18:30"
+      );
+    });
+
+    expect(timeSpan).toBeDefined();
+    expect(timeSpan).not.toBeNull();
+    expect(timeSpan.props.style.textDecoration).toBe("line-through");
+    expect(timeSpan.props.style.color).toBe("rgba(255, 255, 255, 0.3)");
+  });
+
+  test("does not grey out screening times on a future date", () => {
+    const match = {
+      id: "m1",
+      title: "Dead Poets Society",
+      boxd_uri: "https://boxd.it/123",
+      poster: null,
+      showtimes: [
+        {
+          cinema: "Kinoteka",
+          cinema_id: "c1",
+          times: ["18:30"],
+        },
+      ],
+    };
+
+    const result = MatchSidebar({
+      matches: [match],
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+      selectedDate: "2099-01-01", // definitely future date
+    });
+
+    const timeSpan = findElement(result, (el) => {
+      return (
+        el && el.type === "span" && el.props && el.props.children === "18:30"
+      );
+    });
+
+    expect(timeSpan).toBeDefined();
+    expect(timeSpan).not.toBeNull();
+    expect(timeSpan.props.style.textDecoration).toBe("none");
+    expect(timeSpan.props.style.color).toBe("var(--lb-text-secondary)");
+  });
 });
 
 // Declare global variable type for TypeScript safety

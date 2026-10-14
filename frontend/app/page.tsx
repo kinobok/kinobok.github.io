@@ -1,13 +1,15 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import JSZip from "jszip";
 import {
   findMatchesWithFilters,
   calculateMatchCountsPerDay,
   CinemaData,
   isScreeningPast,
+  getDefaultSelectedDate,
+  isDateInPast,
 } from "../utils/matching_logic";
 import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
@@ -74,7 +76,7 @@ export default function Home() {
         if (json.showtimes) {
           const dates = Object.keys(json.showtimes).sort();
           if (dates.length > 0) {
-            setSelectedDate(dates[0]);
+            setSelectedDate(getDefaultSelectedDate(dates, json.showtimes));
           }
         }
       });
@@ -504,6 +506,13 @@ export default function Home() {
     );
   }, [data, selectedDate, excludedMovieIds]);
 
+  const isDatePast = useCallback(
+    (dateStr: string) => {
+      return isDateInPast(dateStr, new Date(), data?.showtimes?.[dateStr]);
+    },
+    [data?.showtimes],
+  );
+
   if (!data) {
     return (
       <div
@@ -615,6 +624,7 @@ export default function Home() {
         isMinimized={isSidebarMinimized}
         onToggleMinimize={setIsSidebarMinimized}
         selectedCinema={selectedCinema}
+        isDatePast={isDatePast}
       />
 
       <div style={{ flex: 1, position: "relative" }}>

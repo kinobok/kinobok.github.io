@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Match, Cinema, isScreeningPast } from "../utils/matching_logic";
 import Image from "next/image";
 import DateSelector from "./DateSelector";
@@ -22,6 +22,7 @@ interface MatchSidebarProps {
   isMinimized?: boolean;
   onToggleMinimize?: (minimized: boolean) => void;
   selectedCinema?: Cinema | null;
+  isDatePast?: (date: string) => boolean;
 }
 
 export default function MatchSidebar({
@@ -40,18 +41,9 @@ export default function MatchSidebar({
   isMinimized = false,
   onToggleMinimize,
   selectedCinema,
+  isDatePast,
 }: MatchSidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
-
-  const todayStr = useMemo(() => {
-    const d = new Date();
-    const year = d.getFullYear();
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const day = String(d.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
-  }, []);
-
-  const isTodaySelected = selectedDate === todayStr;
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -334,6 +326,7 @@ export default function MatchSidebar({
                   onDateChange={onDateChange}
                   matchCounts={matchCounts}
                   isInline={true}
+                  isDatePast={isDatePast}
                 />
               </div>
             )}
@@ -604,8 +597,7 @@ export default function MatchSidebar({
                               </span>
                               :{" "}
                               {s.times.map((t, tIdx) => {
-                                const isPast =
-                                  isTodaySelected && isScreeningPast(t);
+                                const isPast = isScreeningPast(t, selectedDate);
                                 return (
                                   <span key={tIdx}>
                                     <span

@@ -44,6 +44,24 @@ function findElement(element: any, predicate: (el: any) => boolean): any {
   return null;
 }
 
+function findAllElements(
+  element: any,
+  predicate: (el: any) => boolean,
+  results: any[] = [],
+): any[] {
+  if (!element) return results;
+  if (predicate(element)) {
+    results.push(element);
+  }
+  if (element.props && element.props.children) {
+    const children = React.Children.toArray(element.props.children);
+    for (const child of children) {
+      findAllElements(child, predicate, results);
+    }
+  }
+  return results;
+}
+
 describe("MatchSidebar", () => {
   beforeEach(() => {
     globalThis.__MOCK_IS_MOBILE__ = false;
@@ -367,6 +385,138 @@ describe("MatchSidebar", () => {
     expect(timeSpan).not.toBeNull();
     expect(timeSpan.props.style.textDecoration).toBe("none");
     expect(timeSpan.props.style.color).toBe("var(--lb-text-secondary)");
+  });
+
+  test("renders city section headers when matches span multiple cities", () => {
+    const allCinemas = [
+      { id: "c1", name: "Kinoteka", address: "Warszawa", city: "Warszawa" },
+      {
+        id: "c2",
+        name: "Kino Pod Baranami",
+        address: "Kraków",
+        city: "Kraków",
+      },
+    ];
+
+    const matches = [
+      {
+        id: "m1",
+        title: "Dune",
+        boxd_uri: "https://boxd.it/dune",
+        showtimes: [{ cinema: "Kinoteka", cinema_id: "c1", times: ["18:00"] }],
+      },
+      {
+        id: "m2",
+        title: "Challengers",
+        boxd_uri: "https://boxd.it/challengers",
+        showtimes: [
+          { cinema: "Kino Pod Baranami", cinema_id: "c2", times: ["20:00"] },
+        ],
+      },
+    ];
+
+    const result = MatchSidebar({
+      matches,
+      allCinemas,
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+    });
+
+    const headers = findAllElements(result, (el) => {
+      return (
+        el &&
+        el.type === "div" &&
+        el.props &&
+        el.props.className === "city-section-header"
+      );
+    });
+
+    expect(headers.length).toBe(2);
+    expect(JSON.stringify(headers[0].props.children)).toContain("Kraków");
+    expect(JSON.stringify(headers[1].props.children)).toContain("Warszawa");
+  });
+
+  test("does not render city section headers when matches are from only one city", () => {
+    const allCinemas = [
+      { id: "c1", name: "Kinoteka", address: "Warszawa", city: "Warszawa" },
+      { id: "c2", name: "Muranów", address: "Warszawa", city: "Warszawa" },
+    ];
+
+    const matches = [
+      {
+        id: "m1",
+        title: "Dune",
+        boxd_uri: "https://boxd.it/dune",
+        showtimes: [{ cinema: "Kinoteka", cinema_id: "c1", times: ["18:00"] }],
+      },
+    ];
+
+    const result = MatchSidebar({
+      matches,
+      allCinemas,
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+    });
+
+    const headers = findAllElements(result, (el) => {
+      return (
+        el &&
+        el.type === "div" &&
+        el.props &&
+        el.props.className === "city-section-header"
+      );
+    });
+
+    expect(headers.length).toBe(0);
+  });
+
+  test("renders 'Fold all' button when multiple cities are shown and allows folding", () => {
+    const allCinemas = [
+      { id: "c1", name: "Kinoteka", address: "Warszawa", city: "Warszawa" },
+      {
+        id: "c2",
+        name: "Kino Pod Baranami",
+        address: "Kraków",
+        city: "Kraków",
+      },
+    ];
+
+    const matches = [
+      {
+        id: "m1",
+        title: "Dune",
+        boxd_uri: "https://boxd.it/dune",
+        showtimes: [{ cinema: "Kinoteka", cinema_id: "c1", times: ["18:00"] }],
+      },
+      {
+        id: "m2",
+        title: "Challengers",
+        boxd_uri: "https://boxd.it/challengers",
+        showtimes: [
+          { cinema: "Kino Pod Baranami", cinema_id: "c2", times: ["20:00"] },
+        ],
+      },
+    ];
+
+    const result = MatchSidebar({
+      matches,
+      allCinemas,
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+    });
+
+    const foldAllBtn = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "button" &&
+        el.props &&
+        el.props.className === "fold-all-button",
+    );
+
+    expect(foldAllBtn).toBeDefined();
+    expect(foldAllBtn).not.toBeNull();
+    expect(foldAllBtn.props.children).toBe("Fold all");
   });
 });
 

@@ -16,6 +16,7 @@ import (
 
 	"cmd/scraper/main.go/internal/export"
 	"cmd/scraper/main.go/internal/filmweb"
+	"cmd/scraper/main.go/internal/geo"
 	"cmd/scraper/main.go/internal/letterboxd"
 	"cmd/scraper/main.go/internal/slug"
 	"cmd/scraper/main.go/internal/tmdb"
@@ -386,12 +387,25 @@ func main() {
 								}
 							}
 
+							resolvedCity := city
+							if coordsModel != nil {
+								resolvedCity = geo.ResolveCity(city, coordsModel.Lat, coordsModel.Lng)
+							}
+
 							cinemaModel = export.CinemaModel{
 								ID:      cid,
 								Name:    displayName,
+								City:    resolvedCity,
 								Address: cinemaInfo.Address,
 								Coords:  coordsModel,
 							}
+							cinemasMap[strings.ToLower(displayName)] = cinemaModel
+						} else if cinemaModel.City == "" {
+							resolvedCity := city
+							if cinemaModel.Coords != nil {
+								resolvedCity = geo.ResolveCity(city, cinemaModel.Coords.Lat, cinemaModel.Coords.Lng)
+							}
+							cinemaModel.City = resolvedCity
 							cinemasMap[strings.ToLower(displayName)] = cinemaModel
 						}
 						cinemaMutex.Unlock()

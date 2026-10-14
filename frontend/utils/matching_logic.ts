@@ -21,6 +21,7 @@ export interface Cinema {
   name: string;
   address: string;
   coords?: { lat: number; lng: number };
+  city?: string;
 }
 
 export interface Movie {
@@ -361,4 +362,55 @@ export function getDefaultSelectedDate(
   }
 
   return sortedDates[sortedDates.length - 1];
+}
+
+export interface CityMatchGroup {
+  city: string;
+  matches: Match[];
+}
+
+export function groupMatchesByCity(
+  matches: Match[],
+  cinemas: Cinema[],
+): CityMatchGroup[] {
+  const cinemaMap = new Map<string, Cinema>();
+  for (const c of cinemas) {
+    cinemaMap.set(c.id, c);
+  }
+
+  const cityMap = new Map<string, Map<string, Match>>();
+
+  for (const match of matches) {
+    for (const st of match.showtimes) {
+      const cinema = cinemaMap.get(st.cinema_id);
+      const city = cinema?.city || "Other";
+
+      if (!cityMap.has(city)) {
+        cityMap.set(city, new Map());
+      }
+
+      const moviesMap = cityMap.get(city)!;
+      if (!moviesMap.has(match.id)) {
+        moviesMap.set(match.id, {
+          ...match,
+          showtimes: [st],
+        });
+      } else {
+        moviesMap.get(match.id)!.showtimes.push(st);
+      }
+    }
+  }
+
+  const groups: CityMatchGroup[] = [];
+  cityMap.forEach((moviesMap, city) => {
+    const cityMatches: Match[] = [];
+    moviesMap.forEach((m) => cityMatches.push(m));
+    groups.push({
+      city,
+      matches: cityMatches,
+    });
+  });
+
+  groups.sort((a, b) => a.city.localeCompare(b.city, "pl"));
+  return groups;
 }

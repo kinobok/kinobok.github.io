@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState } from "react";
 import { Cinema, Movie } from "../utils/matching_logic";
+import { ChevronDown, ChevronUp, Search } from "lucide-react";
 
 interface ConfigMenuProps {
   isOpen: boolean;
@@ -12,6 +13,7 @@ interface ConfigMenuProps {
   allCinemas?: Cinema[];
   excludedCinemaIds?: string[];
   onToggleCinema?: (cinemaId: string) => void;
+  onToggleCinemas?: (cinemaIds: string[]) => void;
   excludedMovieIds?: string[];
   allMovies?: Movie[];
   onRestoreMovie?: (movieId: string) => void;
@@ -31,6 +33,7 @@ export default function ConfigMenu({
   allCinemas = [],
   excludedCinemaIds = [],
   onToggleCinema,
+  onToggleCinemas,
   excludedMovieIds = [],
   allMovies = [],
   onRestoreMovie,
@@ -41,26 +44,70 @@ export default function ConfigMenu({
   onDashboardToggle,
 }: ConfigMenuProps) {
   const [activeTab, setActiveTab] = useState<string>("Upload");
+  const [cinemaSearchQuery, setCinemaSearchQuery] = useState<string>("");
+  const [expandedCities, setExpandedCities] = useState<Record<string, boolean>>(
+    {},
+  );
   const chains = ["Multikino", "Cinema City", "Helios"];
 
-  // Group cinemas for display
-  const cinemasByChain = useMemo(() => {
-    const grouped: Record<string, Cinema[]> = {
-      Multikino: [],
-      "Cinema City": [],
-      Helios: [],
-      Independent: [],
-    };
+  const toggleCityExpand = (city: string) => {
+    setExpandedCities((prev) => ({
+      ...prev,
+      [city]: prev[city] === false ? true : false,
+    }));
+  };
+
+  // Group cinemas by city for display
+  const cinemasByCity = useMemo(() => {
+    const grouped: Record<string, Cinema[]> = {};
     allCinemas.forEach((c) => {
-      const name = c.name.toLowerCase();
-      if (name.startsWith("multikino")) grouped.Multikino.push(c);
-      else if (name.startsWith("cinema city") || name.startsWith("imax"))
-        grouped["Cinema City"].push(c);
-      else if (name.startsWith("helios")) grouped.Helios.push(c);
-      else grouped.Independent.push(c);
+      const city = c.city || "Other";
+      if (!grouped[city]) {
+        grouped[city] = [];
+      }
+      grouped[city].push(c);
     });
-    return grouped;
+    return Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b, "pl"));
   }, [allCinemas]);
+
+  const filteredCinemasByCity = useMemo(() => {
+    const q = cinemaSearchQuery.trim().toLowerCase();
+    if (!q) return cinemasByCity;
+
+    const result: [string, Cinema[]][] = [];
+    for (const [city, cityCinemas] of cinemasByCity) {
+      if (city.toLowerCase().includes(q)) {
+        result.push([city, cityCinemas]);
+      } else {
+        const matched = cityCinemas.filter((c) =>
+          c.name.toLowerCase().includes(q),
+        );
+        if (matched.length > 0) {
+          result.push([city, matched]);
+        }
+      }
+    }
+    return result;
+  }, [cinemasByCity, cinemaSearchQuery]);
+
+  const allCitiesCollapsed = useMemo(() => {
+    if (filteredCinemasByCity.length === 0) return false;
+    return filteredCinemasByCity.every(
+      ([city]) => expandedCities[city] === false,
+    );
+  }, [filteredCinemasByCity, expandedCities]);
+
+  const toggleFoldAllCities = () => {
+    if (allCitiesCollapsed) {
+      setExpandedCities({});
+    } else {
+      const allCollapsed: Record<string, boolean> = {};
+      filteredCinemasByCity.forEach(([city]) => {
+        allCollapsed[city] = false;
+      });
+      setExpandedCities(allCollapsed);
+    }
+  };
 
   return (
     <div
@@ -241,7 +288,7 @@ export default function ConfigMenu({
 
             {allCinemas.length > 0 && onToggleCinema && (
               <div className="config-section">
-                <h3>Individual Cinemas</h3>
+                <h3>Cinemas by City</h3>
                 <p
                   style={{
                     fontSize: "0.9em",
@@ -249,29 +296,200 @@ export default function ConfigMenu({
                     marginBottom: "10px",
                   }}
                 >
-                  Toggle specific locations on/off:
+                  Toggle entire cities or individual locations on/off:
                 </p>
-                {Object.entries(cinemasByChain).map(
-                  ([groupName, groupCinemas]) => {
-                    // Only show group if the chain is visible, or if it's independent
-                    const isChainVisible =
-                      groupName === "Independent" ||
-                      visibleChains.includes(groupName);
-                    if (!isChainVisible || groupCinemas.length === 0)
-                      return null;
 
-                    return (
-                      <div key={groupName} style={{ marginBottom: "10px" }}>
-                        <strong
+                {/* City/Cinema search input */}
+                <div style={{ position: "relative", marginBottom: "12px" }}>
+                  <input
+                    type="text"
+                    placeholder="Search city or cinema..."
+                    value={cinemaSearchQuery}
+                    onChange={(e) => setCinemaSearchQuery(e.target.value)}
+                    style={{
+                      width: "100%",
+                      padding: "8px 12px",
+                      paddingLeft: "32px",
+                      paddingRight: cinemaSearchQuery ? "28px" : "12px",
+                      background: "var(--lb-card)",
+                      border: "1px solid rgba(255, 255, 255, 0.1)",
+                      borderRadius: "6px",
+                      color: "var(--lb-text-primary)",
+                      fontSize: "0.85em",
+                      boxSizing: "border-box",
+                    }}
+                  />
+                  <Search
+                    size={14}
+                    style={{
+                      position: "absolute",
+                      left: "10px",
+                      top: "50%",
+                      transform: "translateY(-50%)",
+                      color: "var(--lb-text-secondary)",
+                      pointerEvents: "none",
+                    }}
+                  />
+                  {cinemaSearchQuery && (
+                    <button
+                      onClick={() => setCinemaSearchQuery("")}
+                      style={{
+                        position: "absolute",
+                        right: "8px",
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        background: "none",
+                        border: "none",
+                        color: "var(--lb-text-secondary)",
+                        cursor: "pointer",
+                        fontSize: "0.85em",
+                        padding: "2px",
+                      }}
+                    >
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                {filteredCinemasByCity.length > 1 && (
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "8px",
+                      padding: "0 2px",
+                    }}
+                  >
+                    <span
+                      style={{
+                        fontSize: "0.8em",
+                        color: "var(--lb-text-secondary)",
+                      }}
+                    >
+                      {filteredCinemasByCity.length} cities
+                    </span>
+                    <button
+                      onClick={toggleFoldAllCities}
+                      className="fold-all-button"
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "var(--lb-blue, #40bcf4)",
+                        cursor: "pointer",
+                        fontSize: "0.8em",
+                        padding: "2px 4px",
+                        borderRadius: "4px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {allCitiesCollapsed ? "Unfold all" : "Fold all"}
+                    </button>
+                  </div>
+                )}
+
+                {filteredCinemasByCity.map(([city, cityCinemas]) => {
+                  const cityCinemaIds = cityCinemas.map((c) => c.id);
+                  const activeCount = cityCinemaIds.filter(
+                    (id) => !excludedCinemaIds.includes(id),
+                  ).length;
+                  const isAllActive = activeCount === cityCinemaIds.length;
+                  const isNoneActive = activeCount === 0;
+                  const isExpanded =
+                    !!cinemaSearchQuery || expandedCities[city] !== false;
+
+                  const handleCityToggle = () => {
+                    if (onToggleCinemas) {
+                      onToggleCinemas(cityCinemaIds);
+                    } else if (onToggleCinema) {
+                      if (isAllActive) {
+                        cityCinemaIds.forEach((id) => {
+                          if (!excludedCinemaIds.includes(id))
+                            onToggleCinema(id);
+                        });
+                      } else {
+                        cityCinemaIds.forEach((id) => {
+                          if (excludedCinemaIds.includes(id))
+                            onToggleCinema(id);
+                        });
+                      }
+                    }
+                  };
+
+                  return (
+                    <div key={city} style={{ marginBottom: "8px" }}>
+                      <div
+                        onClick={() => toggleCityExpand(city)}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          padding: "6px 8px",
+                          background: "rgba(255, 255, 255, 0.04)",
+                          borderRadius: "6px",
+                          marginBottom: "4px",
+                          cursor: "pointer",
+                          userSelect: "none",
+                        }}
+                      >
+                        <label
+                          onClick={(e) => e.stopPropagation()}
                           style={{
-                            fontSize: "0.85em",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                            fontWeight: "bold",
+                            fontSize: "0.9em",
                             color: "var(--lb-orange)",
+                            cursor: "pointer",
                           }}
                         >
-                          {groupName}
-                        </strong>
-                        <div style={{ paddingLeft: "10px", marginTop: "4px" }}>
-                          {groupCinemas.map((c) => (
+                          <input
+                            type="checkbox"
+                            checked={isAllActive}
+                            ref={(el) => {
+                              if (el)
+                                el.indeterminate =
+                                  !isAllActive && !isNoneActive;
+                            }}
+                            onChange={handleCityToggle}
+                            style={{ accentColor: "var(--lb-green)" }}
+                          />
+                          {city}
+                        </label>
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontSize: "0.8em",
+                              color: "var(--lb-text-secondary)",
+                            }}
+                          >
+                            {activeCount}/{cityCinemaIds.length} active
+                          </span>
+                          {isExpanded ? (
+                            <ChevronUp
+                              size={14}
+                              style={{ color: "var(--lb-text-secondary)" }}
+                            />
+                          ) : (
+                            <ChevronDown
+                              size={14}
+                              style={{ color: "var(--lb-text-secondary)" }}
+                            />
+                          )}
+                        </div>
+                      </div>
+                      {isExpanded && (
+                        <div
+                          style={{ paddingLeft: "26px", marginBottom: "8px" }}
+                        >
+                          {cityCinemas.map((c) => (
                             <label
                               key={c.id}
                               className="checkbox-label"
@@ -287,10 +505,10 @@ export default function ConfigMenu({
                             </label>
                           ))}
                         </div>
-                      </div>
-                    );
-                  },
-                )}
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </>

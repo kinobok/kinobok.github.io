@@ -27,6 +27,7 @@ type CoordsModel struct {
 type CinemaModel struct {
 	ID      string       `json:"id"`
 	Name    string       `json:"name"`
+	City    string       `json:"city"`
 	Address string       `json:"address"`
 	Coords  *CoordsModel `json:"coords"`
 }
@@ -84,6 +85,9 @@ func (s *Schema) Validate() error {
 		}
 		if c.Name == "" {
 			return fmt.Errorf("cinema name cannot be empty")
+		}
+		if c.City == "" {
+			return fmt.Errorf("cinema city cannot be empty")
 		}
 		if c.Address == "" {
 			return fmt.Errorf("cinema address cannot be empty")

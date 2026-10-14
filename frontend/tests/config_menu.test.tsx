@@ -178,6 +178,113 @@ describe("ConfigMenu Tabs", () => {
     dashboardBtn.props.onClick({ stopPropagation: vi.fn() });
     expect(onDashboardToggle).toHaveBeenCalled();
   });
+
+  test("renders cinemas grouped by city and supports bulk city toggle", () => {
+    globalThis.__MOCK_ACTIVE_TAB__ = "Cinemas";
+    const onToggleCinemas = vi.fn();
+    const onToggleCinema = vi.fn();
+
+    const allCinemas = [
+      { id: "c1", name: "Kinoteka", address: "Warszawa", city: "Warszawa" },
+      { id: "c2", name: "Muranów", address: "Warszawa", city: "Warszawa" },
+      {
+        id: "c3",
+        name: "Kino Pod Baranami",
+        address: "Kraków",
+        city: "Kraków",
+      },
+    ];
+
+    const result = ConfigMenu({
+      isOpen: true,
+      onClose: vi.fn(),
+      visibleChains: ["Multikino"],
+      onToggleChain: vi.fn(),
+      handleFileUpload: vi.fn(),
+      allCinemas,
+      excludedCinemaIds: ["c1"], // c1 is excluded in Warszawa
+      onToggleCinema,
+      onToggleCinemas,
+    });
+
+    expect(result).not.toBeNull();
+    const contentStr = JSON.stringify(result);
+    expect(contentStr).toContain("Cinemas by City");
+    expect(contentStr).toContain("Warszawa");
+    expect(contentStr).toContain("Kraków");
+
+    // Find city checkboxes
+    const checkboxes = findAllElements(
+      result,
+      (el) =>
+        el && el.type === "input" && el.props && el.props.type === "checkbox",
+    );
+
+    // City headers + individual cinemas:
+    // Kraków: 1 city checkbox + 1 cinema checkbox
+    // Warszawa: 1 city checkbox + 2 cinema checkboxes
+    // plus chain checkboxes at top
+    expect(checkboxes.length).toBeGreaterThanOrEqual(5);
+
+    // Find the Kraków city checkbox (checked = true because 0 excluded in Kraków)
+    const krakowHeaderLabel = findElement(result, (el) => {
+      return (
+        el &&
+        el.type === "label" &&
+        el.props &&
+        JSON.stringify(el.props.children).includes("Kraków") &&
+        el.props.style &&
+        el.props.style.color === "var(--lb-orange)"
+      );
+    });
+    expect(krakowHeaderLabel).toBeDefined();
+
+    const krakowCheckbox = findElement(
+      krakowHeaderLabel,
+      (el) => el && el.type === "input",
+    );
+    expect(krakowCheckbox).toBeDefined();
+    expect(krakowCheckbox.props.checked).toBe(true);
+
+    // Trigger toggle on Kraków header
+    krakowCheckbox.props.onChange();
+    expect(onToggleCinemas).toHaveBeenCalledWith(["c3"]);
+  });
+
+  test("renders 'Fold all' button when multiple cities are in ConfigMenu", () => {
+    globalThis.__MOCK_ACTIVE_TAB__ = "Cinemas";
+    const allCinemas = [
+      { id: "c1", name: "Kinoteka", address: "Warszawa", city: "Warszawa" },
+      {
+        id: "c2",
+        name: "Kino Pod Baranami",
+        address: "Kraków",
+        city: "Kraków",
+      },
+    ];
+
+    const result = ConfigMenu({
+      isOpen: true,
+      onClose: vi.fn(),
+      visibleChains: [],
+      onToggleChain: vi.fn(),
+      handleFileUpload: vi.fn(),
+      allCinemas,
+      onToggleCinema: vi.fn(),
+    });
+
+    const foldAllBtn = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "button" &&
+        el.props &&
+        el.props.className === "fold-all-button",
+    );
+
+    expect(foldAllBtn).toBeDefined();
+    expect(foldAllBtn).not.toBeNull();
+  });
 });
 
 declare global {

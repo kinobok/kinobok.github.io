@@ -284,6 +284,22 @@ export default function Home() {
     );
   };
 
+  const handleToggleCinemas = (cinemaIds: string[]) => {
+    const allExcluded = cinemaIds.every((id) => excludedCinemaIds.includes(id));
+    let newExcluded: string[];
+    if (allExcluded) {
+      newExcluded = excludedCinemaIds.filter((id) => !cinemaIds.includes(id));
+    } else {
+      const set = new Set([...excludedCinemaIds, ...cinemaIds]);
+      newExcluded = Array.from(set);
+    }
+    setExcludedCinemaIds(newExcluded);
+    localStorage.setItem(
+      "kinobok_excluded_cinemas",
+      JSON.stringify(newExcluded),
+    );
+  };
+
   const handleSelectCinema = (cinemaId: string | null) => {
     setSelectedCinemaId(cinemaId);
     if (cinemaId !== null) {
@@ -590,6 +606,7 @@ export default function Home() {
         allCinemas={data.cinemas}
         excludedCinemaIds={excludedCinemaIds}
         onToggleCinema={handleToggleCinema}
+        onToggleCinemas={handleToggleCinemas}
         excludedMovieIds={excludedMovieIds}
         allMovies={data.movies}
         onRestoreMovie={handleRestoreMovie}
@@ -605,6 +622,7 @@ export default function Home() {
 
       <MatchSidebar
         matches={matches}
+        allCinemas={data.cinemas}
         isExpanded={isSidebarExpanded}
         onToggleExpand={(val) => {
           setIsSidebarExpanded(val);

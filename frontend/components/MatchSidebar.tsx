@@ -1,13 +1,19 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Match, Cinema, isScreeningPast } from "../utils/matching_logic";
+import { useState, useEffect, useRef, useMemo } from "react";
+import {
+  Match,
+  Cinema,
+  isScreeningPast,
+  groupMatchesByCity,
+} from "../utils/matching_logic";
 import Image from "next/image";
 import DateSelector from "./DateSelector";
 import { ChevronDown, Search, ChevronUp } from "lucide-react";
 
 interface MatchSidebarProps {
   matches: Match[];
+  allCinemas?: Cinema[];
   isExpanded: boolean;
   onToggleExpand: (expanded: boolean) => void;
   onExcludeMovie?: (movieId: string) => void;
@@ -27,6 +33,7 @@ interface MatchSidebarProps {
 
 export default function MatchSidebar({
   matches,
+  allCinemas = [],
   isExpanded,
   onToggleExpand,
   onExcludeMovie,
@@ -51,6 +58,37 @@ export default function MatchSidebar({
     window.addEventListener("resize", checkMobile);
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
+
+  const cityGroups = useMemo(() => {
+    if (!allCinemas || allCinemas.length === 0) return [];
+    return groupMatchesByCity(matches, allCinemas);
+  }, [matches, allCinemas]);
+
+  const [foldedCities, setFoldedCities] = useState<Record<string, boolean>>({});
+
+  const toggleFoldCity = (city: string) => {
+    setFoldedCities((prev) => ({
+      ...prev,
+      [city]: !prev[city],
+    }));
+  };
+
+  const allCitiesFolded = useMemo(() => {
+    if (cityGroups.length <= 1) return false;
+    return cityGroups.every((g) => !!foldedCities[g.city]);
+  }, [cityGroups, foldedCities]);
+
+  const toggleFoldAllCities = () => {
+    if (allCitiesFolded) {
+      setFoldedCities({});
+    } else {
+      const allFolded: Record<string, boolean> = {};
+      cityGroups.forEach((g) => {
+        allFolded[g.city] = true;
+      });
+      setFoldedCities(allFolded);
+    }
+  };
 
   const touchStartY = useRef<number | null>(null);
   const touchCurrentY = useRef<number | null>(null);
@@ -138,6 +176,158 @@ export default function MatchSidebar({
       }
     }
   };
+
+  const renderMovieCard = (match: Match, keyPrefix?: string) => (
+    <div
+      key={`${keyPrefix ? keyPrefix + "-" : ""}${match.id}`}
+      style={{
+        position: "relative",
+        display: "flex",
+        gap: "12px",
+        marginBottom: "16px",
+        padding: "8px",
+        background: "var(--lb-card)",
+        borderRadius: "4px",
+        border: "1px solid transparent",
+        transition: "border-color 0.2s",
+      }}
+      onMouseEnter={(e) =>
+        (e.currentTarget.style.borderColor = "var(--lb-blue)")
+      }
+      onMouseLeave={(e) => (e.currentTarget.style.borderColor = "transparent")}
+    >
+      {onExcludeMovie && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onExcludeMovie(match.id);
+          }}
+          title="Hide this movie"
+          style={{
+            position: "absolute",
+            top: "4px",
+            right: "4px",
+            background: "var(--lb-bg)",
+            color: "var(--lb-text-secondary)",
+            border: "none",
+            borderRadius: "50%",
+            width: "26px",
+            height: "26px",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--lb-text-secondary)"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
+            <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
+            <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
+            <line x1="2" y1="2" x2="22" y2="22" />
+          </svg>
+        </button>
+      )}
+      <a
+        href={match.boxd_uri}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          color: "var(--lb-text-primary)",
+          textDecoration: "none",
+        }}
+      >
+        <Image
+          src={match.poster || "/poster-placeholder.svg"}
+          alt={match.title}
+          width={45}
+          height={67}
+          loading="lazy"
+          style={{
+            objectFit: "cover",
+            borderRadius: "2px",
+            background: "#333",
+            flexShrink: 0,
+          }}
+          onError={(e) => {
+            (e.target as HTMLImageElement).src = "/poster-placeholder.svg";
+          }}
+        />
+      </a>
+
+      <div style={{ overflow: "hidden", paddingRight: "20px" }}>
+        <div
+          style={{
+            fontWeight: "bold",
+            fontSize: "0.95em",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          <a
+            href={match.boxd_uri}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              color: "var(--lb-text-primary)",
+              textDecoration: "none",
+            }}
+          >
+            {match.title}
+          </a>
+        </div>
+        <div
+          style={{
+            fontSize: "0.85em",
+            color: "var(--lb-text-secondary)",
+            marginTop: "4px",
+          }}
+        >
+          {match.showtimes.map((s, idx) => (
+            <div key={idx} style={{ marginBottom: "2px" }}>
+              <a
+                style={{
+                  textDecoration: "none",
+                  color: "var(--lb-text-secondary)",
+                }}
+                href={`https://www.google.com/search?q=cinema+${s.cinema}`}
+              >
+                <span style={{ color: "var(--lb-orange)" }}>{s.cinema}</span>:{" "}
+                {s.times.map((t, tIdx) => {
+                  const isPast = isScreeningPast(t, selectedDate);
+                  return (
+                    <span key={tIdx}>
+                      <span
+                        style={{
+                          color: isPast
+                            ? "rgba(255, 255, 255, 0.3)"
+                            : "var(--lb-text-secondary)",
+                          textDecoration: isPast ? "line-through" : "none",
+                        }}
+                      >
+                        {t}
+                      </span>
+                      {tIdx < s.times.length - 1 && ", "}
+                    </span>
+                  );
+                })}
+              </a>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -461,168 +651,116 @@ export default function MatchSidebar({
                   No matches found yet. Try uploading your watchlist in the menu
                   or adjusting filters.
                 </p>
-              ) : (
-                matches.map((match) => (
+              ) : cityGroups.length > 1 ? (
+                <>
                   <div
-                    key={match.id}
                     style={{
-                      position: "relative",
                       display: "flex",
-                      gap: "12px",
-                      marginBottom: "16px",
-                      padding: "8px",
-                      background: "var(--lb-card)",
-                      borderRadius: "4px",
-                      border: "1px solid transparent",
-                      transition: "border-color 0.2s",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      marginBottom: "12px",
+                      padding: "0 2px",
                     }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.borderColor = "var(--lb-blue)")
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.borderColor = "transparent")
-                    }
                   >
-                    {onExcludeMovie && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onExcludeMovie(match.id);
-                        }}
-                        title="Hide this movie"
-                        style={{
-                          position: "absolute",
-                          top: "4px",
-                          right: "4px",
-                          background: "var(--lb-bg)",
-                          color: "var(--lb-text-secondary)",
-                          border: "none",
-                          borderRadius: "50%",
-                          width: "26px",
-                          height: "26px",
-                          cursor: "pointer",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="14"
-                          height="14"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="var(--lb-text-secondary)"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <path d="M9.88 9.88a3 3 0 1 0 4.24 4.24" />
-                          <path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68" />
-                          <path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61" />
-                          <line x1="2" y1="2" x2="22" y2="22" />
-                        </svg>
-                      </button>
-                    )}
-                    <a
-                      href={match.boxd_uri}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <span
                       style={{
-                        color: "var(--lb-text-primary)",
-                        textDecoration: "none",
+                        fontSize: "0.8em",
+                        color: "var(--lb-text-secondary)",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.5px",
+                        fontWeight: "bold",
                       }}
                     >
-                      {" "}
-                      <Image
-                        src={match.poster || "/poster-placeholder.svg"}
-                        alt={match.title}
-                        width={45}
-                        height={67}
-                        loading="lazy"
-                        style={{
-                          objectFit: "cover",
-                          borderRadius: "2px",
-                          background: "#333",
-                          flexShrink: 0,
-                        }}
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src =
-                            "/poster-placeholder.svg";
-                        }}
-                      />
-                    </a>
-
-                    <div style={{ overflow: "hidden", paddingRight: "20px" }}>
-                      <div
-                        style={{
-                          fontWeight: "bold",
-                          fontSize: "0.95em",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                      >
-                        <a
-                          href={match.boxd_uri}
-                          target="_blank"
-                          rel="noopener noreferrer"
+                      {cityGroups.length} cities
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleFoldAllCities();
+                      }}
+                      className="fold-all-button"
+                      style={{
+                        background: "none",
+                        border: "none",
+                        color: "var(--lb-blue, #40bcf4)",
+                        cursor: "pointer",
+                        fontSize: "0.8em",
+                        padding: "2px 6px",
+                        borderRadius: "4px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {allCitiesFolded ? "Unfold all" : "Fold all"}
+                    </button>
+                  </div>
+                  {cityGroups.map((group) => {
+                    const isFolded = !!foldedCities[group.city];
+                    return (
+                      <div key={group.city} style={{ marginBottom: "16px" }}>
+                        <div
+                          className="city-section-header"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleFoldCity(group.city);
+                          }}
                           style={{
-                            color: "var(--lb-text-primary)",
-                            textDecoration: "none",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                            padding: "6px 10px",
+                            background: "rgba(255, 255, 255, 0.05)",
+                            borderRadius: "6px",
+                            marginBottom: isFolded ? "0px" : "10px",
+                            fontSize: "0.85em",
+                            fontWeight: "bold",
+                            color: "var(--lb-green)",
+                            cursor: "pointer",
+                            userSelect: "none",
                           }}
                         >
-                          {match.title}
-                        </a>
-                      </div>
-                      <div
-                        style={{
-                          fontSize: "0.85em",
-                          color: "var(--lb-text-secondary)",
-                          marginTop: "4px",
-                        }}
-                      >
-                        {match.showtimes.map((s, idx) => (
-                          <div key={idx} style={{ marginBottom: "2px" }}>
-                            <a
+                          <span>{group.city}</span>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "6px",
+                            }}
+                          >
+                            <span
                               style={{
-                                textDecoration: "none",
                                 color: "var(--lb-text-secondary)",
+                                fontWeight: "normal",
+                                fontSize: "0.9em",
                               }}
-                              href={`https://www.google.com/search?q=cinema+${s.cinema}`}
                             >
-                              {" "}
-                              <span style={{ color: "var(--lb-orange)" }}>
-                                {s.cinema}
-                              </span>
-                              :{" "}
-                              {s.times.map((t, tIdx) => {
-                                const isPast = isScreeningPast(t, selectedDate);
-                                return (
-                                  <span key={tIdx}>
-                                    <span
-                                      style={{
-                                        color: isPast
-                                          ? "rgba(255, 255, 255, 0.3)"
-                                          : "var(--lb-text-secondary)",
-                                        textDecoration: isPast
-                                          ? "line-through"
-                                          : "none",
-                                      }}
-                                    >
-                                      {t}
-                                    </span>
-                                    {tIdx < s.times.length - 1 && ", "}
-                                  </span>
-                                );
-                              })}
-                            </a>
+                              ({group.matches.length})
+                            </span>
+                            {isFolded ? (
+                              <ChevronDown
+                                size={14}
+                                style={{ color: "var(--lb-text-secondary)" }}
+                              />
+                            ) : (
+                              <ChevronUp
+                                size={14}
+                                style={{ color: "var(--lb-text-secondary)" }}
+                              />
+                            )}
                           </div>
-                        ))}
+                        </div>
+                        {!isFolded &&
+                          group.matches.map((match) =>
+                            renderMovieCard(match, group.city),
+                          )}
                       </div>
-                    </div>
-                  </div>
-                ))
+                    );
+                  })}
+                </>
+              ) : (
+                matches.map((match) => renderMovieCard(match))
               )}
             </div>
             {onRestoreAllMovies && excludedCount > 0 && (

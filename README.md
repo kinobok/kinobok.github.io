@@ -1,8 +1,6 @@
 <p align="center">
-  <img src="frontend/public/kinobok.png" alt="kinooobok logo" width="120" />
+  <img src="frontend/public/kinobok_with_title.png" alt="kinooobok logo" width="120" />
 </p>
-
-$${\Huge{\textbf{\color{white}kin\color{#ff8000}o\color{green}o\color{blue}o\color{white}bok}}}$$ 
 
 <p align="center">
   <strong>A privacy-first movie matchmaker for local Warsaw cinemas and Letterboxd watchlists.</strong>

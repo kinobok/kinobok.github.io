@@ -324,7 +324,9 @@ describe("MatchSidebar", () => {
     });
 
     const timeSpan = findElement(result, (el) => {
-      return el && el.type === "span" && el.props && el.props.children === "18:30";
+      return (
+        el && el.type === "span" && el.props && el.props.children === "18:30"
+      );
     });
 
     expect(timeSpan).toBeDefined();
@@ -356,7 +358,9 @@ describe("MatchSidebar", () => {
     });
 
     const timeSpan = findElement(result, (el) => {
-      return el && el.type === "span" && el.props && el.props.children === "18:30";
+      return (
+        el && el.type === "span" && el.props && el.props.children === "18:30"
+      );
     });
 
     expect(timeSpan).toBeDefined();

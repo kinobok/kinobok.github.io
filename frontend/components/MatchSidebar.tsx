@@ -597,10 +597,7 @@ export default function MatchSidebar({
                               </span>
                               :{" "}
                               {s.times.map((t, tIdx) => {
-                                const isPast = isScreeningPast(
-                                  t,
-                                  selectedDate,
-                                );
+                                const isPast = isScreeningPast(t, selectedDate);
                                 return (
                                   <span key={tIdx}>
                                     <span

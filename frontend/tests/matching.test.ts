@@ -297,14 +297,13 @@ describe("isScreeningPast", () => {
 });
 
 describe("hasFutureScreeningsForDate", () => {
-  const showtimes = [
-    { times: ["12:00", "18:00"] },
-    { times: ["20:00"] },
-  ];
+  const showtimes = [{ times: ["12:00", "18:00"] }, { times: ["20:00"] }];
 
   it("returns false for past dates", () => {
     const now = new Date("2026-10-14T10:00:00");
-    expect(hasFutureScreeningsForDate("2026-10-13", showtimes, now)).toBe(false);
+    expect(hasFutureScreeningsForDate("2026-10-13", showtimes, now)).toBe(
+      false,
+    );
   });
 
   it("returns true for future dates with showtimes", () => {
@@ -319,7 +318,9 @@ describe("hasFutureScreeningsForDate", () => {
 
   it("returns false if today has no remaining future showtimes", () => {
     const now = new Date("2026-10-14T21:00:00");
-    expect(hasFutureScreeningsForDate("2026-10-14", showtimes, now)).toBe(false);
+    expect(hasFutureScreeningsForDate("2026-10-14", showtimes, now)).toBe(
+      false,
+    );
   });
 });
 

@@ -307,7 +307,8 @@ export function hasFutureScreeningsForDate(
 ): boolean {
   const todayStr = formatDateToYMD(now);
   if (date < todayStr) return false;
-  if (date > todayStr) return (dailyShowtimes && dailyShowtimes.length > 0) ?? false;
+  if (date > todayStr)
+    return (dailyShowtimes && dailyShowtimes.length > 0) ?? false;
   if (!dailyShowtimes || dailyShowtimes.length === 0) return false;
 
   return dailyShowtimes.some((s) =>
@@ -361,4 +362,3 @@ export function getDefaultSelectedDate(
 
   return sortedDates[sortedDates.length - 1];
 }
-

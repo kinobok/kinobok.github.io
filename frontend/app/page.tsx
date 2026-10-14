@@ -7,6 +7,7 @@ import {
   findMatchesWithFilters,
   calculateMatchCountsPerDay,
   CinemaData,
+  Cinema,
   isScreeningPast,
   getDefaultSelectedDate,
   isDateInPast,
@@ -55,6 +56,7 @@ export default function Home() {
     east: number;
     north: number;
   } | null>(null);
+  const [cinemasToFit, setCinemasToFit] = useState<Cinema[] | null>(null);
 
   const selectedCinema = useMemo(() => {
     if (!selectedCinemaId || !data?.cinemas) return null;
@@ -556,10 +558,33 @@ export default function Home() {
           .map((st) => st.cinema_id),
       );
 
+      const allMovieCinemas = data.cinemas.filter((c) =>
+        movieCinemaIds.has(c.id),
+      );
+
+      const visibleMovieCinemas = mapBounds
+        ? allMovieCinemas.filter(
+            (c) =>
+              c.coords &&
+              c.coords.lat >= mapBounds.south &&
+              c.coords.lat <= mapBounds.north &&
+              c.coords.lng >= mapBounds.west &&
+              c.coords.lng <= mapBounds.east,
+          )
+        : allMovieCinemas;
+
+      const visibleMovieCinemaIds = new Set(
+        visibleMovieCinemas.map((c) => c.id),
+      );
+
       const selectedMovie = data.movies.find((m) => m.id === selectedMovieId);
       if (selectedMovie) {
         const movieShowtimes = showtimesForDate
-          .filter((st) => st.movie_id === selectedMovieId)
+          .filter(
+            (st) =>
+              st.movie_id === selectedMovieId &&
+              visibleMovieCinemaIds.has(st.cinema_id),
+          )
           .map((st) => {
             const cinema = data.cinemas.find((c) => c.id === st.cinema_id);
             return {
@@ -582,9 +607,8 @@ export default function Home() {
         result.matches = [];
       }
 
-      result.filteredCinemas = data.cinemas.filter((c) =>
-        movieCinemaIds.has(c.id),
-      );
+      result.filteredCinemas = visibleMovieCinemas;
+      result.matchedCinemaIds = Array.from(visibleMovieCinemaIds);
     }
 
     if (selectedCinemaId) {
@@ -644,6 +668,59 @@ export default function Home() {
       (m) => activeMovieIds.has(m.id) && !excludedMovieIds.includes(m.id),
     );
   }, [data, selectedDate, excludedMovieIds]);
+
+  const { outsideMovieCinemas, allMovieCinemasForSelected } = useMemo(() => {
+    if (!selectedMovieId || !data) {
+      return { outsideMovieCinemas: [], allMovieCinemasForSelected: [] };
+    }
+    const showtimesForDate = data.showtimes[selectedDate] || [];
+    const movieCinemaIds = new Set(
+      showtimesForDate
+        .filter((st) => st.movie_id === selectedMovieId)
+        .map((st) => st.cinema_id),
+    );
+    const allCinemas = data.cinemas.filter(
+      (c) => movieCinemaIds.has(c.id) && c.coords,
+    );
+    if (!mapBounds) {
+      return {
+        outsideMovieCinemas: [],
+        allMovieCinemasForSelected: allCinemas,
+      };
+    }
+    const outside = allCinemas.filter(
+      (c) =>
+        !c.coords ||
+        c.coords.lat < mapBounds.south ||
+        c.coords.lat > mapBounds.north ||
+        c.coords.lng < mapBounds.west ||
+        c.coords.lng > mapBounds.east,
+    );
+    return {
+      outsideMovieCinemas: outside,
+      allMovieCinemasForSelected: allCinemas,
+    };
+  }, [selectedMovieId, data, selectedDate, mapBounds]);
+
+  const handleZoomOutToAll = useCallback(() => {
+    if (allMovieCinemasForSelected.length > 0) {
+      setCinemasToFit([...allMovieCinemasForSelected]);
+    }
+  }, [allMovieCinemasForSelected]);
+
+  const handleBoundsChange = useCallback(
+    (
+      bounds: {
+        west: number;
+        south: number;
+        east: number;
+        north: number;
+      } | null,
+    ) => {
+      setMapBounds(bounds);
+    },
+    [],
+  );
 
   const isDatePast = useCallback(
     (dateStr: string) => {
@@ -780,6 +857,22 @@ export default function Home() {
       />
 
       <div style={{ flex: 1, position: "relative" }}>
+        {selectedMovieId && outsideMovieCinemas.length > 0 && (
+          <div className="outside-screenings-banner">
+            <span>
+              {outsideMovieCinemas.length}{" "}
+              {outsideMovieCinemas.length === 1 ? "cinema" : "cinemas"} with
+              this movie outside this area
+            </span>
+            <button
+              type="button"
+              onClick={handleZoomOutToAll}
+              className="outside-zoom-btn"
+            >
+              Zoom out
+            </button>
+          </div>
+        )}
         <CinemaMap
           cinemas={filteredCinemas}
           highlightedCinemaIds={matchedCinemaIds}
@@ -787,10 +880,11 @@ export default function Home() {
           onLocationFound={handleLocationFound}
           onSelectCinema={handleSelectCinema}
           isMinimized={isSidebarMinimized}
-          onBoundsChange={setMapBounds}
+          onBoundsChange={handleBoundsChange}
           hasActiveMovieFilter={!!selectedMovieId}
           center={selectedCinema ? selectedCinema.coords : null}
           cityToFit={cityToFit}
+          fitBoundsCinemas={cinemasToFit}
         />
       </div>
     </main>

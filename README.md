@@ -1,40 +1,40 @@
 <p align="center">
-  <img src="frontend/public/kinobok.png" alt="kinooobok logo" width="120" />
+  <img src="frontend/public/kinobok_with_title.png" alt="kinooobok logo" width="140" />
 </p>
 
-$${\Huge{\textbf{\color{white}kin\color{#ff8000}o\color{green}o\color{blue}o\color{white}bok}}}$$ 
-
 <p align="center">
-  <strong>A privacy-first movie matchmaker for local Warsaw cinemas and Letterboxd watchlists.</strong>
+  <strong>A privacy-first movie matchmaker for Polish cinemas and Letterboxd watchlists.</strong>
 </p>
 
 ---
 
-## Current Project State - Warsaw Cinemas Only
+## Overview
 
-Kinobok is a modern, privacy-focused web application designed to match your Letterboxd watchlist with movie showtimes in Warsaw cinemas. The application processes all user data (such as watchlists) entirely client-side in the browser to maintain strict user privacy.
+**kinobok** is a modern, privacy-focused web application designed to match your Letterboxd watchlist with movie showtimes in local cinemas across Poland (Warszawa, Kraków, Wrocław, Poznań, Gdańsk, Łódź, and more). The application processes all user data entirely client-side in the browser to maintain strict user privacy.
 
 ### Key Features
-*   **Privacy-First Matching:** No user watchlists or data are ever uploaded to a backend server. Processing of files is done fully in your browser.
-*   **Flexible Imports:** Supports uploading either your raw Letterboxd `.zip` data export or a single `watchlist.csv`.
-*   **Interactive Cinema Map:** View matching movie showtimes visualised on a beautiful custom Leaflet map of Warsaw.
-*   **Local Cinema Filters:** Customise and filter search results by specific cinemas of interest.
-*   **Daily Updates:** An automated scraping pipeline runs daily to compile Warsaw showtimes, resolve matching movie metadata via TMDB, and export the fresh dataset.
+*   **Privacy-First Matching:** No user watchlists or personal data are ever uploaded to a backend server. File parsing and movie matching run 100% locally in your browser.
+*   **Flexible Imports:** Easily import your Letterboxd watchlist by uploading either the exported `.zip` archive directly or a standalone `watchlist.csv`.
+*   **Interactive Cinema Map:** Discover matching screenings visualised on a custom Leaflet map featuring real-time viewport synchronisation and geolocation ("Locate Me").
+*   **Multi-City Support & Filters:** Browse showtimes grouped by city, collapse individual city sections, and selectively enable or disable venues—or entire cities—in the configuration menu.
+*   **Smart Screening Filters:** Browse upcoming dates, hide or grey out past showtimes, and sort matches by rarity (screenings count across the week) or title.
+*   **Automated Daily Updates:** A high-performance Go scraper runs daily via GitHub Actions to collect cinema schedules, resolve movie metadata via TMDB and Letterboxd, validate cinema coordinates, and publish fresh data.
 
 ---
 
 ## Architecture
 
-*   **Frontend:** A modern Next.js + React + TypeScript web application that uses custom state management, client-side ZIP parsing with `JSZip`, CSV parsing with `PapaParse`, and interactive maps with Leaflet.
-*   **Backend Scraper:** A Python utility running BeautifulSoup4, HTTPX, and RapidFuzz to fetch local cinema schedules from Filmweb (PL), map film entries using the TMDB API, and format matching metadata into a client-readable JSON schema (`frontend/public/data.json`).
+*   **Frontend:** A static Next.js 14 (React 18 + TypeScript) single-page application hosted on GitHub Pages. Features custom client-side state management, archive extraction with `JSZip`, CSV parsing with `PapaParse`, and interactive mapping with `Leaflet` (`react-leaflet`) powered by CARTO basemaps.
+*   **Backend Scraper (`scraper_go`):** A concurrent Go 1.25+ service using `Colly/v2` and `goquery` to scrape Polish cinema schedules from Filmweb (PL), match movie entries and Letterboxd identifiers using the TMDB API, determine true cinema cities via Haversine geographic validation, and export a structured dataset (`frontend/public/data_go.json`).
 
 ---
 
 ## Prerequisites
 
-*   **Node.js** 18+ (Node 20+ recommended)
-*   **Python** 3.11+
+*   **Node.js** 20+
+*   **Go** 1.25+ (or latest stable Go)
 *   **TMDB API Key** (required to run the backend scraper)
+*   **CARTO Basemaps API Key** (free at [carto.com/basemaps](https://carto.com/basemaps/apikey), required for frontend map tiles)
 
 ---
 
@@ -68,24 +68,25 @@ The application will be accessible at [http://localhost:3000](http://localhost:3
 
 ### 2. Backend Scraper
 
-To configure and run the daily showtime scraper locally:
+To run the showtime scraper locally:
 
 ```bash
-# Set up a virtual environment (optional but recommended)
-python -m venv env
-source env/bin/activate
+cd scraper_go
 
-# Install scraper dependencies
-pip install -r scraper/requirements.txt
+# Download Go module dependencies
+go mod download
 
 # Configure your TMDB API Key
 export TMDB_API_KEY=your_api_key_here
 
-# Run the scraper pipeline
-python scraper/main.py
+# Run the scraper pipeline (default: all supported Polish cities)
+go run cmd/scraper/main.go
 
-# Run the backend test suite (pytest)
-pytest
+# Optional: Run for specific cities or limit movies per city for faster local runs
+go run cmd/scraper/main.go -cities Warszawa -cities Kraków -limit-movies 5
+
+# Run the backend test suite
+go test ./...
 ```
 
 ---
@@ -93,6 +94,6 @@ pytest
 ## CI/CD & Deployment
 
 This project uses **GitHub Actions** workflows for automated operations:
-*   **Daily Warsaw Scraper (`daily-scraper.yml`):** Runs every day at 4:00 AM UTC to fetch the latest cinema schedules, update `frontend/public/data.json`, and commit the updated data.
-*   **Deploy to GitHub Pages (`deploy.yml`):** Triggered automatically on push to the `main` branch (for frontend files) or after a successful run of the daily scraper. It compiles and publishes the static Next.js export to GitHub Pages. Requires the `CARTO_API_KEY` repository variable for map tiles.
-*   **Linter Checks (`revive.yml` and `prettier.yml`):** Automatically format and check code quality for both the Golang codebase and frontend TypeScript.
+*   **Daily Showtime Scraper (`daily-scraper-go.yml`):** Runs daily at 4:30 AM UTC to scrape the latest cinema schedules across Poland, update `frontend/public/data_go.json`, and commit the updated data.
+*   **Deploy to GitHub Pages (`deploy.yml`):** Automatically triggered on pushes to the `main` branch affecting frontend code or after a successful run of the daily scraper. Compiles and publishes the static Next.js export to GitHub Pages. Requires the `CARTO_API_KEY` repository variable for map tiles.
+*   **Linter Checks (`revive.yml` and `prettier.yml`):** Enforce code formatting and quality standards across the Go backend and TypeScript frontend codebases.

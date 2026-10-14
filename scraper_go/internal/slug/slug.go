@@ -44,6 +44,13 @@ func GenerateSlugWithYear(title string, year int) string {
 	// Lowercase
 	slug = strings.ToLower(slug)
 
+	// Replace slashes, Unicode dashes, and underscores with hyphens so words don't get glued together
+	// (e.g. "Lynch/Oz" -> "lynch-oz", "Spider–Man" -> "spider-man", "A_B" -> "a-b")
+	separators := []string{"/", "\\", "–", "—", "−", "_"}
+	for _, sep := range separators {
+		slug = strings.ReplaceAll(slug, sep, "-")
+	}
+
 	// Remove non-alphanumeric except spaces and hyphens
 	reg := regexp.MustCompile(`[^a-z0-9\s-]`)
 	slug = reg.ReplaceAllString(slug, "")

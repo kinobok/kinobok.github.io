@@ -133,6 +133,23 @@ func TestLetterboxdScraper_GetShortURI_TheLastDayOfSummer(t *testing.T) {
 	}
 }
 
+func TestLetterboxdScraper_GetShortURI_LynchOz_Live(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping live integration test in short mode")
+	}
+
+	scraper := NewScraper()
+	uri, err := scraper.GetShortURI("lynch-oz")
+	if err != nil {
+		t.Logf("Skipping live test: Letterboxd is unreachable or returned error: %v", err)
+		return
+	}
+
+	if uri != "https://boxd.it/ArIK" {
+		t.Errorf("Expected short URI 'https://boxd.it/ArIK', got: %s", uri)
+	}
+}
+
 func TestLetterboxdScraper_GetShortURI_BillieEilish(t *testing.T) {
 	if testing.Short() {
 		t.Skip("Skipping live integration test in short mode")

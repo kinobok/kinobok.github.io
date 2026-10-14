@@ -10,6 +10,7 @@ import {
   formatVoteCount,
   formatRuntime,
   getTmdbUrl,
+  formatChipDate,
 } from "../utils/matching_logic";
 import Image from "next/image";
 import DateSelector from "./DateSelector";
@@ -34,6 +35,7 @@ interface MatchSidebarProps {
   selectedCinema?: Cinema | null;
   isDatePast?: (date: string) => boolean;
   searchQuery?: string;
+  movieScreeningDates?: string[];
 }
 
 function TmdbLogo({
@@ -124,6 +126,7 @@ export default function MatchSidebar({
   selectedCinema,
   isDatePast,
   searchQuery,
+  movieScreeningDates,
 }: MatchSidebarProps) {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -480,6 +483,68 @@ export default function MatchSidebar({
             <span>{formatRuntime(match.runtime)}</span>
           )}
         </div>
+        {movieScreeningDates && movieScreeningDates.length > 0 && (
+          <div
+            className="movie-screening-dates"
+            style={{
+              marginTop: "6px",
+              marginBottom: "8px",
+            }}
+          >
+            <div
+              style={{
+                fontSize: "0.75em",
+                color: "var(--lb-text-secondary)",
+                marginBottom: "4px",
+                fontWeight: 600,
+                textTransform: "uppercase",
+                letterSpacing: "0.5px",
+              }}
+            >
+              Screening dates:
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "5px",
+              }}
+            >
+              {movieScreeningDates.map((date) => {
+                const isActive = date === selectedDate;
+                return (
+                  <button
+                    key={date}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (onDateChange) onDateChange(date);
+                    }}
+                    className={`screening-date-chip ${isActive ? "active" : ""}`}
+                    style={{
+                      background: isActive
+                        ? "var(--lb-orange)"
+                        : "rgba(255, 255, 255, 0.08)",
+                      color: isActive ? "#000" : "var(--lb-text-primary)",
+                      border: isActive
+                        ? "1px solid var(--lb-orange)"
+                        : "1px solid rgba(255, 255, 255, 0.15)",
+                      borderRadius: "14px",
+                      padding: "2px 8px",
+                      fontSize: "0.75em",
+                      fontWeight: isActive ? 700 : 500,
+                      cursor: "pointer",
+                      transition: "all 0.15s ease",
+                    }}
+                    title={`View screenings for ${date}`}
+                  >
+                    {formatChipDate(date)}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
         <div
           style={{
             fontSize: "0.85em",
@@ -488,37 +553,49 @@ export default function MatchSidebar({
             paddingRight: "26px",
           }}
         >
-          {match.showtimes.map((s, idx) => (
-            <div key={idx} style={{ marginBottom: "2px" }}>
-              <a
-                style={{
-                  textDecoration: "none",
-                  color: "var(--lb-text-secondary)",
-                }}
-                href={`https://www.google.com/search?q=cinema+${s.cinema}`}
-              >
-                <span style={{ color: "var(--lb-orange)" }}>{s.cinema}</span>:{" "}
-                {s.times.map((t, tIdx) => {
-                  const isPast = isScreeningPast(t, selectedDate);
-                  return (
-                    <span key={tIdx}>
-                      <span
-                        style={{
-                          color: isPast
-                            ? "rgba(255, 255, 255, 0.3)"
-                            : "var(--lb-text-secondary)",
-                          textDecoration: isPast ? "line-through" : "none",
-                        }}
-                      >
-                        {t}
-                      </span>
-                      {tIdx < s.times.length - 1 && ", "}
-                    </span>
-                  );
-                })}
-              </a>
+          {match.showtimes.length === 0 ? (
+            <div
+              style={{
+                fontStyle: "italic",
+                color: "var(--lb-text-secondary)",
+                padding: "4px 0",
+              }}
+            >
+              No screenings in this map area on this date.
             </div>
-          ))}
+          ) : (
+            match.showtimes.map((s, idx) => (
+              <div key={idx} style={{ marginBottom: "2px" }}>
+                <a
+                  style={{
+                    textDecoration: "none",
+                    color: "var(--lb-text-secondary)",
+                  }}
+                  href={`https://www.google.com/search?q=cinema+${s.cinema}`}
+                >
+                  <span style={{ color: "var(--lb-orange)" }}>{s.cinema}</span>:{" "}
+                  {s.times.map((t, tIdx) => {
+                    const isPast = isScreeningPast(t, selectedDate);
+                    return (
+                      <span key={tIdx}>
+                        <span
+                          style={{
+                            color: isPast
+                              ? "rgba(255, 255, 255, 0.3)"
+                              : "var(--lb-text-secondary)",
+                            textDecoration: isPast ? "line-through" : "none",
+                          }}
+                        >
+                          {t}
+                        </span>
+                        {tIdx < s.times.length - 1 && ", "}
+                      </span>
+                    );
+                  })}
+                </a>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

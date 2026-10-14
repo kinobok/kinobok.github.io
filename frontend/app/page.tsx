@@ -13,6 +13,7 @@ import {
   isDateInPast,
   getAvailableCities,
   getNearestCity,
+  getMovieScreeningDates,
 } from "../utils/matching_logic";
 import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
@@ -464,6 +465,20 @@ export default function Home() {
           setSearchQuery(movie.title);
         }
       }
+      if (data?.showtimes) {
+        const hasScreeningOnSelectedDate = data.showtimes[selectedDate]?.some(
+          (st) => st.movie_id === movieId,
+        );
+        if (!hasScreeningOnSelectedDate) {
+          const availableDates = getMovieScreeningDates(
+            movieId,
+            data.showtimes,
+          );
+          if (availableDates.length > 0) {
+            setSelectedDate(availableDates[0]);
+          }
+        }
+      }
     }
   };
 
@@ -666,14 +681,23 @@ export default function Home() {
     selectedMovieId,
   ]);
 
-  const visibleMovies = useMemo(() => {
+  const allScreeningMovies = useMemo(() => {
     if (!data) return [];
-    const dailyShowtimes = data.showtimes[selectedDate] || [];
-    const activeMovieIds = new Set(dailyShowtimes.map((st) => st.movie_id));
+    const activeMovieIds = new Set<string>();
+    for (const date in data.showtimes) {
+      for (const st of data.showtimes[date]) {
+        activeMovieIds.add(st.movie_id);
+      }
+    }
     return data.movies.filter(
       (m) => activeMovieIds.has(m.id) && !excludedMovieIds.includes(m.id),
     );
-  }, [data, selectedDate, excludedMovieIds]);
+  }, [data, excludedMovieIds]);
+
+  const movieScreeningDates = useMemo(() => {
+    if (!selectedMovieId || !data?.showtimes) return [];
+    return getMovieScreeningDates(selectedMovieId, data.showtimes);
+  }, [selectedMovieId, data]);
 
   const { outsideMovieCinemas, allMovieCinemasForSelected } = useMemo(() => {
     if (!selectedMovieId || !data) {
@@ -803,7 +827,7 @@ export default function Home() {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         allCinemas={filteredCinemas}
-        allMovies={visibleMovies}
+        allMovies={allScreeningMovies}
         onSelectCinema={handleSelectCinema}
         onSelectMovie={handleSelectMovie}
       />
@@ -860,6 +884,7 @@ export default function Home() {
         selectedCinema={selectedCinema}
         isDatePast={isDatePast}
         searchQuery={searchQuery}
+        movieScreeningDates={movieScreeningDates}
       />
 
       <div style={{ flex: 1, position: "relative" }}>

@@ -132,3 +132,54 @@ func TestLetterboxdScraper_GetShortURI_TheLastDayOfSummer(t *testing.T) {
 		t.Errorf("Expected short URI 'https://boxd.it/6I3u', got: %s", uri)
 	}
 }
+
+func TestLetterboxdScraper_GetShortURI_BillieEilish(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping live integration test in short mode")
+	}
+
+	scraper := NewScraper()
+	uri, err := scraper.GetShortURI("billie-eilish-hit-me-hard-and-soft-the-tour")
+	if err != nil {
+		t.Logf("Skipping live test: Letterboxd is unreachable or returned error: %v", err)
+		return
+	}
+
+	if uri != "https://boxd.it/Wowg" {
+		t.Errorf("Expected short URI 'https://boxd.it/Wowg', got: %s", uri)
+	}
+}
+
+func TestLetterboxdScraper_GetShortURI_SlimeMovie(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping live integration test in short mode")
+	}
+
+	scraper := NewScraper()
+	uri, err := scraper.GetShortURI("that-time-i-got-reincarnated-as-a-slime-the")
+	if err != nil {
+		t.Logf("Skipping live test: Letterboxd is unreachable or returned error: %v", err)
+		return
+	}
+
+	if uri != "https://boxd.it/Qxf2" {
+		t.Errorf("Expected short URI 'https://boxd.it/Qxf2', got: %s", uri)
+	}
+}
+
+func TestLetterboxdScraper_GetShortURI_LifeBeyondPineCurtain(t *testing.T) {
+	if testing.Short() {
+		t.Skip("Skipping live integration test in short mode")
+	}
+
+	scraper := NewScraper()
+	uri, err := scraper.GetShortURI("life-beyond-the-pine-curtain-america-the")
+	if err != nil {
+		t.Logf("Skipping live test: Letterboxd is unreachable or returned error: %v", err)
+		return
+	}
+
+	if uri != "https://boxd.it/WzXs" {
+		t.Errorf("Expected short URI 'https://boxd.it/WzXs', got: %s", uri)
+	}
+}

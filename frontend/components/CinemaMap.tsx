@@ -26,6 +26,7 @@ interface CinemaMapProps {
   ) => void;
   hasActiveMovieFilter?: boolean;
   center?: { lat: number; lng: number } | null;
+  cityToFit?: string | null;
 }
 
 const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
@@ -44,21 +45,42 @@ const createMarkerIcon = (color: string, name: string, showLabel: boolean) => {
   });
 };
 
+const createUserLocationIcon = () => {
+  if (typeof L === "undefined") return null;
+  return L.divIcon({
+    className: "user-location-marker",
+    html: `
+      <div style="font-size: 24px; line-height: 1; text-align: center; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); user-select: none;">
+        📍
+      </div>
+    `,
+    iconSize: [24, 24],
+    iconAnchor: [12, 22],
+    popupAnchor: [0, -20],
+  });
+};
+
 function MapController({
   center,
   onZoomChange,
   cinemas,
   hasActiveMovieFilter,
+  cityToFit,
+  userLocation,
   mapRef,
 }: {
   center: [number, number] | null;
   onZoomChange: (zoom: number) => void;
   cinemas: Cinema[];
   hasActiveMovieFilter: boolean;
+  cityToFit?: string | null;
+  userLocation?: { lat: number; lng: number } | null;
   mapRef?: React.MutableRefObject<L.Map | null>;
 }) {
   const map = useMap();
   const lastCenterRef = useRef<[number, number] | null>(null);
+  const lastCityFitRef = useRef<string | null>(null);
+  const initialLocationSetRef = useRef(false);
 
   useEffect(() => {
     if (mapRef) {
@@ -87,6 +109,41 @@ function MapController({
       lastCenterRef.current = null;
     }
   }, [center, map]);
+
+  useEffect(() => {
+    if (
+      userLocation &&
+      !initialLocationSetRef.current &&
+      !cityToFit &&
+      !hasActiveMovieFilter
+    ) {
+      map.panTo([userLocation.lat, userLocation.lng]);
+      initialLocationSetRef.current = true;
+    }
+  }, [userLocation, cityToFit, hasActiveMovieFilter, map]);
+
+  useEffect(() => {
+    if (
+      cityToFit &&
+      cityToFit !== lastCityFitRef.current &&
+      cinemas.length > 0 &&
+      !hasActiveMovieFilter
+    ) {
+      const cityCinemas = cinemas.filter(
+        (c) =>
+          c.city &&
+          c.city.toLowerCase() === cityToFit.toLowerCase() &&
+          c.coords,
+      );
+      if (cityCinemas.length > 0) {
+        const bounds = L.latLngBounds(
+          cityCinemas.map((c) => L.latLng(c.coords!.lat, c.coords!.lng)),
+        );
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 14 });
+        lastCityFitRef.current = cityToFit;
+      }
+    }
+  }, [cityToFit, cinemas, hasActiveMovieFilter, map]);
 
   useEffect(() => {
     if (hasActiveMovieFilter && cinemas.length > 0) {
@@ -156,6 +213,7 @@ export default function CinemaMap({
   onBoundsChange,
   hasActiveMovieFilter = false,
   center,
+  cityToFit,
 }: CinemaMapProps) {
   const [isClient, setIsClient] = useState(false);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM_VALUE);
@@ -196,7 +254,7 @@ export default function CinemaMap({
   const handleLocateMe = () => {
     if (userLocation) {
       if (mapRef.current) {
-        mapRef.current.setView([userLocation.lat, userLocation.lng], 14);
+        mapRef.current.panTo([userLocation.lat, userLocation.lng]);
       }
       if (onLocationFound) {
         onLocationFound(userLocation);
@@ -211,7 +269,7 @@ export default function CinemaMap({
             lng: pos.coords.longitude,
           };
           if (mapRef.current) {
-            mapRef.current.setView([loc.lat, loc.lng], 14);
+            mapRef.current.panTo([loc.lat, loc.lng]);
           }
           if (onLocationFound) {
             onLocationFound(loc);
@@ -285,6 +343,8 @@ export default function CinemaMap({
           onZoomChange={setZoom}
           cinemas={cinemas}
           hasActiveMovieFilter={hasActiveMovieFilter}
+          cityToFit={cityToFit}
+          userLocation={userLocation}
           mapRef={mapRef}
         />
         <MapEventsController
@@ -303,7 +363,7 @@ export default function CinemaMap({
         {userLocation && (
           <Marker
             position={[userLocation.lat, userLocation.lng]}
-            icon={createMarkerIcon("#40bcf4", "You", false)!}
+            icon={createUserLocationIcon()!}
           >
             <Popup>You are here</Popup>
           </Marker>

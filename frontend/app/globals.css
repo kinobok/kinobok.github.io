@@ -65,6 +65,31 @@ body,
   color: var(--lb-text-secondary) !important;
 }
 
+/* Leaflet Tooltip Styling Overrides */
+.leaflet-tooltip {
+  background-color: var(--lb-sidebar) !important;
+  color: var(--lb-text-primary) !important;
+  border: 1px solid var(--lb-card) !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4) !important;
+  padding: 4px 8px !important;
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: var(--lb-sidebar) !important;
+}
+.leaflet-tooltip-bottom:before {
+  border-bottom-color: var(--lb-sidebar) !important;
+}
+.leaflet-tooltip-left:before {
+  border-left-color: var(--lb-sidebar) !important;
+}
+.leaflet-tooltip-right:before {
+  border-right-color: var(--lb-sidebar) !important;
+}
+
 /* Custom DivIcon Styling */
 .custom-marker {
   display: flex;

@@ -10,6 +10,8 @@ import {
   isScreeningPast,
   getDefaultSelectedDate,
   isDateInPast,
+  getAvailableCities,
+  getNearestCity,
 } from "../utils/matching_logic";
 import { parseWatchlist } from "../utils/csv_parser";
 import GuidanceModal from "../components/GuidanceModal";
@@ -36,6 +38,9 @@ export default function Home() {
     lat: number;
     lng: number;
   } | null>(null);
+  const [defaultCity, setDefaultCity] = useState<string>("Warszawa");
+  const [cityToFit, setCityToFit] = useState<string | null>(null);
+  const [isLocationActive, setIsLocationActive] = useState<boolean>(false);
   const [showGuidance, setShowGuidance] = useState(false);
   const [showDashboard, setShowDashboard] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -126,6 +131,60 @@ export default function Home() {
       }
     }
 
+    const useLocationDefault =
+      localStorage.getItem("kinobok_use_location_default") === "true";
+    const savedCity = localStorage.getItem("kinobok_default_city");
+    const savedLoc = localStorage.getItem("kinobok_default_location");
+
+    if (useLocationDefault || (!savedCity && savedLoc)) {
+      setIsLocationActive(true);
+      setCityToFit(null);
+      if (savedLoc) {
+        try {
+          const parsedLoc = JSON.parse(savedLoc);
+          if (
+            parsedLoc &&
+            typeof parsedLoc.lat === "number" &&
+            typeof parsedLoc.lng === "number"
+          ) {
+            setUserLocation(parsedLoc);
+          }
+        } catch (e) {
+          console.error("Failed to parse saved location", e);
+        }
+      }
+
+      if (typeof navigator !== "undefined" && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const freshLoc = {
+              lat: pos.coords.latitude,
+              lng: pos.coords.longitude,
+            };
+            setUserLocation(freshLoc);
+            setIsLocationActive(true);
+            setCityToFit(null);
+            localStorage.setItem(
+              "kinobok_default_location",
+              JSON.stringify(freshLoc),
+            );
+            localStorage.setItem("kinobok_use_location_default", "true");
+          },
+          (err) => {
+            console.warn("Auto-geolocation on load error:", err);
+          },
+        );
+      }
+    } else if (savedCity) {
+      setDefaultCity(savedCity);
+      setCityToFit(savedCity);
+      setIsLocationActive(false);
+    } else {
+      setDefaultCity("Warszawa");
+      setCityToFit("Warszawa");
+      setIsLocationActive(false);
+    }
+
     // Check guidance and reminder visibility
     const hasSeenGuidance = localStorage.getItem("kinobok_guidance_seen");
     if (!hasSeenGuidance && !savedUris) {
@@ -150,6 +209,23 @@ export default function Home() {
       }
     }
   }, []);
+
+  // On load, if location is used as default, adjust initial zoom to the nearest city's cinemas
+  useEffect(() => {
+    if (
+      isLocationActive &&
+      userLocation &&
+      data?.cinemas &&
+      data.cinemas.length > 0 &&
+      !cityToFit
+    ) {
+      const nearest = getNearestCity(userLocation, data.cinemas);
+      if (nearest) {
+        setCityToFit(nearest);
+        setDefaultCity(nearest);
+      }
+    }
+  }, [isLocationActive, userLocation, data?.cinemas, cityToFit]);
 
   const processUploadedFile = async (file: File) => {
     setIsProcessing(true);
@@ -233,13 +309,60 @@ export default function Home() {
     );
   };
 
-  const handleLocationFound = (loc: { lat: number; lng: number }) => {
-    setUserLocation(loc);
+  const handleLocationFound = useCallback(
+    (loc: { lat: number; lng: number }) => {
+      setUserLocation(loc);
+      setIsLocationActive(true);
+      setCityToFit(null);
+      localStorage.setItem("kinobok_use_location_default", "true");
+      localStorage.setItem("kinobok_default_location", JSON.stringify(loc));
+      localStorage.removeItem("kinobok_default_city");
+      setSelectedCinemaId(null);
+      setSelectedMovieId(null);
+      setSearchQuery("");
+      setIsSidebarMinimized(false);
+    },
+    [],
+  );
+
+  const handleSelectCity = useCallback((city: string) => {
+    setDefaultCity(city);
+    setCityToFit(city);
+    setIsLocationActive(false);
+    setUserLocation(null);
     setSelectedCinemaId(null);
     setSelectedMovieId(null);
     setSearchQuery("");
-    setIsSidebarMinimized(false);
-  };
+    localStorage.setItem("kinobok_default_city", city);
+    localStorage.removeItem("kinobok_default_location");
+    localStorage.setItem("kinobok_use_location_default", "false");
+  }, []);
+
+  const handleLocateMe = useCallback(() => {
+    if (typeof navigator !== "undefined" && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const loc = {
+            lat: pos.coords.latitude,
+            lng: pos.coords.longitude,
+          };
+          handleLocationFound(loc);
+        },
+        (err) => {
+          console.error("Geolocation error:", err);
+          alert(
+            "Could not get your location. Please check your browser permissions.",
+          );
+        },
+      );
+    } else {
+      alert("Geolocation is not supported by your browser.");
+    }
+  }, [handleLocationFound]);
+
+  const availableCities = useMemo(() => {
+    return getAvailableCities(data?.cinemas || []);
+  }, [data?.cinemas]);
 
   // State Updates with Persistence
   const handleSortChange = (newSortBy: string) => {
@@ -572,6 +695,11 @@ export default function Home() {
         onBrowseWithoutWatchlist={handleBrowseWithoutWatchlist}
         error={uploadError}
         isProcessing={isProcessing}
+        availableCities={availableCities}
+        selectedCity={defaultCity}
+        onSelectCity={handleSelectCity}
+        onLocateMe={handleLocateMe}
+        isLocationActive={isLocationActive}
       />
 
       <UpdateReminderModal
@@ -614,6 +742,11 @@ export default function Home() {
         onToggleShowAllScreenings={handleToggleShowAllScreenings}
         sortBy={sortBy}
         onSortChange={handleSortChange}
+        availableCities={availableCities}
+        defaultCity={defaultCity}
+        onSelectDefaultCity={handleSelectCity}
+        onLocateMe={handleLocateMe}
+        isLocationActive={isLocationActive}
         onDashboardToggle={() => {
           setShowDashboard(true);
           setIsMenuOpen(false);
@@ -656,6 +789,7 @@ export default function Home() {
           onBoundsChange={setMapBounds}
           hasActiveMovieFilter={!!selectedMovieId}
           center={selectedCinema ? selectedCinema.coords : null}
+          cityToFit={cityToFit}
         />
       </div>
     </main>

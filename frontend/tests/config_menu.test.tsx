@@ -285,6 +285,50 @@ describe("ConfigMenu Tabs", () => {
     expect(foldAllBtn).toBeDefined();
     expect(foldAllBtn).not.toBeNull();
   });
+
+  test("renders starting city dropdown and locate me button in Cinemas tab", () => {
+    globalThis.__MOCK_ACTIVE_TAB__ = "Cinemas";
+    const onSelectDefaultCity = vi.fn();
+    const onLocateMe = vi.fn();
+
+    const result = ConfigMenu({
+      isOpen: true,
+      onClose: vi.fn(),
+      visibleChains: [],
+      onToggleChain: vi.fn(),
+      handleFileUpload: vi.fn(),
+      allCinemas: [],
+      availableCities: ["Warszawa", "Kraków", "Wrocław"],
+      defaultCity: "Warszawa",
+      onSelectDefaultCity,
+      onLocateMe,
+    });
+
+    const citySelect = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "select" &&
+        el.props.id === "config-default-city-select",
+    );
+    expect(citySelect).toBeDefined();
+    expect(citySelect.props.value).toBe("Warszawa");
+
+    citySelect.props.onChange({ target: { value: "Kraków" } });
+    expect(onSelectDefaultCity).toHaveBeenCalledWith("Kraków");
+
+    const locateBtn = findElement(
+      result,
+      (el) =>
+        el &&
+        el.type === "button" &&
+        el.props.title === "Use my current location",
+    );
+    expect(locateBtn).toBeDefined();
+
+    locateBtn.props.onClick();
+    expect(onLocateMe).toHaveBeenCalledTimes(1);
+  });
 });
 
 declare global {

@@ -844,6 +844,64 @@ export default function ConfigMenu({
                 📊 Scrape Dashboard
               </button>
             )}
+
+            <div className="config-section" style={{ marginTop: "24px" }}>
+              <h3>About & Support</h3>
+              <p
+                style={{
+                  fontSize: "0.85em",
+                  color: "var(--lb-text-secondary)",
+                  marginBottom: "12px",
+                }}
+              >
+                Kinobok is an open-source cinema discovery tool. Found a bug or
+                have a suggestion?
+              </p>
+              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                <a
+                  href="https://github.com/kinobok/kinobok.github.io"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="github-repo-link"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    background: "var(--lb-card, #2c3440)",
+                    color: "var(--lb-text-primary, #fff)",
+                    padding: "8px 14px",
+                    borderRadius: "4px",
+                    fontSize: "0.85em",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                  }}
+                >
+                  GitHub Repository ↗
+                </a>
+                <a
+                  href="https://github.com/kinobok/kinobok.github.io/issues"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="github-issues-link"
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    background: "var(--lb-card, #2c3440)",
+                    color: "var(--lb-orange, #ff8000)",
+                    padding: "8px 14px",
+                    borderRadius: "4px",
+                    fontSize: "0.85em",
+                    fontWeight: 600,
+                    textDecoration: "none",
+                    border: "1px solid rgba(255, 255, 255, 0.1)",
+                  }}
+                >
+                  Report an Issue ↗
+                </a>
+              </div>
+            </div>
           </>
         )}
       </div>

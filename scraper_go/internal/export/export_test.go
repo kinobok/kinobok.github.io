@@ -148,3 +148,109 @@ func TestUniqueStrings(t *testing.T) {
 		}
 	}
 }
+
+func TestExportToJSON_WithMovieRatingsAndRuntime(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "export-ratings-test")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	rating := 8.4
+	voteCount := 2500
+	runtime := 166
+	tmdbID := 693134
+	tmdbURL := "https://www.themoviedb.org/movie/693134"
+	year := 2024
+
+	movies := []MovieModel{
+		{
+			ID:        "m1",
+			Title:     "Dune: Part Two",
+			BoxdURI:   "https://boxd.it/hZkK",
+			Rating:    &rating,
+			VoteCount: &voteCount,
+			Runtime:   &runtime,
+			TMDBID:    &tmdbID,
+			TMDBURL:   &tmdbURL,
+			Year:      &year,
+		},
+	}
+	cinemas := []CinemaModel{
+		{
+			ID:      "c1",
+			Name:    "Kino Nowe Horyzonty",
+			City:    "Wrocław",
+			Address: "ul. Kazimierza Wielkiego 19a-21",
+		},
+	}
+	showtimes := map[string][]ShowtimeModel{
+		"2026-05-07": {
+			{
+				MovieID:  "m1",
+				CinemaID: "c1",
+				Times:    []string{"19:00"},
+			},
+		},
+	}
+	metadata := MetadataModel{
+		LastScrape:     "2026-05-07T10:00:00Z",
+		TotalMovies:    1,
+		AvailableDates: []string{"2026-05-07"},
+	}
+
+	outputFile := filepath.Join(tmpDir, "data.json")
+	if err := ToJSON(movies, cinemas, showtimes, metadata, outputFile); err != nil {
+		t.Fatalf("ToJSON failed: %v", err)
+	}
+
+	data, err := os.ReadFile(outputFile)
+	if err != nil {
+		t.Fatalf("Failed to read output: %v", err)
+	}
+
+	var parsed Schema
+	if err := json.Unmarshal(data, &parsed); err != nil {
+		t.Fatalf("Failed to unmarshal output: %v", err)
+	}
+
+	if len(parsed.Movies) != 1 {
+		t.Fatalf("Expected 1 movie, got %d", len(parsed.Movies))
+	}
+	m := parsed.Movies[0]
+	if m.Rating == nil || *m.Rating != 8.4 {
+		t.Errorf("Expected rating 8.4, got %v", m.Rating)
+	}
+	if m.VoteCount == nil || *m.VoteCount != 2500 {
+		t.Errorf("Expected vote_count 2500, got %v", m.VoteCount)
+	}
+	if m.Runtime == nil || *m.Runtime != 166 {
+		t.Errorf("Expected runtime 166, got %v", m.Runtime)
+	}
+	if m.TMDBID == nil || *m.TMDBID != 693134 {
+		t.Errorf("Expected tmdb_id 693134, got %v", m.TMDBID)
+	}
+	if m.TMDBURL == nil || *m.TMDBURL != "https://www.themoviedb.org/movie/693134" {
+		t.Errorf("Expected tmdb_url 'https://www.themoviedb.org/movie/693134', got %v", m.TMDBURL)
+	}
+	if m.Year == nil || *m.Year != 2024 {
+		t.Errorf("Expected year 2024, got %v", m.Year)
+	}
+}
+
+func TestValidateCurrentDataGoJSON(t *testing.T) {
+	dataPath := filepath.Join("..", "..", "..", "frontend", "public", "data_go.json")
+	data, err := os.ReadFile(dataPath)
+	if err != nil {
+		t.Skipf("data_go.json not found at %s: %v", dataPath, err)
+	}
+
+	var schema Schema
+	if err := json.Unmarshal(data, &schema); err != nil {
+		t.Fatalf("Failed to parse data_go.json: %v", err)
+	}
+
+	if err := schema.Validate(); err != nil {
+		t.Fatalf("data_go.json validation failed: %v", err)
+	}
+}

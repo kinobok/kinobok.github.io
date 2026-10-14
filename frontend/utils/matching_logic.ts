@@ -29,6 +29,12 @@ export interface Movie {
   title: string;
   boxd_uri: string;
   poster?: string;
+  rating?: number;
+  vote_count?: number;
+  runtime?: number;
+  tmdb_id?: number;
+  tmdb_url?: string;
+  year?: number;
 }
 
 export interface Showtime {
@@ -62,11 +68,59 @@ export interface Match {
   title: string;
   boxd_uri: string;
   poster?: string;
+  rating?: number;
+  vote_count?: number;
+  runtime?: number;
+  tmdb_id?: number;
+  tmdb_url?: string;
+  year?: number;
   showtimes: {
     cinema: string | undefined;
     times: string[];
     cinema_id: string;
   }[];
+}
+
+export function formatRating(rating?: number): string | null {
+  if (typeof rating !== "number" || isNaN(rating) || rating <= 0) return null;
+  return (Math.round(rating * 10) / 10).toFixed(1);
+}
+
+export function formatVoteCount(count?: number): string | null {
+  if (typeof count !== "number" || isNaN(count) || count <= 0) return null;
+  if (count >= 1_000_000) {
+    return `${(count / 1_000_000).toFixed(1)}M`;
+  }
+  if (count >= 10_000) {
+    return `${Math.round(count / 1_000)}k`;
+  }
+  if (count >= 1_000) {
+    return `${(count / 1_000).toFixed(1)}k`;
+  }
+  return `${count}`;
+}
+
+export function formatRuntime(runtime?: number): string | null {
+  if (typeof runtime !== "number" || isNaN(runtime) || runtime <= 0)
+    return null;
+  return `${runtime} min`;
+}
+
+export function getTmdbUrl(
+  tmdbUrl?: string,
+  tmdbId?: number,
+  title?: string,
+): string {
+  if (tmdbUrl && tmdbUrl.trim() !== "") {
+    return tmdbUrl;
+  }
+  if (tmdbId && tmdbId > 0) {
+    return `https://www.themoviedb.org/movie/${tmdbId}`;
+  }
+  if (title) {
+    return `https://www.themoviedb.org/search/movie?query=${encodeURIComponent(title)}`;
+  }
+  return "https://www.themoviedb.org";
 }
 
 export function findMatchesWithFilters(
@@ -169,6 +223,37 @@ export function findMatchesWithFilters(
     finalMatches.sort((a, b) => a.title.localeCompare(b.title));
   } else if (sortBy === "alpha-desc") {
     finalMatches.sort((a, b) => b.title.localeCompare(a.title));
+  } else if (sortBy === "popularity-desc") {
+    finalMatches.sort((a, b) => {
+      const aPop = a.vote_count ?? 0;
+      const bPop = b.vote_count ?? 0;
+      if (aPop !== bPop) return bPop - aPop;
+      return a.title.localeCompare(b.title);
+    });
+  } else if (sortBy === "rating-desc") {
+    finalMatches.sort((a, b) => {
+      const aRate = a.rating ?? 0;
+      const bRate = b.rating ?? 0;
+      if (aRate !== bRate) return bRate - aRate;
+      const aPop = a.vote_count ?? 0;
+      const bPop = b.vote_count ?? 0;
+      if (aPop !== bPop) return bPop - aPop;
+      return a.title.localeCompare(b.title);
+    });
+  } else if (sortBy === "year-desc") {
+    finalMatches.sort((a, b) => {
+      const aYear = a.year ?? 0;
+      const bYear = b.year ?? 0;
+      if (aYear !== bYear) return bYear - aYear;
+      return a.title.localeCompare(b.title);
+    });
+  } else if (sortBy === "year-asc") {
+    finalMatches.sort((a, b) => {
+      const aYear = a.year && a.year > 0 ? a.year : 9999;
+      const bYear = b.year && b.year > 0 ? b.year : 9999;
+      if (aYear !== bYear) return aYear - bYear;
+      return a.title.localeCompare(b.title);
+    });
   }
 
   const matchedCinemaIds = Array.from(

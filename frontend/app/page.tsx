@@ -600,6 +600,12 @@ export default function Home() {
             title: selectedMovie.title,
             boxd_uri: selectedMovie.boxd_uri,
             poster: selectedMovie.poster,
+            rating: selectedMovie.rating,
+            vote_count: selectedMovie.vote_count,
+            runtime: selectedMovie.runtime,
+            tmdb_id: selectedMovie.tmdb_id,
+            tmdb_url: selectedMovie.tmdb_url,
+            year: selectedMovie.year,
             showtimes: movieShowtimes,
           },
         ];

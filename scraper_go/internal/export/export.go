@@ -11,10 +11,16 @@ import (
 
 // MovieModel represents a scraped movie with its metadata.
 type MovieModel struct {
-	ID      string  `json:"id"`
-	Title   string  `json:"title"`
-	Poster  *string `json:"poster"`
-	BoxdURI string  `json:"boxd_uri"`
+	ID        string   `json:"id"`
+	Title     string   `json:"title"`
+	Poster    *string  `json:"poster"`
+	BoxdURI   string   `json:"boxd_uri"`
+	Rating    *float64 `json:"rating,omitempty"`
+	VoteCount *int     `json:"vote_count,omitempty"`
+	Runtime   *int     `json:"runtime,omitempty"`
+	TMDBID    *int     `json:"tmdb_id,omitempty"`
+	TMDBURL   *string  `json:"tmdb_url,omitempty"`
+	Year      *int     `json:"year,omitempty"`
 }
 
 // CoordsModel represents coordinates of a cinema.

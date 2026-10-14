@@ -179,6 +179,38 @@ describe("ConfigMenu Tabs", () => {
     expect(onDashboardToggle).toHaveBeenCalled();
   });
 
+  test("renders sort dropdown with popularity, rating, and year options", () => {
+    globalThis.__MOCK_ACTIVE_TAB__ = "Other";
+    const onSortChange = vi.fn();
+
+    const result = ConfigMenu({
+      isOpen: true,
+      onClose: vi.fn(),
+      visibleChains: [],
+      onToggleChain: vi.fn(),
+      handleFileUpload: vi.fn(),
+      sortBy: "rare-week",
+      onSortChange,
+    });
+
+    const selectEl = findElement(result, (el) => el && el.type === "select");
+    expect(selectEl).toBeDefined();
+    expect(selectEl).not.toBeNull();
+
+    const optionValues = React.Children.toArray(selectEl.props.children).map(
+      (opt: any) => opt.props.value,
+    );
+    expect(optionValues).toContain("rare-week");
+    expect(optionValues).toContain("popularity-desc");
+    expect(optionValues).toContain("rating-desc");
+    expect(optionValues).toContain("year-desc");
+    expect(optionValues).toContain("year-asc");
+
+    // Change triggers callback
+    selectEl.props.onChange({ target: { value: "popularity-desc" } });
+    expect(onSortChange).toHaveBeenCalledWith("popularity-desc");
+  });
+
   test("renders cinemas grouped by city and supports bulk city toggle", () => {
     globalThis.__MOCK_ACTIVE_TAB__ = "Cinemas";
     const onToggleCinemas = vi.fn();

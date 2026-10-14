@@ -776,6 +776,7 @@ export default function Home() {
         onToggleMinimize={setIsSidebarMinimized}
         selectedCinema={selectedCinema}
         isDatePast={isDatePast}
+        searchQuery={searchQuery}
       />
 
       <div style={{ flex: 1, position: "relative" }}>

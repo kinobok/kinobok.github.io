@@ -518,6 +518,45 @@ describe("MatchSidebar", () => {
     expect(foldAllBtn).not.toBeNull();
     expect(foldAllBtn.props.children).toBe("Fold all");
   });
+
+  test("renders search info in header between buttons when expanded on mobile", () => {
+    globalThis.__MOCK_IS_MOBILE__ = true;
+
+    const result = MatchSidebar({
+      matches: [],
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+      searchQuery: "Dune: Part Two",
+    });
+
+    const searchInfo = findElement(
+      result,
+      (el) =>
+        el && el.props && el.props.className === "mobile-search-query-info",
+    );
+
+    expect(searchInfo).not.toBeNull();
+    expect(searchInfo.props.children).toBe("Dune: Part Two");
+  });
+
+  test("does not render search info element when searchQuery is empty", () => {
+    globalThis.__MOCK_IS_MOBILE__ = true;
+
+    const result = MatchSidebar({
+      matches: [],
+      isExpanded: true,
+      onToggleExpand: vi.fn(),
+      searchQuery: "",
+    });
+
+    const searchInfo = findElement(
+      result,
+      (el) =>
+        el && el.props && el.props.className === "mobile-search-query-info",
+    );
+
+    expect(searchInfo).toBeNull();
+  });
 });
 
 // Declare global variable type for TypeScript safety

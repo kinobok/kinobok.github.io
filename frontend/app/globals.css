@@ -360,6 +360,21 @@ body,
   border-color: var(--lb-green);
 }
 
+.date-button.past {
+  opacity: 0.45;
+}
+
+.date-button.past:hover {
+  opacity: 0.75;
+}
+
+.date-button.past.active {
+  background: rgba(0, 224, 84, 0.25);
+  border-color: var(--lb-green);
+  color: var(--lb-text-primary);
+  opacity: 0.85;
+}
+
 .date-weekday {
   font-size: 10px;
   text-transform: uppercase;

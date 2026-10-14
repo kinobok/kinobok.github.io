@@ -5,6 +5,10 @@ import {
   findMatchesWithFilters,
   calculateMatchCountsPerDay,
   isScreeningPast,
+  formatDateToYMD,
+  hasFutureScreeningsForDate,
+  isDateInPast,
+  getDefaultSelectedDate,
   Movie,
   Showtime,
   CinemaData,
@@ -269,5 +273,113 @@ describe("isScreeningPast", () => {
 
     expect(isScreeningPast("17:00", now)).toBe(false);
     expect(isScreeningPast("16:40", now)).toBe(false);
+  });
+
+  it("should consider all screenings on a past date as past", () => {
+    const now = new Date("2026-10-14T00:39:00");
+    // Date is Tuesday Oct 13, now is Wednesday Oct 14
+    expect(isScreeningPast("18:30", "2026-10-13", now)).toBe(true);
+    expect(isScreeningPast("23:59", "2026-10-13", now)).toBe(true);
+  });
+
+  it("should not consider screenings on a future date as past", () => {
+    const now = new Date("2026-10-14T00:39:00");
+    // Date is Thursday Oct 15
+    expect(isScreeningPast("09:00", "2026-10-15", now)).toBe(false);
+    expect(isScreeningPast("18:30", "2026-10-15", now)).toBe(false);
+  });
+
+  it("should compare times when screening date matches today", () => {
+    const now = new Date("2026-10-14T15:00:00");
+    expect(isScreeningPast("14:30", "2026-10-14", now)).toBe(true);
+    expect(isScreeningPast("15:30", "2026-10-14", now)).toBe(false);
+  });
+});
+
+describe("hasFutureScreeningsForDate", () => {
+  const showtimes = [
+    { times: ["12:00", "18:00"] },
+    { times: ["20:00"] },
+  ];
+
+  it("returns false for past dates", () => {
+    const now = new Date("2026-10-14T10:00:00");
+    expect(hasFutureScreeningsForDate("2026-10-13", showtimes, now)).toBe(false);
+  });
+
+  it("returns true for future dates with showtimes", () => {
+    const now = new Date("2026-10-14T10:00:00");
+    expect(hasFutureScreeningsForDate("2026-10-15", showtimes, now)).toBe(true);
+  });
+
+  it("returns true if today has remaining future showtimes", () => {
+    const now = new Date("2026-10-14T15:00:00");
+    expect(hasFutureScreeningsForDate("2026-10-14", showtimes, now)).toBe(true);
+  });
+
+  it("returns false if today has no remaining future showtimes", () => {
+    const now = new Date("2026-10-14T21:00:00");
+    expect(hasFutureScreeningsForDate("2026-10-14", showtimes, now)).toBe(false);
+  });
+});
+
+describe("isDateInPast", () => {
+  const showtimes = [{ times: ["18:00", "20:00"] }];
+
+  it("returns true for a past date", () => {
+    const now = new Date("2026-10-14T00:39:00");
+    expect(isDateInPast("2026-10-13", now)).toBe(true);
+  });
+
+  it("returns false for a future date", () => {
+    const now = new Date("2026-10-14T00:39:00");
+    expect(isDateInPast("2026-10-15", now)).toBe(false);
+  });
+
+  it("returns false for today if there are future showtimes", () => {
+    const now = new Date("2026-10-14T12:00:00");
+    expect(isDateInPast("2026-10-14", now, showtimes)).toBe(false);
+  });
+
+  it("returns true for today if all showtimes have ended", () => {
+    const now = new Date("2026-10-14T21:00:00");
+    expect(isDateInPast("2026-10-14", now, showtimes)).toBe(true);
+  });
+});
+
+describe("getDefaultSelectedDate", () => {
+  const dates = ["2026-10-13", "2026-10-14", "2026-10-15"];
+  const showtimes = {
+    "2026-10-13": [{ times: ["18:00", "20:30"] }],
+    "2026-10-14": [{ times: ["14:00", "19:00"] }],
+    "2026-10-15": [{ times: ["15:00", "20:00"] }],
+  };
+
+  it("defaults to today (Wednesday) when dates[0] is yesterday (Tuesday) - issue #62 edge case", () => {
+    const now = new Date("2026-10-14T00:39:00");
+    const result = getDefaultSelectedDate(dates, showtimes, now);
+    expect(result).toBe("2026-10-14");
+  });
+
+  it("defaults to next day when today's screenings have all already started/ended", () => {
+    const now = new Date("2026-10-13T23:45:00");
+    const result = getDefaultSelectedDate(dates, showtimes, now);
+    expect(result).toBe("2026-10-14");
+  });
+
+  it("defaults to today during daytime when screenings remain", () => {
+    const now = new Date("2026-10-14T10:00:00");
+    const result = getDefaultSelectedDate(dates, showtimes, now);
+    expect(result).toBe("2026-10-14");
+  });
+
+  it("falls back to the latest date if all dates are in the past (stale data)", () => {
+    const now = new Date("2026-10-20T12:00:00");
+    const result = getDefaultSelectedDate(dates, showtimes, now);
+    expect(result).toBe("2026-10-15");
+  });
+
+  it("returns empty string for empty dates list", () => {
+    expect(getDefaultSelectedDate([])).toBe("");
   });
 });

@@ -256,10 +256,36 @@ export function calculateMatchCountsPerDay(
   return counts;
 }
 
+export function formatDateToYMD(d: Date = new Date()): string {
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export function isScreeningPast(
   timeStr: string,
-  now: Date = new Date(),
+  dateOrNow?: string | Date,
+  maybeNow?: Date,
 ): boolean {
+  let dateStr: string | undefined;
+  let now: Date = new Date();
+
+  if (typeof dateOrNow === "string") {
+    dateStr = dateOrNow;
+    if (maybeNow instanceof Date) {
+      now = maybeNow;
+    }
+  } else if (dateOrNow instanceof Date) {
+    now = dateOrNow;
+  }
+
+  if (dateStr) {
+    const todayStr = formatDateToYMD(now);
+    if (dateStr < todayStr) return true;
+    if (dateStr > todayStr) return false;
+  }
+
   const currentHour = now.getHours();
   const currentMinute = now.getMinutes();
 
@@ -273,3 +299,66 @@ export function isScreeningPast(
   if (hour === currentHour && minute <= currentMinute) return true;
   return false;
 }
+
+export function hasFutureScreeningsForDate(
+  date: string,
+  dailyShowtimes: Array<{ times: string[] }> | undefined,
+  now: Date = new Date(),
+): boolean {
+  const todayStr = formatDateToYMD(now);
+  if (date < todayStr) return false;
+  if (date > todayStr) return (dailyShowtimes && dailyShowtimes.length > 0) ?? false;
+  if (!dailyShowtimes || dailyShowtimes.length === 0) return false;
+
+  return dailyShowtimes.some((s) =>
+    s.times.some((t) => !isScreeningPast(t, now)),
+  );
+}
+
+export function isDateInPast(
+  dateStr: string,
+  now: Date = new Date(),
+  dailyShowtimes?: Array<{ times: string[] }>,
+): boolean {
+  const todayStr = formatDateToYMD(now);
+  if (dateStr < todayStr) return true;
+  if (dateStr > todayStr) return false;
+
+  if (dailyShowtimes && dailyShowtimes.length > 0) {
+    return !dailyShowtimes.some((s) =>
+      s.times.some((t) => !isScreeningPast(t, now)),
+    );
+  }
+  return false;
+}
+
+export function getDefaultSelectedDate(
+  dates: string[],
+  showtimes?: Record<string, Array<{ times: string[] }>>,
+  now: Date = new Date(),
+): string {
+  if (!dates || dates.length === 0) return "";
+
+  const sortedDates = [...dates].sort();
+  const todayStr = formatDateToYMD(now);
+
+  for (const date of sortedDates) {
+    if (date < todayStr) continue;
+    if (date === todayStr) {
+      const dailyShowtimes = showtimes ? showtimes[date] : undefined;
+      if (dailyShowtimes && dailyShowtimes.length > 0) {
+        const hasFuture = dailyShowtimes.some((s) =>
+          s.times.some((t) => !isScreeningPast(t, now)),
+        );
+        if (!hasFuture) {
+          continue; // Today's screenings have all passed; default to the next day
+        }
+      }
+      return date;
+    }
+    return date;
+  }
+
+  return sortedDates[sortedDates.length - 1];
+}
+

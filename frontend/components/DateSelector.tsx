@@ -6,6 +6,7 @@ interface DateSelectorProps {
   onDateChange: (date: string) => void;
   matchCounts?: Record<string, number>;
   isInline?: boolean;
+  isDatePast?: (date: string) => boolean;
 }
 
 export default function DateSelector({
@@ -14,6 +15,7 @@ export default function DateSelector({
   onDateChange,
   matchCounts,
   isInline = false,
+  isDatePast,
 }: DateSelectorProps) {
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -23,18 +25,29 @@ export default function DateSelector({
     return { weekday, day, month };
   };
 
+  const defaultIsDatePast = (dateStr: string) => {
+    const d = new Date();
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return dateStr < `${year}-${month}-${day}`;
+  };
+
+  const checkIsPast = isDatePast || defaultIsDatePast;
+
   return (
     <div className={isInline ? "date-selector-inline" : "date-selector"}>
       <div className="date-scroll">
         {dates.map((date) => {
           const { weekday, day, month } = formatDate(date);
           const isActive = date === selectedDate;
+          const isPast = checkIsPast(date);
           const count = matchCounts ? matchCounts[date] || 0 : 0;
 
           return (
             <button
               key={date}
-              className={`date-button ${isActive ? "active" : ""}`}
+              className={`date-button ${isActive ? "active" : ""} ${isPast ? "past" : ""}`}
               onClick={() => onDateChange(date)}
               style={{ position: "relative" }}
             >
@@ -47,8 +60,10 @@ export default function DateSelector({
                     position: "absolute",
                     top: "-5px",
                     right: "-5px",
-                    background: "var(--lb-green)",
-                    color: "#000",
+                    background: isPast
+                      ? "rgba(100, 100, 100, 0.6)"
+                      : "var(--lb-green)",
+                    color: isPast ? "#bbb" : "#000",
                     fontSize: "0.7em",
                     fontWeight: "bold",
                     padding: "2px 6px",

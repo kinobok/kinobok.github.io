@@ -292,16 +292,31 @@ func main() {
 							continue
 						}
 
-						// Generate Letterboxd slug
-						boxdSlug := slug.GenerateSlug(tmdbMovie.Title, tmdbMovie.Year)
-						boxdURI, err := letterboxdScraper.GetShortURI(boxdSlug)
+						// Generate Letterboxd slug (try with year first, fallback to without year)
+						targetYear := tmdbMovie.Year
+						if targetYear <= 0 && fwMovie.Year > 0 {
+							targetYear = fwMovie.Year
+						}
+
+						var boxdSlug string
+						var boxdURI string
+						if targetYear > 0 {
+							boxdSlug = slug.GenerateSlugWithYear(tmdbMovie.Title, targetYear)
+							boxdURI, err = letterboxdScraper.GetShortURI(boxdSlug)
+						}
+
+						if targetYear <= 0 || err != nil {
+							boxdSlug = slug.GenerateSlug(tmdbMovie.Title)
+							boxdURI, err = letterboxdScraper.GetShortURI(boxdSlug)
+						}
+
 						if err != nil {
 							failuresMutex.Lock()
 							failures = append(failures, export.FailureModel{
 								Title:  title,
 								Reason: "Letterboxd URI resolution failed",
 								Details: func() *string {
-									s := fmt.Sprintf("Slug: %s, Error: %v", boxdSlug, err)
+									s := fmt.Sprintf("Slug: %s, Year: %d, Error: %v", boxdSlug, targetYear, err)
 									return &s
 								}(),
 							})
